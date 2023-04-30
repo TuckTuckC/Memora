@@ -22,6 +22,7 @@ To install Memora, follow these steps:
 3. Create a new Firebase project and configure your app's settings.
 4. Add your Firebase SDK configuration to the `firebase.js` file in the `src` folder.
 5. Start the app by running `npm run dev`.
+
 Note: To add your Firebase SDK configuration, follow these steps:
 
 1. Go to your Firebase project's settings and click on "Add Firebase to your web app".
