@@ -1,7 +1,7 @@
 # Memora
 Memora is a note-taking app designed for forgetful people who need help remembering important information. With built-in reminders and an intuitive interface, Memora makes it easy to capture and organize your thoughts, ideas, to-do lists, tasks, and events.
 
-Features
+# Features
 - Intuitive interface for easy note-taking and organization
 - Built-in reminders to help you remember important information
 - Synchronization with Firebase for easy access to your notes and reminders from anywhere
