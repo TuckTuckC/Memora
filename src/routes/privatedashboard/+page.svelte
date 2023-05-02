@@ -1,11 +1,35 @@
 <script>
     import { auth } from "../../lib/firebase/firebase.client";
-    import { authStore } from "../../stores/authStore";
+    import { authHandlers, authStore } from "../../stores/authStore";
+    import AuthReset from '../../components/AuthReset.svelte';
 
     let email;
     authStore.subscribe(curr => {
-        email = authStore.currentUser.email
+        console.log('CURR', curr);
+        email = curr?.currentUser?.email
     })
 </script>
 
-<h1>CURRENT USER: {}</h1>
+{#if $authStore.currentUser}
+<div>
+    <h1>CURRENT USER: {email}</h1>
+    <AuthReset />
+    <button on:click={authHandlers.logout}>Logout</button>
+</div>
+{:else}
+<div>Loading.....</div>
+{/if}
+
+<style>
+    div {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    h1 {
+        text-align: center;
+    }
+</style>

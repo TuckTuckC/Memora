@@ -1,6 +1,8 @@
 <script>
   import Header from "./Header.svelte";
   import "./styles.css";
+  import "../app.css";
+  import { browser } from "$app/environment";
   import { onMount } from "svelte";
   import { authStore } from "../stores/authStore";
   import { auth } from "../lib/firebase/firebase.client";
@@ -11,7 +13,19 @@
       authStore.update((curr) => {
         return { ...curr, isLoading: false, currentUser: user };
       });
+
+      if (browser) {
+        if (
+          !$authStore?.currentUser &&
+          !$authStore.isLoading &&
+          window.location.pathname !== "/"
+        ) {
+          window.location.href = "/";
+          console.log(authStore.currentUser, authStore.isLoading);
+        }
+      }
     });
+    return unsubscribe;
   });
 </script>
 
