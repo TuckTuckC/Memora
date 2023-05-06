@@ -1,6 +1,6 @@
 <script>
   import { collection, getDocs, setDoc, doc } from "firebase/firestore";
-  import { db } from "../../lib/firebase/firebase";
+  import { db } from "../../lib/firebase/firebase.client";
   import "firebase/firestore";
 
   //   const querySnapshot = getDocs(collection(db, "users"));
@@ -13,28 +13,40 @@
   import { onMount } from "svelte";
   let store;
 
-  onMount(async () => {
-    try {
-      authStore.subscribe((value) => {
-        store = value;
-      });
+  const notesCollection = collection(db, "notes");
+  async function newNote() {
+    const newDoc = await addDoc(notesCollection, {
+      body: "TEST Body",
+      createdAt: "May 4, 2023 at 1:19:31 PM UTC-4",
+      title: "TEST Title",
+      updatedAt: "May 4, 2023 at 1:38:38 PM UTC-4",
+      user_id: "test@gmail.com",
+    });
+    console.log(`Your doc was created at ${newDoc.path}`);
+  }
 
-      const querySnapshot = await getDocs(collection(db, "notes"));
-      console.log("SNAPSHOT:", querySnapshot);
+  //   onMount(async () => {
+  //     try {
+  //       authStore.subscribe((value) => {
+  //         store = value;
+  //       });
 
-      console.log("store:", store);
-      console.log("notes:", notes);
-      const data = {
-        title: "NOTE 2",
-        body: "Note 2 Body",
-        createdAt: "May 4, 2023 at 1:19:31 PM UTC-4",
-        updatedAt: "May 4, 2023 at 1:38:38 PM UTC-4",
-        user_id: store.currentUser.uid,
-      };
-    } catch (e) {
-      console.error(e);
-    }
-  });
+  //       const querySnapshot = await getDocs(collection(db, "notes"));
+  //       console.log("SNAPSHOT:", querySnapshot);
+
+  //       console.log("store:", store);
+  //       console.log("notes:", db.notes);
+  //       const data = {
+  //         title: "NOTE 2",
+  //         body: "Note 2 Body",
+  //         createdAt: "May 4, 2023 at 1:19:31 PM UTC-4",
+  //         updatedAt: "May 4, 2023 at 1:38:38 PM UTC-4",
+  //         user_id: store.currentUser.uid,
+  //       };
+  //     } catch (e) {
+  //       console.error(e);
+  //     }
+  //   });
 
   async function loadUserData() {
     const querySnapshot = await getDocs(collection(db, "users"));
@@ -47,7 +59,9 @@
   loadUserData();
 </script>
 
-<div />
+<div>
+  <button on:click={newNote} />
+</div>
 
 <style>
 </style>
