@@ -8,6 +8,7 @@
 
   let profileDrop = false;
 
+  //   Profile dropdown toggle
   function menuHandler() {
     profileDrop = !profileDrop;
   }

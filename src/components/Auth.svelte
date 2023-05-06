@@ -1,12 +1,7 @@
 <script>
   import { authHandlers, authStore } from "../stores/authStore";
-  import { collection, addDoc, getDocs, setDoc, doc } from "firebase/firestore";
+  import { collection, addDoc } from "firebase/firestore";
   import { db } from "../lib/firebase/firebase.client";
-
-  let store;
-  authStore.subscribe((value) => {
-    store = value;
-  });
 
   let register = false;
   let email = "";
@@ -15,9 +10,14 @@
   let emailErr = false;
   let passErr = false;
   let confErr = false;
+  let store;
+  authStore.subscribe((value) => {
+    store = value;
+  });
 
   const usersCollection = collection(db, "users");
 
+  //   Adds the user that just registered to the users collection in Firebase
   async function newUser() {
     const newDoc = await addDoc(usersCollection, {
       email: email,
@@ -28,6 +28,7 @@
   }
 
   async function handleSubmit() {
+    // If a fiend is empty, throw an appropriate error
     if (!email || !password || (register && !confirmPassword)) {
       console.log(emailErr, passErr, confErr);
       !email ? (emailErr = true) : null;
@@ -36,22 +37,26 @@
       return;
     }
 
+    // If user is registering and registration is valid
     if (register && password === confirmPassword) {
       emailErr = false;
       passErr = false;
       confErr = false;
       try {
+        // Signup with firebase
         await authHandlers.signup(email, password);
       } catch (err) {
         console.log(err);
       }
     } else {
+      // Anything else and the user must be trying to Log In
       try {
         await authHandlers.login(email, password);
       } catch (err) {
         console.log(err);
       }
     }
+    // If there currently is a user in firebase, add the new user the the users collection in firestore
     if ($authStore.currentUser) {
       await newUser();
       window.location.href = "/privatedashboard";

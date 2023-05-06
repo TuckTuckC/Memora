@@ -2,24 +2,17 @@
   import { collection, addDoc, getDocs, setDoc, doc } from "firebase/firestore";
   import { db } from "../../lib/firebase/firebase.client";
   import "firebase/firestore";
-
-  //   const querySnapshot = getDocs(collection(db, "users"));
-  //   console.log("snap:", querySnapshot);
-  //   for (const doc of querySnapshot.docs) {
-  //     console.log(`${doc.id} => ${doc.data}`);
-  //   }
-
   import { authStore } from "../../stores/authStore";
 
+  let title = "";
+  let body = "";
   let store;
   authStore.subscribe((value) => {
     store = value;
   });
 
-  let title = "";
-  let body = "";
-
   const notesCollection = collection(db, "notes");
+
   async function newNote() {
     const newDoc = await addDoc(notesCollection, {
       body: body,

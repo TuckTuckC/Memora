@@ -1,5 +1,5 @@
 <script>
-  import { authHandlers, authStore } from "../stores/authStore";
+  import { authHandlers } from "../stores/authStore";
 
   let action = "";
   let newEmail = "";
