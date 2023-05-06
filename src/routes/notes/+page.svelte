@@ -1,5 +1,5 @@
 <script>
-  import { collection, addDoc, getDocs, setDoc, doc } from "firebase/firestore";
+  import { collection, addDoc } from "firebase/firestore";
   import { db } from "../../lib/firebase/firebase.client";
   import "firebase/firestore";
   import { authStore } from "../../stores/authStore";
