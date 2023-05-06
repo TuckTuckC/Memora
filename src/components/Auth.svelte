@@ -1,5 +1,12 @@
 <script>
   import { authHandlers, authStore } from "../stores/authStore";
+  import { collection, addDoc, getDocs, setDoc, doc } from "firebase/firestore";
+  import { db } from "../lib/firebase/firebase.client";
+
+  let store;
+  authStore.subscribe((value) => {
+    store = value;
+  });
 
   let register = false;
   let email = "";
@@ -8,6 +15,17 @@
   let emailErr = false;
   let passErr = false;
   let confErr = false;
+
+  const usersCollection = collection(db, "users");
+
+  async function newUser() {
+    const newDoc = await addDoc(usersCollection, {
+      email: email,
+      notes: [],
+      uid: store.currentUser.uid,
+    });
+    console.log(`Your doc was created at ${newDoc.path}`);
+  }
 
   async function handleSubmit() {
     if (!email || !password || (register && !confirmPassword)) {
@@ -35,6 +53,7 @@
       }
     }
     if ($authStore.currentUser) {
+      await newUser();
       window.location.href = "/privatedashboard";
     }
   }
