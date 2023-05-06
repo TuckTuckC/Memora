@@ -3,6 +3,8 @@
   import { db } from "../../lib/firebase/firebase.client";
   import "firebase/firestore";
   import { authStore } from "../../stores/authStore";
+  import { get } from "svelte/store";
+  import { dateTime } from "../../stores/store";
 
   let title = "";
   let body = "";
@@ -10,13 +12,16 @@
   authStore.subscribe((value) => {
     store = value;
   });
-
+  console.log("datetime", get(dateTime));
+  console.log(`${get(dateTime).date} at ${get(dateTime).time}`);
   const notesCollection = collection(db, "notes");
 
   async function newNote() {
     const newDoc = await addDoc(notesCollection, {
       body: body,
+      createdAt: `${get(dateTime).date} at ${get(dateTime).time}`,
       title: title,
+      updatedAt: `${get(dateTime).date} at ${get(dateTime).time}`,
       user_id: store.currentUser.uid,
     });
     console.log(`Your doc was created at ${newDoc.path}`);

@@ -1,11 +1,19 @@
 import {writable} from 'svelte/store';
 
 function getDateTime() {
-    let time = new Date();
-    
-    $: hours = time.getHours();
-	$: minutes = time.getMinutes();
-	$: seconds = time.getSeconds();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    let dateTime = {
+        date: new Date().toLocaleDateString("en-US", options),
+        time: new Date().toLocaleTimeString(),
+        time24: new Date().toLocaleTimeString([], {hour12: false}),
+        utc: new Date().toUTCString(),
+        timeZoneOffset: `UTC${new Date().getUTCHours() > new Date().getHours() ? '-' : ''}${(new Date().getUTCHours()) - (new Date().getHours())}`
+
+    }
+
+
+
+    return dateTime
 }
 
-export const dateTime = writeable('');
+export const dateTime = writable(getDateTime());
