@@ -52,13 +52,13 @@
       // Anything else and the user must be trying to Log In
       try {
         await authHandlers.login(email, password);
+        register ? await newUser() : null;
       } catch (err) {
         console.log(err);
       }
     }
     // If there currently is a user in firebase, add the new user the the users collection in firestore
     if ($authStore.currentUser) {
-      await newUser();
       window.location.href = "/privatedashboard";
     }
   }
