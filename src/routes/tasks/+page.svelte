@@ -5,6 +5,7 @@
     import { authStore } from "../../stores/authStore";
     import { get } from "svelte/store";
     import { dateTime } from "../../stores/store";
+    import { storeTasks } from "../../stores/store";
   
     let title = "";
     let body = "";
@@ -25,9 +26,19 @@
         labels = [];
         snapshot.docs.forEach((doc) => {
             console.log(doc.data());
-            labels.push({...doc.data(), labelName: doc.data().labelName})
+            labels.push({...doc.data(), labelName: doc.data().labelName});
         })
         console.log(labels);
+    })
+
+    onSnapshot( tasksCollection, (snapshot) => {
+        let array = [];
+        snapshot.docs.forEach((doc) => {
+            console.log(doc.data());
+            array.push({...doc.data()})
+        })
+        console.log(array);
+        storeTasks.set(array);
     })
 
     function addLabel(labelName) {
@@ -172,6 +183,24 @@
                 </ul>
             </div>
           </div>
+
+          {#if $storeTasks}
+              <div class="md:flex flex-col md:items-center mb-6">
+                <div>Stored Tasks in Store.js</div>
+                <div>
+                    <ul>
+                        {#each $storeTasks as task}
+                            <li class="shadow bg-gray-500 hover:bg-gray-300 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-4 rounded">
+                                <div>{task.title}</div>
+                                <div>{task.body}</div>
+                                <div>{task.createdAt}</div>
+                                <div>{task.labels}</div>
+                            </li>
+                        {/each}
+                    </ul>
+                </div>
+              </div>
+          {/if}
       </div>
   </div>
   
