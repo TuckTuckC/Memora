@@ -10,10 +10,9 @@ function getDateTime() {
         timeZoneOffset: `UTC${new Date().getUTCHours() > new Date().getHours() ? '-' : ''}${(new Date().getUTCHours()) - (new Date().getHours())}`
 
     }
-
-
-
     return dateTime
 }
+
+export const storeTasks = writable([]);
 
 export const dateTime = writable(getDateTime());
