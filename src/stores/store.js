@@ -16,4 +16,6 @@ function getDateTime() {
     return dateTime
 }
 
+export const notes = writable([])
+
 export const dateTime = writable(getDateTime());
