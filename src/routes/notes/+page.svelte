@@ -1,30 +1,36 @@
 <script>
-  import {
-    collection,
-    addDoc,
-    onSnapshot,
-    doc,
-    getDocs,
-    query,
-    where,
-    orderBy,
-    limit,
-  } from "firebase/firestore";
-  import { db } from "../../lib/firebase/firebase.client";
   import "firebase/firestore";
+  import { collection, addDoc, onSnapshot } from "firebase/firestore";
+  import { db } from "../../lib/firebase/firebase.client";
   import { authStore } from "../../stores/authStore";
   import { get } from "svelte/store";
   import { dateTime } from "../../stores/store";
+
   let title = "";
   let body = "";
-  $: notes = [];
+  let notesList;
+
+  //   Auth connection
   let store;
   authStore.subscribe((value) => {
     store = value;
   });
+
   console.log("datetime", get(dateTime));
   console.log(`${get(dateTime).date} at ${get(dateTime).time}`);
+
+  //   Get and display all notes
   const notesCollection = collection(db, "notes");
+
+  onSnapshot(notesCollection, (snapshot) => {
+    let tempNotes = [];
+    snapshot.docs.forEach((doc) => {
+      doc.data().user_id == store.currentUser.uid
+        ? tempNotes.push({ ...doc.data() })
+        : null;
+    });
+    notesList = tempNotes;
+  });
 
   function newNote() {
     const newDoc = addDoc(notesCollection, {
@@ -34,17 +40,12 @@
       updatedAt: `${get(dateTime).date} at ${get(dateTime).time}`,
       user_id: store.currentUser.uid,
     });
+    title = "";
+    body = "";
     console.log(`Your doc was created at ${newDoc.path}`);
   }
 
-  onSnapshot(collection(db, "notes"), (snapshot) => {
-    let notes = [];
-    snapshot.docs.forEach((doc) => {
-      notes.push({ ...doc.data() });
-    });
-    console.log(notes);
-    return notes;
-  });
+  function deleteNote() {}
 </script>
 
 <div>
@@ -102,35 +103,35 @@
   </form>
 
   <div>
-    {notes.length}
-    {notes}
-    {#each notes as note}
-      <div class="max-w-sm rounded overflow-hidden shadow-lg">
-        <img
-          class="w-full"
-          src="/img/card-top.jpg"
-          alt="Sunset in the mountains"
-        />
-        <div class="px-6 py-4">
-          <div class="font-bold text-xl mb-2">{note.title}</div>
-          <p class="text-gray-700 text-base">{note.body}</p>
+    {#if notesList}
+      {#each notesList as note}
+        <div class="max-w-sm rounded overflow-hidden shadow-lg">
+          <!-- <img
+            class="w-full"
+            src="/img/card-top.jpg"
+            alt="Sunset in the mountains"
+          /> -->
+          <div class="px-6 py-4">
+            <div class="font-bold text-xl mb-2">{note.title}</div>
+            <p class="text-gray-700 text-base">{note.body}</p>
+          </div>
+          <div class="px-6 pt-4 pb-2">
+            <span
+              class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
+              >#photography</span
+            >
+            <span
+              class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
+              >#travel</span
+            >
+            <span
+              class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
+              >#winter</span
+            >
+          </div>
         </div>
-        <div class="px-6 pt-4 pb-2">
-          <span
-            class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
-            >#photography</span
-          >
-          <span
-            class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
-            >#travel</span
-          >
-          <span
-            class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
-            >#winter</span
-          >
-        </div>
-      </div>
-    {/each}
+      {/each}
+    {/if}
   </div>
 </div>
 
