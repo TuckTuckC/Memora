@@ -12,6 +12,7 @@ export default {
       },
     },
   },
-  plugins: [],
+  darkMode: "class",
+  plugins: [require("tw-elements/dist/plugin.cjs")]
 }
 
