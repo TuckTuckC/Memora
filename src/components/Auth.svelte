@@ -52,6 +52,7 @@
       // Anything else and the user must be trying to Log In
       try {
         await authHandlers.login(email, password);
+        // Check if registering
         register ? await newUser() : null;
       } catch (err) {
         console.log(err);
