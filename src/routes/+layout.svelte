@@ -28,7 +28,7 @@
   });
 </script>
 
-<div class="app dark:bg-darkbg-50">
+<div class="app dark:bg-darkbg">
   <Header />
 
   <main>

@@ -155,7 +155,7 @@
         {#each notesList as note}
           <Card
             href="/cards"
-            class="m-2 w-auto max-w-xs bg-lightnotebg-50 dark:bg-darknotebg-50"
+            class="m-2 w-auto max-w-xs bg-lightnotebg dark:bg-darknotebg"
           >
             <h5
               class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
@@ -163,11 +163,13 @@
               {note.title}
             </h5>
             <p
-              class="font-normal text-gray-700 dark:text-gray-200 leading-tight mb-2"
+              class="font-normal text-gray-700 dark:text-gray-200 leading-tight mb-4"
             >
               {note.body}
             </p>
-            <Button color="red" on:click={deleteNote(note.id)}>Delete</Button>
+            <Button color="red" class="w-fit" on:click={deleteNote(note.id)}
+              >Delete</Button
+            >
           </Card>
         {/each}
       {/if}
