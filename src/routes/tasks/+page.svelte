@@ -1,5 +1,6 @@
 <script>
-    import { collection, addDoc, doc, onSnapshot } from "firebase/firestore";
+    import { collection, addDoc, getDocs, doc, getDoc, deleteDoc, query, where, onSnapshot } from "firebase/firestore";
+    import { v4 as uuidv4 } from 'uuid';
     import { db } from "../../lib/firebase/firebase.client";
     import "firebase/firestore";
     import { authStore } from "../../stores/authStore";
@@ -15,8 +16,8 @@
     authStore.subscribe((value) => {
       store = value;
     });
-    console.log("datetime", get(dateTime));
-    console.log(`${get(dateTime).date} at ${get(dateTime).time}`);
+    // console.log("datetime", get(dateTime));
+    // console.log(`${get(dateTime).date} at ${get(dateTime).time}`);
     const tasksCollection = collection(db, "tasks");
     const taskLabelsRef = collection(db, "taskLabels");
 
@@ -25,25 +26,40 @@
     onSnapshot( taskLabelsRef, (snapshot) => {
         labels = [];
         snapshot.docs.forEach((doc) => {
-            console.log(doc.data());
+            // console.log(doc.data());
             labels.push({...doc.data(), labelName: doc.data().labelName});
         })
-        console.log(labels);
+        // console.log(labels);
     })
 
     onSnapshot( tasksCollection, (snapshot) => {
         let array = [];
         snapshot.docs.forEach((doc) => {
-            console.log(doc.data());
+            // console.log(doc.data());
             array.push({...doc.data()})
         })
-        console.log(array);
+        // console.log(array);
         storeTasks.set(array);
     })
 
     function addLabel(labelName) {
+      //ensure that the label isn't already added/applied
+      if (labelsAdded.includes(labelName)) {
+        console.log("No can do, this label is already applied and we don't want duplicates");
+      } else {
         console.log("Adding this label: ", labelName);
         labelsAdded.push(labelName);
+        labelsAdded = labelsAdded;
+      }
+    }
+
+    function removeAppliedLabel(labelName) {
+        console.log("Removing this label: ", labelName);
+        console.log("labelsAdded before splicing", labelsAdded);
+        let indexToRemove = labelsAdded.indexOf(labelName);
+        console.log(indexToRemove);
+        labelsAdded.splice(indexToRemove, 1);
+        console.log("labelsAdded after splice", labelsAdded);
         labelsAdded = labelsAdded;
     }
   
@@ -54,6 +70,7 @@
         title: title,
         updatedAt: `${get(dateTime).date} at ${get(dateTime).time}`,
         user_id: store.currentUser.uid,
+        UUID: uuidv4(),
         labels: labelsAdded,
       });
       labelsAdded = [];
@@ -62,11 +79,47 @@
     }
 
     async function newLabel() {
-      const newDoc = await addDoc(taskLabelsRef, {
-        labelName: labelName,
+      /*need to add a check here to ensure label name is NOT used (necessary for our delete function)*/
+      let namesToCheck = [];
+      const q = query(taskLabelsRef);
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        // console.log(doc.id, " => ", doc.data());
+        namesToCheck.push(doc.data().labelName);
       });
-      console.log(`Your doc was created at ${newDoc.path}`);
+
+      if (!namesToCheck.includes(labelName)) {
+        const newDoc = await addDoc(taskLabelsRef, {
+          labelName: labelName,
+        });
+        console.log(`Your doc was created at ${newDoc.path}`);
+      } else {
+        alert("Please enter a unique label name")
+      }
     }
+    
+    async function removeStoredLabel(labelName) {
+      const q = query(taskLabelsRef, where("labelName", "==", labelName));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => { //documents cite using forEach -- should only run on one b/c of query == labelName
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
+        deleteDoc(doc.ref);
+      });
+    }
+
+    async function deleteStoredTask(task) {
+      console.log(task.UUID);
+      const q = query(tasksCollection, where("UUID", "==", task.UUID));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => { //documents cite using forEach -- should only run on one b/c of query == user_id
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
+        deleteDoc(doc.ref);
+      });
+    }
+
   </script>
   
   <div>
@@ -163,9 +216,15 @@
             <div>
                 <ul>
                     {#each labelsAdded as labelAdded}
-                        <li class="shadow bg-gray-500 hover:bg-gray-300 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-4 rounded" on:click={addLabel(labelAdded.labelName)}>
-                            {labelAdded}
+                        <li class="shadow bg-gray-500 hover:bg-gray-300 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-4 rounded">
+                            <button>{labelAdded}</button>
                         </li>
+                        <button on:click={removeAppliedLabel(labelAdded)} >
+                          <svg width="40" height="40" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M55.5564 55.6693L24.4437 24.5566" stroke="#BC12CC" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M24.4436 55.6693L55.5563 24.5566" stroke="#BC12CC" stroke-linecap="round" stroke-linejoin="round" />
+                          </svg>
+                        </button>
                     {/each}
                 </ul>
             </div>
@@ -177,8 +236,14 @@
                 <ul>
                     {#each labels as label}
                         <li class="shadow bg-gray-500 hover:bg-gray-300 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-4 rounded" on:click={addLabel(label.labelName)}>
-                            {label.labelName}
+                          <button>{label.labelName}</button>
                         </li>
+                        <button on:click={removeStoredLabel(label.labelName)} >
+                          <svg width="40" height="40" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M55.5564 55.6693L24.4437 24.5566" stroke="#BC12CC" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M24.4436 55.6693L55.5563 24.5566" stroke="#BC12CC" stroke-linecap="round" stroke-linejoin="round" />
+                          </svg>
+                        </button>
                     {/each}
                 </ul>
             </div>
@@ -196,6 +261,12 @@
                                 <div>{task.createdAt}</div>
                                 <div>{task.labels}</div>
                             </li>
+                            <button on:click={deleteStoredTask(task)} >
+                              <svg width="40" height="40" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M55.5564 55.6693L24.4437 24.5566" stroke="#BC12CC" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M24.4436 55.6693L55.5563 24.5566" stroke="#BC12CC" stroke-linecap="round" stroke-linejoin="round" />
+                              </svg>
+                            </button>
                         {/each}
                     </ul>
                 </div>
