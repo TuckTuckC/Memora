@@ -7,6 +7,7 @@
     deleteDoc,
     doc,
   } from "firebase/firestore";
+  import { Card, Button, Label, Input } from "flowbite-svelte";
   import { db } from "../../lib/firebase/firebase.client";
   import { authStore } from "../../stores/authStore";
   import { get } from "svelte/store";
@@ -61,6 +62,19 @@
 
 {#if store.currentUser}
   <div>
+    <div class="mb-6">
+      <Label for="title" class="block mb-2">Title</Label>
+      <Input id="body" size="lg" placeholder="Body" />
+    </div>
+    <div class="mb-6">
+      <Label for="default-input" class="block mb-2">Default input</Label>
+      <Input id="default-input" placeholder="Default input" />
+    </div>
+    <div class="mb-6">
+      <Label for="large-input" class="block mb-2">Small input</Label>
+      <Input size="sm" placeholder="Small input" label="Small input" />
+    </div>
+
     <form class="w-full max-w-sm">
       <div class="md:flex md:items-center mb-6">
         <div class="md:w-1/3">
@@ -117,56 +131,19 @@
     <div>
       {#if notesList}
         {#each notesList as note}
-          <div
-            class="block rounded-lg bg-white p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700"
-          >
+          <Card href="/cards">
             <h5
-              class="mb-2 text-xl font-medium leading-tight text-neutral-800 dark:text-neutral-50"
+              class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
             >
               {note.title}
             </h5>
-            <p class="mb-4 text-base text-neutral-600 dark:text-neutral-200">
+            <p
+              class="font-normal text-gray-700 dark:text-gray-400 leading-tight"
+            >
               {note.body}
             </p>
-            <div
-              data-te-chip-init
-              data-te-ripple-init
-              class={dark
-                ? "[word-wrap: break-word] my-[5px] mr-4 flex h-[32px] w-fit cursor-pointer items-center justify-between rounded-[16px] border border-[#332d2d] bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-[#332d2d] hover:!shadow-none dark:text-neutral-200"
-                : "[word-wrap: break-word] my-[5px] mr-4 flex h-[32px] w-fit cursor-pointer items-center justify-between rounded-[16px] border border-[#fbfbfb] bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-[#fbfbfb] hover:!shadow-none dark:text-neutral-200"}
-              data-te-ripple-color="light"
-            >
-              Label
-              <span
-                data-te-chip-close
-                class="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="h-3 w-3"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </span>
-            </div>
-            <button
-              type="button"
-              class="inline-block rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-              data-te-ripple-init
-              data-te-ripple-color="light"
-              on:click={deleteNote(note.id)}
-            >
-              Delete
-            </button>
-          </div>
+            <Button color="red" on:click={deleteNote(note.id)}>Delete</Button>
+          </Card>
         {/each}
       {/if}
     </div>
