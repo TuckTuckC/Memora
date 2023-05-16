@@ -19,11 +19,10 @@
   import { db } from "../../lib/firebase/firebase.client";
   import { authStore } from "../../stores/authStore";
   import { get } from "svelte/store";
-  import { dateTime } from "../../stores/store";
+  import { dateTime, notes } from "../../stores/store";
 
   let title = "";
   let body = "";
-  let notesList;
   let dark = true;
 
   //   Auth connection
@@ -46,7 +45,7 @@
           ? tempNotes.push({ ...doc.data(), id: doc.id })
           : null;
       });
-      notesList = tempNotes;
+      notes.set(tempNotes);
     }
   });
 
@@ -81,7 +80,10 @@
 {#if store.currentUser}
   <div>
     <div class="text-center flex mb-2">
-      <Button on:click={() => (hidden4 = false)}>Create New Note</Button>
+      <Button
+        on:click={() => (hidden4 = false)}
+        class="!bg-greenbtn !text-black">Create New Note</Button
+      >
     </div>
     <Drawer
       transitionType="fly"
@@ -133,29 +135,47 @@
             bind:value={body}
           />
         </div>
-        <Button type="submit" class="w-full" on:click={newNote}
+        <Button
+          type="submit"
+          class="w-full !bg-greenbtn !text-black"
+          on:click={newNote}
           ><svg
-            class="w-5 h-5 mr-2"
-            aria-hidden="true"
-            fill="currentColor"
-            viewBox="0 0 20 20"
+            width="30"
+            height="30"
+            viewBox="0 0 80 80"
+            fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            ><path
-              fill-rule="evenodd"
-              d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-              clip-rule="evenodd"
-            /></svg
-          > Create Note</Button
+          >
+            <path
+              d="M38.4 20.7417H14C12.8954 20.7417 12 21.6371 12 22.7417V66.7417C12 67.8463 12.8954 68.7417 14 68.7417H58C59.1046 68.7417 60 67.8463 60 66.7417V42.342"
+              stroke="black"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M68.0145 21.8972C68.7943 21.1174 68.7943 19.8532 68.0145 19.0734L62.3577 13.4166C61.5753 12.6342 60.3069 12.6342 59.5246 13.4166L30.6996 42.2416C28.1991 44.7421 26.5974 48.0005 26.1449 51.5077L25.7115 54.8664C25.6479 55.359 26.0674 55.7785 26.56 55.715L29.9187 55.2816C33.4259 54.829 36.6844 53.2273 39.1849 50.7268L68.0145 21.8972Z"
+              stroke="black"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M52.1455 20.8037L60.6261 29.2843"
+              stroke="black"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          Create Note</Button
         >
       </form>
     </Drawer>
 
     <div class="flex flex-wrap">
-      {#if notesList}
-        {#each notesList as note}
+      {#if $notes}
+        {#each $notes as note}
           <Card
             href="/cards"
-            class="m-2 w-auto max-w-xs bg-lightnotebg dark:bg-darknotebg"
+            class="m-2 w-auto max-w-xs !bg-lightnotebg dark:!bg-darknotebg"
           >
             <h5
               class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"

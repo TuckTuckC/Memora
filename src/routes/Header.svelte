@@ -26,7 +26,7 @@
   }
 </script>
 
-<Navbar let:hidden let:toggle class="">
+<Navbar let:hidden let:toggle class="border-b-2 divide-y-reverse">
   <NavBrand href="/">
     <span
       class="self-center whitespace-nowrap text-xl font-semibold dark:text-white"
