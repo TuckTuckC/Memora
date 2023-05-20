@@ -77,6 +77,11 @@
     idTemp = id;
     console.log(docSnap.data());
     hidden3 = false;
+    await setDoc(
+      doc(db, "notes", id),
+      { updatedAt: `${get(dateTime).date} at ${get(dateTime).time}` },
+      { merge: true }
+    );
   }
 
   async function editNote() {
