@@ -62,6 +62,7 @@
     });
     title = "";
     body = "";
+    hidden4 = true;
     console.log(`Your doc was created at ${newDoc.path}`);
   }
 
@@ -85,10 +86,11 @@
       title: title,
       updatedAt: `${get(dateTime).date} at ${get(dateTime).time}`,
     };
-    await setDoc(doc(db, "notes", idTemp), newData);
+    await setDoc(doc(db, "notes", idTemp), newData, { merge: true });
 
     title = "";
     body = "";
+    hidden3 = true;
     console.log(`Your doc was updated at ${newData.path}`);
   }
 
@@ -203,7 +205,7 @@
         {#each $notes as note}
           <Card
             on:click={openEdit(note.id)}
-            class="m-2 w-auto max-w-xs !bg-lightnotebg dark:!bg-darknotebg"
+            class="m-2 w-auto max-w-xs h-48 overflow-hidden cursor-pointer !bg-lightnotebg dark:!bg-darknotebg"
           >
             <h5
               class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
@@ -217,7 +219,7 @@
             </p>
             <Button
               color="red"
-              class="w-fit mt-6 bg-redbtn dark:!bg-darkredbtn"
+              class="w-fit mt-6 bg-redbtn dark:!bg-darkredbtn flex self-end bottom-0"
               on:click={deleteNote(note.id)}
               ><svg
                 width="20"
