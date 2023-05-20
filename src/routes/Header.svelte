@@ -59,7 +59,7 @@
       <DropdownItem>Settings</DropdownItem>
       <DropdownItem>Earnings</DropdownItem>
       <DropdownDivider />
-      <DropdownItem>Sign out</DropdownItem>
+      <DropdownItem on:click={authHandlers.logout}>Sign out</DropdownItem>
     </Dropdown>
   </NavUl>
 </Navbar>
