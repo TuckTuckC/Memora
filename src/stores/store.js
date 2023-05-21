@@ -14,6 +14,7 @@ function getDateTime() {
 }
 
 export const storeTasks = writable([]);
+export const storeTasksLabels = writable([]);
 
 export const notes = writable([])
 

@@ -1,12 +1,12 @@
 <script>
     import { collection, addDoc, getDocs, doc, getDoc, deleteDoc, query, where, onSnapshot } from "firebase/firestore";
-    import { v4 as uuidv4 } from 'uuid';
     import { db } from "../../lib/firebase/firebase.client";
     import "firebase/firestore";
     import { authStore } from "../../stores/authStore";
     import { get } from "svelte/store";
     import { dateTime } from "../../stores/store";
     import { storeTasks } from "../../stores/store";
+    import { storeTasksLabels } from "../../stores/store";
   
     let title = "";
     let body = "";
@@ -36,10 +36,21 @@
         let array = [];
         snapshot.docs.forEach((doc) => {
             // console.log(doc.data());
+            array.push({...doc.data(), id: doc.id})
+        })
+        console.log("This is the storeTasks array: ", array);
+        // console.log(array);
+        storeTasks.set(array);
+    })
+
+    onSnapshot( taskLabelsRef, (snapshot) => {
+        let array = [];
+        snapshot.docs.forEach((doc) => {
+            // console.log(doc.data());
             array.push({...doc.data()})
         })
         // console.log(array);
-        storeTasks.set(array);
+        storeTasksLabels.set(array);
     })
 
     function addLabel(labelName) {
@@ -70,7 +81,6 @@
         title: title,
         updatedAt: `${get(dateTime).date} at ${get(dateTime).time}`,
         user_id: store.currentUser.uid,
-        UUID: uuidv4(),
         labels: labelsAdded,
       });
       labelsAdded = [];
@@ -109,15 +119,13 @@
       });
     }
 
-    async function deleteStoredTask(task) {
-      console.log(task.UUID);
-      const q = query(tasksCollection, where("UUID", "==", task.UUID));
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => { //documents cite using forEach -- should only run on one b/c of query == user_id
-        // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
-        deleteDoc(doc.ref);
-      });
+    async function deleteStoredTask(id) {
+      console.log(id);
+      // querySnapshot.forEach((doc) => { //documents cite using forEach -- should only run on one b/c of query == user_id
+      //   // doc.data() is never undefined for query doc snapshots
+      //   console.log(doc.id, " => ", doc.data());
+      //   deleteDoc(doc.ref);
+      // });
     }
 
   </script>
@@ -230,7 +238,30 @@
             </div>
           </div>
     
-          <div class="md:flex flex-col md:items-center mb-6">
+
+          {#if $storeTasksLabels}
+            <div class="md:flex flex-col md:items-center mb-6">
+              <div>Stored Labels in Store.js</div>
+              <div>
+                <ul>
+                  {#each $storeTasksLabels as label}
+                  <li class="shadow bg-gray-500 hover:bg-gray-300 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-4 rounded" on:click={addLabel(label.labelName)}>
+                          <div>{label.labelName}</div>
+                      </li>
+                      <button on:click={removeStoredLabel(label.labelName)} >
+                        <svg width="40" height="40" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M55.5564 55.6693L24.4437 24.5566" stroke="#BC12CC" stroke-linecap="round" stroke-linejoin="round" />
+                          <path d="M24.4436 55.6693L55.5563 24.5566" stroke="#BC12CC" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                      </button>
+                  {/each}
+                </ul>
+              </div>
+            </div>
+          {/if}
+
+
+          <!-- <div class="md:flex flex-col md:items-center mb-6">
             <div>All Available Labels Here</div>
             <div>
                 <ul>
@@ -247,7 +278,7 @@
                     {/each}
                 </ul>
             </div>
-          </div>
+          </div> -->
 
           {#if $storeTasks}
               <div class="md:flex flex-col md:items-center mb-6">
@@ -261,7 +292,7 @@
                                 <div>{task.createdAt}</div>
                                 <div>{task.labels}</div>
                             </li>
-                            <button on:click={deleteStoredTask(task)} >
+                            <button on:click={deleteStoredTask(task.id)} >
                               <svg width="40" height="40" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M55.5564 55.6693L24.4437 24.5566" stroke="#BC12CC" stroke-linecap="round" stroke-linejoin="round" />
                                 <path d="M24.4436 55.6693L55.5563 24.5566" stroke="#BC12CC" stroke-linecap="round" stroke-linejoin="round" />
