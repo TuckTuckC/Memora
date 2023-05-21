@@ -1,22 +1,25 @@
 <script>
-  import {
-    collection,
-    addDoc,
-    getDocs,
-    doc,
-    getDoc,
-    deleteDoc,
-    query,
-    where,
-    onSnapshot,
-  } from "firebase/firestore";
-  import { v4 as uuidv4 } from "uuid";
-  import { db } from "../../lib/firebase/firebase.client";
-  import "firebase/firestore";
-  import { authStore } from "../../stores/authStore";
-  import { get } from "svelte/store";
-  import { dateTime } from "../../stores/store";
-  import { storeTasks } from "../../stores/store";
+    import { collection, addDoc, getDocs, doc, getDoc, deleteDoc, query, where, onSnapshot } from "firebase/firestore";
+    import { db } from "../../lib/firebase/firebase.client";
+    import "firebase/firestore";
+    import { authStore } from "../../stores/authStore";
+    import { get } from "svelte/store";
+    import { dateTime } from "../../stores/store";
+    import { storeTasks } from "../../stores/store";
+    import { storeTasksLabels } from "../../stores/store";
+  
+    let title = "";
+    let body = "";
+    let labelName = "";
+    let labelsAdded = [];
+    let store;
+    authStore.subscribe((value) => {
+      store = value;
+    });
+    // console.log("datetime", get(dateTime));
+    // console.log(`${get(dateTime).date} at ${get(dateTime).time}`);
+    const tasksCollection = collection(db, "tasks");
+    const taskLabelsRef = collection(db, "taskLabels");
 
   let title = "";
   let body = "";
@@ -31,37 +34,60 @@
   const tasksCollection = collection(db, "tasks");
   const taskLabelsRef = collection(db, "taskLabels");
 
-  //real time collection of labels
-  let labels = [];
-  onSnapshot(taskLabelsRef, (snapshot) => {
-    labels = [];
-    snapshot.docs.forEach((doc) => {
-      // console.log(doc.data());
-      labels.push({ ...doc.data(), labelName: doc.data().labelName });
-    });
-    // console.log(labels);
-  });
+    onSnapshot( tasksCollection, (snapshot) => {
+        let array = [];
+        snapshot.docs.forEach((doc) => {
+            // console.log(doc.data());
+            array.push({...doc.data(), id: doc.id})
+        })
+        console.log("This is the storeTasks array: ", array);
+        // console.log(array);
+        storeTasks.set(array);
+    })
 
-  onSnapshot(tasksCollection, (snapshot) => {
-    let array = [];
-    snapshot.docs.forEach((doc) => {
-      // console.log(doc.data());
-      array.push({ ...doc.data() });
-    });
-    // console.log(array);
-    storeTasks.set(array);
-  });
+    onSnapshot( taskLabelsRef, (snapshot) => {
+        let array = [];
+        snapshot.docs.forEach((doc) => {
+            // console.log(doc.data());
+            array.push({...doc.data()})
+        })
+        // console.log(array);
+        storeTasksLabels.set(array);
+    })
 
-  function addLabel(labelName) {
-    //ensure that the label isn't already added/applied
-    if (labelsAdded.includes(labelName)) {
-      console.log(
-        "No can do, this label is already applied and we don't want duplicates"
-      );
-    } else {
-      console.log("Adding this label: ", labelName);
-      labelsAdded.push(labelName);
-      labelsAdded = labelsAdded;
+    function addLabel(labelName) {
+      //ensure that the label isn't already added/applied
+      if (labelsAdded.includes(labelName)) {
+        console.log("No can do, this label is already applied and we don't want duplicates");
+      } else {
+        console.log("Adding this label: ", labelName);
+        labelsAdded.push(labelName);
+        labelsAdded = labelsAdded;
+      }
+    }
+
+    function removeAppliedLabel(labelName) {
+        console.log("Removing this label: ", labelName);
+        console.log("labelsAdded before splicing", labelsAdded);
+        let indexToRemove = labelsAdded.indexOf(labelName);
+        console.log(indexToRemove);
+        labelsAdded.splice(indexToRemove, 1);
+        console.log("labelsAdded after splice", labelsAdded);
+        labelsAdded = labelsAdded;
+    }
+  
+    async function newTask() {
+      const newDoc = await addDoc(tasksCollection, {
+        body: body,
+        createdAt: `${get(dateTime).date} at ${get(dateTime).time}`,
+        title: title,
+        updatedAt: `${get(dateTime).date} at ${get(dateTime).time}`,
+        user_id: store.currentUser.uid,
+        labels: labelsAdded,
+      });
+      labelsAdded = [];
+      console.log(`Your doc was created at ${newDoc.path}`);
+      console.log("labelsAdded is now: ", labelsAdded);
     }
   }
 
@@ -101,6 +127,14 @@
       namesToCheck.push(doc.data().labelName);
     });
 
+
+    async function deleteStoredTask(id) {
+      console.log(id);
+      // querySnapshot.forEach((doc) => { //documents cite using forEach -- should only run on one b/c of query == user_id
+      //   // doc.data() is never undefined for query doc snapshots
+      //   console.log(doc.id, " => ", doc.data());
+      //   deleteDoc(doc.ref);
+      // });
     if (!namesToCheck.includes(labelName)) {
       const newDoc = await addDoc(taskLabelsRef, {
         labelName: labelName,
@@ -326,49 +360,95 @@
       </div>
     </div>
 
-    {#if $storeTasks}
-      <div class="md:flex flex-col md:items-center mb-6">
-        <div>Stored Tasks in Store.js</div>
-        <div>
-          <ul>
-            {#each $storeTasks as task}
-              <li
-                class="shadow bg-gray-500 hover:bg-gray-300 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-4 rounded"
-              >
-                <div>{task.title}</div>
-                <div>{task.body}</div>
-                <div>{task.createdAt}</div>
-                <div>{task.labels}</div>
-              </li>
-              <button on:click={deleteStoredTask(task)}>
-                <svg
-                  width="40"
-                  height="40"
-                  viewBox="0 0 80 80"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M55.5564 55.6693L24.4437 24.5566"
-                    stroke="#BC12CC"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M24.4436 55.6693L55.5563 24.5566"
-                    stroke="#BC12CC"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-              </button>
-            {/each}
-          </ul>
-        </div>
+      <div class="grid grid-cols-2 m-4 justify-center content-center">
+        <div class="md:flex flex-col md:items-center mb-6">
+            <div>Applied Labels Here</div>
+            <div>
+                <ul>
+                    {#each labelsAdded as labelAdded}
+                        <li class="shadow bg-gray-500 hover:bg-gray-300 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-4 rounded">
+                            <button>{labelAdded}</button>
+                        </li>
+                        <button on:click={removeAppliedLabel(labelAdded)} >
+                          <svg width="40" height="40" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M55.5564 55.6693L24.4437 24.5566" stroke="#BC12CC" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M24.4436 55.6693L55.5563 24.5566" stroke="#BC12CC" stroke-linecap="round" stroke-linejoin="round" />
+                          </svg>
+                        </button>
+                    {/each}
+                </ul>
+            </div>
+          </div>
+    
+
+          {#if $storeTasksLabels}
+            <div class="md:flex flex-col md:items-center mb-6">
+              <div>Stored Labels in Store.js</div>
+              <div>
+                <ul>
+                  {#each $storeTasksLabels as label}
+                  <li class="shadow bg-gray-500 hover:bg-gray-300 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-4 rounded" on:click={addLabel(label.labelName)}>
+                          <div>{label.labelName}</div>
+                      </li>
+                      <button on:click={removeStoredLabel(label.labelName)} >
+                        <svg width="40" height="40" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M55.5564 55.6693L24.4437 24.5566" stroke="#BC12CC" stroke-linecap="round" stroke-linejoin="round" />
+                          <path d="M24.4436 55.6693L55.5563 24.5566" stroke="#BC12CC" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                      </button>
+                  {/each}
+                </ul>
+              </div>
+            </div>
+          {/if}
+
+
+          <!-- <div class="md:flex flex-col md:items-center mb-6">
+            <div>All Available Labels Here</div>
+            <div>
+                <ul>
+                    {#each labels as label}
+                        <li class="shadow bg-gray-500 hover:bg-gray-300 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-4 rounded" on:click={addLabel(label.labelName)}>
+                          <button>{label.labelName}</button>
+                        </li>
+                        <button on:click={removeStoredLabel(label.labelName)} >
+                          <svg width="40" height="40" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M55.5564 55.6693L24.4437 24.5566" stroke="#BC12CC" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M24.4436 55.6693L55.5563 24.5566" stroke="#BC12CC" stroke-linecap="round" stroke-linejoin="round" />
+                          </svg>
+                        </button>
+                    {/each}
+                </ul>
+            </div>
+          </div> -->
+
+          {#if $storeTasks}
+              <div class="md:flex flex-col md:items-center mb-6">
+                <div>Stored Tasks in Store.js</div>
+                <div>
+                    <ul>
+                        {#each $storeTasks as task}
+                            <li class="shadow bg-gray-500 hover:bg-gray-300 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-4 rounded">
+                                <div>{task.title}</div>
+                                <div>{task.body}</div>
+                                <div>{task.createdAt}</div>
+                                <div>{task.labels}</div>
+                            </li>
+                            <button on:click={deleteStoredTask(task.id)} >
+                              <svg width="40" height="40" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M55.5564 55.6693L24.4437 24.5566" stroke="#BC12CC" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M24.4436 55.6693L55.5563 24.5566" stroke="#BC12CC" stroke-linecap="round" stroke-linejoin="round" />
+                              </svg>
+                            </button>
+                        {/each}
+                    </ul>
+                </div>
+              </div>
+          {/if}
       </div>
     {/if}
   </div>
 </div>
-
 <style>
 </style>
+
