@@ -39,6 +39,7 @@
     <NavLi href="/" active={true}>Home</NavLi>
     <NavLi href="/notes">Notes</NavLi>
     <NavLi href="/tasks">Tasks</NavLi>
+    <NavLi href="/textEditor">Text Editor</NavLi>
     <NavLi href="/">Calendar</NavLi>
     <NavLi id="nav-menu1" class="cursor-pointer"
       ><Chevron aligned>
