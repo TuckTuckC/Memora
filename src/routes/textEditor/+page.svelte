@@ -1,210 +1,166 @@
 <script>
-  import {
-    Textarea,
-    Toolbar,
-    ToolbarGroup,
-    ToolbarButton,
-    Button,
-    Label,
-    Input,
-  } from "flowbite-svelte";
-  import { afterUpdate } from "svelte";
   import "bootstrap-icons/font/bootstrap-icons.css";
 
-  let document = "";
-  let docRef;
-  let currSelection = {};
-  let formattedDocument = "";
-  let mods = [];
+  // TIPTAP
+  import { onMount, onDestroy } from "svelte";
+  import { Editor } from "@tiptap/core";
+  import StarterKit from "@tiptap/starter-kit";
+  import Underline from "@tiptap/extension-underline";
 
-  // function handleMouseUp() {
-  //   const selection = window.getSelection();
-  //   if (selection && selection.toString().length > 0) {
-  //     console.log("RANGE", selection.getRangeAt(0).extractContents());
-  //     const start = selection.anchorOffset;
-  //     const end = selection.focusOffset;
-  //     currSelection = selection;
-  //     mods.push({
-  //       selection: selection.toString(),
-  //       start,
-  //       end,
-  //     });
-  //     console.log("docRef.innerHTML", docRef.innerHTML);
-  //     console.log("document", document);
-  //     console.log("mods", mods);
-  //   }
-  //   console.log("selection", selection);
-  // }
-  function handleMouseUp(event) {
-    let start = event.target.selectionStart;
-    let end = event.target.selectionEnd;
-    let selection = event.target.value.substring(start, end);
-    if (selection.length > 0) {
-      mods.push({
-        selection,
-        start,
-        end,
-      });
-      currSelection = { selection, start, end };
+  let element;
+  let editor;
+
+  onMount(() => {
+    editor = new Editor({
+      element: element,
+      extensions: [StarterKit, Underline],
+      content: "",
+      editorProps: {
+        attributes: {
+          class:
+            "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none h-80 p-4",
+        },
+      },
+      onTransaction: () => {
+        // force re-render so `editor.isActive` works as expected
+        editor = editor;
+      },
+    });
+  });
+
+  onDestroy(() => {
+    if (editor) {
+      editor.destroy();
     }
-    console.log(mods);
-    console.log(document, document.innerHTML);
-  }
-
-  function handleBold() {
-    if (currSelection) {
-      let bolded = `<strong>${currSelection.selection}</strong>`;
-      document =
-        document.slice(0, currSelection.start) +
-        bolded +
-        document.slice(currSelection.end);
-      formattedDocument = document;
-    }
-    console.log(formattedDocument);
-  }
-
-  afterUpdate(() => {
-    formattedDocument = document;
   });
 </script>
 
 <form>
-  <label for="editor" class="sr-only">Publish post</label>
-  <Textarea
-    id="editor"
-    rows="8"
-    class="mb-4"
-    placeholder="Your Text Here..."
-    bind:value={document}
-    bind:this={docRef}
-    on:click={handleMouseUp}
+  <div
+    class="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600"
   >
-    <div>
-      {@html formattedDocument}
-    </div>
-    <Toolbar slot="header" embedded>
-      <ToolbarGroup>
-        <ToolbarButton name="Attach file" on:click={handleBold}
-          ><i class="bi bi-type-bold text-2xl" /></ToolbarButton
-        >
-        <ToolbarButton name="Attach file"
-          ><i class="bi bi-type-italic text-2xl" /></ToolbarButton
-        >
-        <ToolbarButton name="Attach file"
-          ><i class="bi bi-type-underline text-2xl" /></ToolbarButton
-        >
-        <ToolbarButton name="Attach file"
-          ><i class="bi bi-list-ul text-2xl" /></ToolbarButton
-        >
-        <ToolbarButton name="Attach file"
-          ><i class="bi bi-list-ol text-2xl" /></ToolbarButton
-        >
-        <ToolbarButton name="Attach file"
-          ><i class="bi bi-link text-2xl" /></ToolbarButton
-        >
-        <ToolbarButton name="Attach file"
-          ><i class="bi bi-text-left text-2xl" /></ToolbarButton
-        >
-        <ToolbarButton name="Attach file"
-          ><i class="bi bi-text-center text-2xl" /></ToolbarButton
-        >
-        <ToolbarButton name="Attach file"
-          ><i class="bi bi-text-right text-2xl" /></ToolbarButton
-        >
-      </ToolbarGroup>
-      <ToolbarGroup>
-        <ToolbarButton name="Add emoji"
-          ><svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="w-6 h-6"
-            ><path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M15.182 15.182a4.5 4.5 0 01-6.364 0M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z"
-            /></svg
-          ></ToolbarButton
-        >
-      </ToolbarGroup>
-    </Toolbar>
-  </Textarea>
+    {#if editor}
+      <div
+        class="flex flex-wrap items-center divide-gray-200 sm:divide-x dark:divide-gray-600"
+      >
+        <div class="flex items-center space-x-1 sm:pr-4">
+          <button
+            type="button"
+            on:click={() => editor.chain().focus().toggleBold().run()}
+            class:active={editor.isActive("bold")}
+            class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+          >
+            <i class="bi bi-type-bold text-2xl" />
+            <span class="sr-only">Bold</span>
+          </button>
+          <button
+            type="button"
+            on:click={() => editor.chain().focus().toggleItalic().run()}
+            class:active={editor.isActive("italic")}
+            class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+          >
+            <i class="bi bi-type-italic text-2xl" />
+            <span class="sr-only">Bold</span>
+          </button>
+          <button
+            type="button"
+            on:click={() => editor.commands.toggleUnderline().run()}
+            class:active={editor.isActive("underline")}
+            class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+          >
+            <i class="bi bi-type-underline text-2xl" />
+            <span class="sr-only">Bold</span>
+          </button>
+          <button
+            type="button"
+            on:click={() => editor.chain().focus().wrapInList().run()}
+            class:active={editor.isActive("list")}
+            class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+          >
+            <i class="bi bi-list-ul text-2xl" />
+            <span class="sr-only">Bold</span>
+          </button>
+          <button
+            type="button"
+            on:click={() => editor.chain().focus().toggleBold().run()}
+            class:active={editor.isActive("bold")}
+            class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+          >
+            <i class="bi bi-list-ol text-2xl" />
+            <span class="sr-only">Bold</span>
+          </button>
+          <button
+            type="button"
+            on:click={() => editor.chain().focus().toggleBold().run()}
+            class:active={editor.isActive("bold")}
+            class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+          >
+            <i class="bi bi-link text-2xl" />
+            <span class="sr-only">Bold</span>
+          </button>
+          <button
+            type="button"
+            on:click={() => editor.chain().focus().toggleBold().run()}
+            class:active={editor.isActive("bold")}
+            class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+          >
+            <i class="bi bi-text-left text-2xl" />
+            <span class="sr-only">Bold</span>
+          </button>
+          <button
+            type="button"
+            on:click={() => editor.chain().focus().toggleBold().run()}
+            class:active={editor.isActive("bold")}
+            class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+          >
+            <i class="bi bi-text-center text-2xl" />
+            <span class="sr-only">Bold</span>
+          </button>
+          <button
+            type="button"
+            on:click={() => editor.chain().focus().toggleBold().run()}
+            class:active={editor.isActive("bold")}
+            class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+          >
+            <i class="bi bi-text-right text-2xl" />
+            <span class="sr-only">Bold</span>
+          </button>
+        </div>
+        <div class="flex flex-wrap items-center space-x-1 sm:pl-4">
+          <button
+            type="button"
+            class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+          >
+            <svg
+              aria-hidden="true"
+              class="w-5 h-5"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+              ><path
+                fill-rule="evenodd"
+                d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                clip-rule="evenodd"
+              /></svg
+            >
+            <span class="sr-only">Add list</span>
+          </button>
+        </div>
+      </div>
+    {/if}
+    <div
+      class="inputField block w-full px-0 text-sm text-gray-800 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
+      bind:this={element}
+    />
+  </div>
 </form>
 
-<form>
-  <label for="editor" class="sr-only">Publish post</label>
-  <Textarea
-    id="editor"
-    rows="8"
-    class="mb-4"
-    placeholder="Write a comment"
-    bind:value={document}
-    bind:this={docRef}
-    on:click={handleMouseUp}
-  >
-    <Toolbar slot="header" embedded>
-      <ToolbarGroup>
-        <ToolbarButton name="Attach file" on:click={handleBold}
-          ><i class="bi bi-type-bold text-2xl" /></ToolbarButton
-        >
-        <ToolbarButton name="Attach file"
-          ><i class="bi bi-type-italic text-2xl" /></ToolbarButton
-        >
-        <ToolbarButton name="Attach file"
-          ><i class="bi bi-type-underline text-2xl" /></ToolbarButton
-        >
-        <ToolbarButton name="Attach file"
-          ><i class="bi bi-list-ul text-2xl" /></ToolbarButton
-        >
-        <ToolbarButton name="Attach file"
-          ><i class="bi bi-list-ol text-2xl" /></ToolbarButton
-        >
-        <ToolbarButton name="Attach file"
-          ><i class="bi bi-link text-2xl" /></ToolbarButton
-        >
-        <ToolbarButton name="Attach file"
-          ><i class="bi bi-text-left text-2xl" /></ToolbarButton
-        >
-        <ToolbarButton name="Attach file"
-          ><i class="bi bi-text-center text-2xl" /></ToolbarButton
-        >
-        <ToolbarButton name="Attach file"
-          ><i class="bi bi-text-right text-2xl" /></ToolbarButton
-        >
-      </ToolbarGroup>
-      <ToolbarGroup>
-        <ToolbarButton name="Add emoji"
-          ><svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="w-6 h-6"
-            ><path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M15.182 15.182a4.5 4.5 0 01-6.364 0M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z"
-            /></svg
-          ></ToolbarButton
-        >
-      </ToolbarGroup>
-    </Toolbar>
-  </Textarea>
-  <div contenteditable="true">
-    {@html formattedDocument}
-  </div>
-  <Label class="block space-y-2">
-    <Input
-      label="Email"
-      id="email"
-      required
-      placeholder="Write your text here..."
-      bind:value={document}
-      bind:this={docRef}
-      on:click={handleMouseUp}>{@html formattedDocument}</Input
-    >
-  </Label>
-</form>
+<style>
+  .ProseMirror p {
+    margin: 1em 0 !important;
+  }
+  button.active {
+    background: black;
+    color: white;
+  }
+</style>
