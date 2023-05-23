@@ -6,19 +6,47 @@
   import { Editor } from "@tiptap/core";
   import StarterKit from "@tiptap/starter-kit";
   import Underline from "@tiptap/extension-underline";
+  import BulletList from "@tiptap/extension-bullet-list";
+  import ListItem from "@tiptap/extension-list-item";
+  import Paragraph from "@tiptap/extension-paragraph";
 
   let element;
   let editor;
 
+  const CustomListItem = ListItem.extend({
+    renderHTML(props) {
+      const { node } = props;
+      if (node.firstChild?.type?.name === "paragraph") {
+        node.firstChild.attrs = {
+          ...node.firstChild.attrs,
+          withoutHTMLTag: true,
+        };
+      }
+      return this.parent?.(props);
+    },
+  });
+
+  const CustomParagraph = Paragraph.extend({
+    renderHTML({ node }) {
+      return [node?.attrs?.withoutHTMLTag ? "" : "p", 0];
+    },
+  });
+
   onMount(() => {
     editor = new Editor({
       element: element,
-      extensions: [StarterKit, Underline],
+      extensions: [
+        StarterKit,
+        CustomParagraph,
+        Underline,
+        CustomListItem,
+        BulletList.configure({ itemListType: "CustomListItem" }),
+      ],
       content: "",
       editorProps: {
         attributes: {
           class:
-            "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none h-80 p-4",
+            "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none h-80 p-4 [&>ul]:list-disc [&>ul]:list-inside",
         },
       },
       onTransaction: () => {
@@ -64,7 +92,7 @@
           </button>
           <button
             type="button"
-            on:click={() => editor.commands.toggleUnderline().run()}
+            on:click={() => editor.chain().focus().toggleUnderline().run()}
             class:active={editor.isActive("underline")}
             class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
           >
@@ -73,8 +101,8 @@
           </button>
           <button
             type="button"
-            on:click={() => editor.chain().focus().wrapInList().run()}
-            class:active={editor.isActive("list")}
+            on:click={() => editor.chain().focus().toggleBulletList().run()}
+            class:active={editor.isActive("bulletList")}
             class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
           >
             <i class="bi bi-list-ul text-2xl" />
@@ -156,8 +184,8 @@
 </form>
 
 <style>
-  .ProseMirror p {
-    margin: 1em 0 !important;
+  .ProseMirror ul > li > p:first-child {
+    display: inline !important;
   }
   button.active {
     background: black;
