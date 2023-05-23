@@ -100,10 +100,12 @@
     labelsAdded = [];
     console.log(`Your doc was created at ${newDoc.path}`);
     console.log("labelsAdded is now: ", labelsAdded);
+    hidden4 = true;
   }
 
-  async function newLabel() {
+  async function makeNewLabel() {
     /*need to add a check here to ensure label name is NOT used (necessary for our delete function)*/
+    console.log("HI MAKING NEW LABEL");
     let namesToCheck = [];
     const q = query(taskLabelsRef);
     const querySnapshot = await getDocs(q);
@@ -112,6 +114,16 @@
       // console.log(doc.id, " => ", doc.data());
       namesToCheck.push(doc.data().labelName);
     });
+    if (namesToCheck.includes(labelName)) {
+        console.log("No can do, this label is already applied and we don't want duplicates");
+    } else {
+      console.log("Adding this label: ", labelName);
+      labelsAdded.push(labelName);
+      labelsAdded = labelsAdded;
+      const newDoc = await addDoc(taskLabelsRef, {
+      labelName: labelName,
+    });
+    }
   }
 
   async function removeStoredLabel(labelName) {
@@ -238,7 +250,7 @@
         </div>
         <Button
           class="w-2/5 !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
-          on:click={newLabel}>Create Label</Button
+          on:click={makeNewLabel}>Create Label</Button
         >
 
         <div class="mb-6">
