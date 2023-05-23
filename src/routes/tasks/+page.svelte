@@ -24,16 +24,18 @@
     const tasksCollection = collection(db, "tasks");
     const taskLabelsRef = collection(db, "taskLabels");
 
-    //real time collection of labels
-    let labels = [];
-    onSnapshot( taskLabelsRef, (snapshot) => {
-        labels = [];
-        snapshot.docs.forEach((doc) => {
-            // console.log(doc.data());
-            labels.push({...doc.data(), labelName: doc.data().labelName});
-        })
-        // console.log(labels);
-    })
+  let title = "";
+  let body = "";
+  let labelName = "";
+  let labelsAdded = [];
+  let store;
+  authStore.subscribe((value) => {
+    store = value;
+  });
+  // console.log("datetime", get(dateTime));
+  // console.log(`${get(dateTime).date} at ${get(dateTime).time}`);
+  const tasksCollection = collection(db, "tasks");
+  const taskLabelsRef = collection(db, "taskLabels");
 
     onSnapshot( tasksCollection, (snapshot) => {
         let array = [];
@@ -90,37 +92,72 @@
       console.log(`Your doc was created at ${newDoc.path}`);
       console.log("labelsAdded is now: ", labelsAdded);
     }
+  }
 
-    async function newLabel() {
-      /*need to add a check here to ensure label name is NOT used (necessary for our delete function)*/
-      let namesToCheck = [];
-      const q = query(taskLabelsRef);
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        // console.log(doc.id, " => ", doc.data());
-        namesToCheck.push(doc.data().labelName);
-      });
+  function removeAppliedLabel(labelName) {
+    console.log("Removing this label: ", labelName);
+    console.log("labelsAdded before splicing", labelsAdded);
+    let indexToRemove = labelsAdded.indexOf(labelName);
+    console.log(indexToRemove);
+    labelsAdded.splice(indexToRemove, 1);
+    console.log("labelsAdded after splice", labelsAdded);
+    labelsAdded = labelsAdded;
+  }
 
-      if (!namesToCheck.includes(labelName)) {
-        const newDoc = await addDoc(taskLabelsRef, {
-          labelName: labelName,
-        });
-        console.log(`Your doc was created at ${newDoc.path}`);
-      } else {
-        alert("Please enter a unique label name")
-      }
-    }
-    
-    async function removeStoredLabel(labelName) {
-      const q = query(taskLabelsRef, where("labelName", "==", labelName));
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => { //documents cite using forEach -- should only run on one b/c of query == labelName
-        // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
-        deleteDoc(doc.ref);
+  async function newTask() {
+    const newDoc = await addDoc(tasksCollection, {
+      body: body,
+      createdAt: `${get(dateTime).date} at ${get(dateTime).time}`,
+      title: title,
+      updatedAt: `${get(dateTime).date} at ${get(dateTime).time}`,
+      user_id: store.currentUser.uid,
+      UUID: uuidv4(),
+      labels: labelsAdded,
+    });
+    labelsAdded = [];
+    console.log(`Your doc was created at ${newDoc.path}`);
+    console.log("labelsAdded is now: ", labelsAdded);
+  }
+
+  async function newLabel() {
+    /*need to add a check here to ensure label name is NOT used (necessary for our delete function)*/
+    let namesToCheck = [];
+    const q = query(taskLabelsRef);
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      // console.log(doc.id, " => ", doc.data());
+      namesToCheck.push(doc.data().labelName);
+    });
+
+
+    async function deleteStoredTask(id) {
+      console.log(id);
+      // querySnapshot.forEach((doc) => { //documents cite using forEach -- should only run on one b/c of query == user_id
+      //   // doc.data() is never undefined for query doc snapshots
+      //   console.log(doc.id, " => ", doc.data());
+      //   deleteDoc(doc.ref);
+      // });
+    if (!namesToCheck.includes(labelName)) {
+      const newDoc = await addDoc(taskLabelsRef, {
+        labelName: labelName,
       });
+      console.log(`Your doc was created at ${newDoc.path}`);
+    } else {
+      alert("Please enter a unique label name");
     }
+  }
+
+  async function removeStoredLabel(labelName) {
+    const q = query(taskLabelsRef, where("labelName", "==", labelName));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      //documents cite using forEach -- should only run on one b/c of query == labelName
+      // doc.data() is never undefined for query doc snapshots
+      console.log(doc.id, " => ", doc.data());
+      deleteDoc(doc.ref);
+    });
+  }
 
     async function deleteStoredTask(id) {
       await deleteDoc(doc(db, "tasks", id));
@@ -732,3 +769,4 @@
 
 <style>
 </style>
+

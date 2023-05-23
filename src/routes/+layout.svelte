@@ -28,7 +28,7 @@
   });
 </script>
 
-<div class="app">
+<div class="app dark:bg-darkbg">
   <Header />
 
   <main>
