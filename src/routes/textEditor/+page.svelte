@@ -37,9 +37,9 @@
       element: element,
       extensions: [
         StarterKit,
-        CustomParagraph,
+        Paragraph,
         Underline,
-        CustomListItem,
+        ListItem,
         BulletList.configure({ itemListType: "CustomListItem" }),
       ],
       content: "",
