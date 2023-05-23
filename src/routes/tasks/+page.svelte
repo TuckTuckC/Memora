@@ -1,28 +1,35 @@
 <script>
-    import { collection, addDoc, getDocs, doc, getDoc, deleteDoc, query, setDoc, where, onSnapshot } from "firebase/firestore";
-    import { db } from "../../lib/firebase/firebase.client";
-    import "firebase/firestore";
-    import { authStore } from "../../stores/authStore";
-    import { get } from "svelte/store";
-    import { dateTime } from "../../stores/store";
-    import { storeTasks } from "../../stores/store";
-    import { storeTasksLabels } from "../../stores/store";
-    import { Card, Button, Label, Input, Drawer, CloseButton, Textarea } from "flowbite-svelte";
-  
-    let idTemp = "";
-    let dark = true;
+  import {
+    collection,
+    addDoc,
+    getDocs,
+    doc,
+    getDoc,
+    deleteDoc,
+    query,
+    setDoc,
+    where,
+    onSnapshot,
+  } from "firebase/firestore";
+  import { db } from "../../lib/firebase/firebase.client";
+  import "firebase/firestore";
+  import { authStore } from "../../stores/authStore";
+  import { get } from "svelte/store";
+  import { dateTime } from "../../stores/store";
+  import { storeTasks } from "../../stores/store";
+  import { storeTasksLabels } from "../../stores/store";
+  import {
+    Card,
+    Button,
+    Label,
+    Input,
+    Drawer,
+    CloseButton,
+    Textarea,
+  } from "flowbite-svelte";
 
-    let title = "";
-    let body = "";
-    let labelName = "";
-    let labelsAdded = [];
-    let store;
-    authStore.subscribe((value) => {
-      store = value;
-    });
-    
-    const tasksCollection = collection(db, "tasks");
-    const taskLabelsRef = collection(db, "taskLabels");
+  let idTemp = "";
+  let dark = true;
 
   let title = "";
   let body = "";
@@ -37,60 +44,37 @@
   const tasksCollection = collection(db, "tasks");
   const taskLabelsRef = collection(db, "taskLabels");
 
-    onSnapshot( tasksCollection, (snapshot) => {
-        let array = [];
-        snapshot.docs.forEach((doc) => {
-            // console.log(doc.data());
-            array.push({...doc.data(), id: doc.id})
-        })
-        console.log("This is the storeTasks array: ", array);
-        // console.log(array);
-        storeTasks.set(array);
-    })
+  onSnapshot(tasksCollection, (snapshot) => {
+    let array = [];
+    snapshot.docs.forEach((doc) => {
+      // console.log(doc.data());
+      array.push({ ...doc.data(), id: doc.id });
+    });
+    console.log("This is the storeTasks array: ", array);
+    // console.log(array);
+    storeTasks.set(array);
+  });
 
-    onSnapshot( taskLabelsRef, (snapshot) => {
-        let array = [];
-        snapshot.docs.forEach((doc) => {
-            // console.log(doc.data());
-            array.push({...doc.data()})
-        })
-        // console.log(array);
-        storeTasksLabels.set(array);
-    })
+  onSnapshot(taskLabelsRef, (snapshot) => {
+    let array = [];
+    snapshot.docs.forEach((doc) => {
+      // console.log(doc.data());
+      array.push({ ...doc.data() });
+    });
+    // console.log(array);
+    storeTasksLabels.set(array);
+  });
 
-    function addLabel(labelName) {
-      //ensure that the label isn't already added/applied
-      if (labelsAdded.includes(labelName)) {
-        console.log("No can do, this label is already applied and we don't want duplicates");
-      } else {
-        console.log("Adding this label: ", labelName);
-        labelsAdded.push(labelName);
-        labelsAdded = labelsAdded;
-      }
-    }
-
-    function removeAppliedLabel(labelName) {
-        console.log("Removing this label: ", labelName);
-        console.log("labelsAdded before splicing", labelsAdded);
-        let indexToRemove = labelsAdded.indexOf(labelName);
-        console.log(indexToRemove);
-        labelsAdded.splice(indexToRemove, 1);
-        console.log("labelsAdded after splice", labelsAdded);
-        labelsAdded = labelsAdded;
-    }
-  
-    async function newTask() {
-      const newDoc = await addDoc(tasksCollection, {
-        body: body,
-        createdAt: `${get(dateTime).date} at ${get(dateTime).time}`,
-        title: title,
-        updatedAt: `${get(dateTime).date} at ${get(dateTime).time}`,
-        user_id: store.currentUser.uid,
-        labels: labelsAdded,
-      });
-      labelsAdded = [];
-      console.log(`Your doc was created at ${newDoc.path}`);
-      console.log("labelsAdded is now: ", labelsAdded);
+  function addLabel(labelName) {
+    //ensure that the label isn't already added/applied
+    if (labelsAdded.includes(labelName)) {
+      console.log(
+        "No can do, this label is already applied and we don't want duplicates"
+      );
+    } else {
+      console.log("Adding this label: ", labelName);
+      labelsAdded.push(labelName);
+      labelsAdded = labelsAdded;
     }
   }
 
@@ -111,7 +95,6 @@
       title: title,
       updatedAt: `${get(dateTime).date} at ${get(dateTime).time}`,
       user_id: store.currentUser.uid,
-      UUID: uuidv4(),
       labels: labelsAdded,
     });
     labelsAdded = [];
@@ -129,23 +112,6 @@
       // console.log(doc.id, " => ", doc.data());
       namesToCheck.push(doc.data().labelName);
     });
-
-
-    async function deleteStoredTask(id) {
-      console.log(id);
-      // querySnapshot.forEach((doc) => { //documents cite using forEach -- should only run on one b/c of query == user_id
-      //   // doc.data() is never undefined for query doc snapshots
-      //   console.log(doc.id, " => ", doc.data());
-      //   deleteDoc(doc.ref);
-      // });
-    if (!namesToCheck.includes(labelName)) {
-      const newDoc = await addDoc(taskLabelsRef, {
-        labelName: labelName,
-      });
-      console.log(`Your doc was created at ${newDoc.path}`);
-    } else {
-      alert("Please enter a unique label name");
-    }
   }
 
   async function removeStoredLabel(labelName) {
@@ -159,49 +125,48 @@
     });
   }
 
-    async function deleteStoredTask(id) {
-      await deleteDoc(doc(db, "tasks", id));
-    }
+  async function deleteStoredTask(id) {
+    await deleteDoc(doc(db, "tasks", id));
+  }
 
-    async function openEdit(id) {
-      let docSnap = await getDoc(doc(db, "tasks", id));
-      title = docSnap.data().title;
-      body = docSnap.data().body;
-      labelsAdded = docSnap.data().labels;
-      idTemp = id;
-      console.log(docSnap.data());
-      hidden3 = false;
-    }
+  async function openEdit(id) {
+    let docSnap = await getDoc(doc(db, "tasks", id));
+    title = docSnap.data().title;
+    body = docSnap.data().body;
+    labelsAdded = docSnap.data().labels;
+    idTemp = id;
+    console.log(docSnap.data());
+    hidden3 = false;
+  }
 
-    async function editTask() {
-      console.log("HERE", doc(db, "tasks", idTemp));
-      const newData = {
-        body: body,
-        title: title,
-        updatedAt: `${get(dateTime).date} at ${get(dateTime).time}`,
-        labels: labelsAdded,
-      };
-      await setDoc(doc(db, "tasks", idTemp), newData, { merge: true });
-
-      title = "";
-      body = "";
-      labelsAdded = [];
-      hidden3 = true;
-      // console.log(`Your doc was updated at ${newData.path}`);
-    }
-
-    // Drawer JS
-    import { sineIn } from "svelte/easing";
-
-    let hidden4 = true;
-    let hidden3 = true;
-    let transitionParams = {
-      x: -320,
-      duration: 200,
-      easing: sineIn,
+  async function editTask() {
+    console.log("HERE", doc(db, "tasks", idTemp));
+    const newData = {
+      body: body,
+      title: title,
+      updatedAt: `${get(dateTime).date} at ${get(dateTime).time}`,
+      labels: labelsAdded,
     };
+    await setDoc(doc(db, "tasks", idTemp), newData, { merge: true });
 
-  </script>
+    title = "";
+    body = "";
+    labelsAdded = [];
+    hidden3 = true;
+    // console.log(`Your doc was updated at ${newData.path}`);
+  }
+
+  // Drawer JS
+  import { sineIn } from "svelte/easing";
+
+  let hidden4 = true;
+  let hidden3 = true;
+  let transitionParams = {
+    x: -320,
+    duration: 200,
+    easing: sineIn,
+  };
+</script>
 
 {#if store.currentUser}
   <div>
@@ -273,61 +238,70 @@
         </div>
         <Button
           class="w-2/5 !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
-          on:click={newLabel}
-          >Create Label</Button
+          on:click={newLabel}>Create Label</Button
         >
-        
+
         <div class="mb-6">
           <Label for="body" class="mb-2">Applied Labels</Label>
           <div class="flex flex-wrap justify-start align-center">
             {#each labelsAdded as labelAdded}
-              <div class="bg-gray-500 w-fit hover:bg-gray-300 flex gap-2 justify-center items-center focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-2 rounded">
+              <div
+                class="bg-gray-500 w-fit hover:bg-gray-300 flex gap-2 justify-center items-center focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-2 rounded"
+              >
                 <div>{labelAdded}</div>
-                <Button class="w-2/5 text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2" on:click={removeAppliedLabel(labelAdded)}>X</Button>
+                <Button
+                  class="w-2/5 text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
+                  on:click={removeAppliedLabel(labelAdded)}>X</Button
+                >
               </div>
             {/each}
           </div>
         </div>
-        
+
         {#if $storeTasksLabels}
-        <div class="mb-6">
-          <Label for="body" class="mb-2">Your Labels</Label>
-          {#each $storeTasksLabels as label}
-            <div class="bg-gray-500 w-fit hover:bg-gray-300 flex gap-2 justify-center items-center focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-4 rounded">
-              <div on:click={addLabel(label.labelName)}>
-                  <div>{label.labelName}</div>
-              </div>
-              <Button class="w-fit text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm text-center" on:click={removeStoredLabel(label.labelName)}>
-                <svg
-                width="20"
-                height="20"
-                viewBox="0 0 80 80"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+          <div class="mb-6">
+            <Label for="body" class="mb-2">Your Labels</Label>
+            {#each $storeTasksLabels as label}
+              <div
+                class="bg-gray-500 w-fit hover:bg-gray-300 flex gap-2 justify-center items-center focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-4 rounded"
               >
-                <path
-                  d="M61 20L56.3735 64.4144C56.1612 66.4521 54.4437 68 52.395 68H27.605C25.5563 68 23.8388 66.4521 23.6265 64.4144L19 20"
-                  stroke="black"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M65 20H15"
-                  stroke="black"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M27.8555 19.9986L33.926 12.3865H46.0747L52.1452 19.9986"
-                  stroke="black"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-              </Button>
-            </div>
-          {/each}
-        </div>
+                <div on:click={addLabel(label.labelName)}>
+                  <div>{label.labelName}</div>
+                </div>
+                <Button
+                  class="w-fit text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm text-center"
+                  on:click={removeStoredLabel(label.labelName)}
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 80 80"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M61 20L56.3735 64.4144C56.1612 66.4521 54.4437 68 52.395 68H27.605C25.5563 68 23.8388 66.4521 23.6265 64.4144L19 20"
+                      stroke="black"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M65 20H15"
+                      stroke="black"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M27.8555 19.9986L33.926 12.3865H46.0747L52.1452 19.9986"
+                      stroke="black"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </Button>
+              </div>
+            {/each}
+          </div>
         {/if}
         <Button
           type="submit"
@@ -480,50 +454,60 @@
                 <Label for="body" class="mb-2">Applied Labels</Label>
                 <div class="flex flex-wrap justify-start align-center">
                   {#each labelsAdded as labelAdded}
-                    <div class="bg-gray-500 w-fit hover:bg-gray-300 flex gap-2 justify-center items-center focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-2 rounded">
+                    <div
+                      class="bg-gray-500 w-fit hover:bg-gray-300 flex gap-2 justify-center items-center focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-2 rounded"
+                    >
                       <div>{labelAdded}</div>
-                      <Button class="w-2/5 text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2" on:click={removeAppliedLabel(labelAdded)}>X</Button>
+                      <Button
+                        class="w-2/5 text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
+                        on:click={removeAppliedLabel(labelAdded)}>X</Button
+                      >
                     </div>
                   {/each}
                 </div>
               </div>
             {/if}
-            
+
             {#if $storeTasksLabels}
               <div class="mb-6">
                 <Label for="body" class="mb-2">Your Labels</Label>
                 {#each $storeTasksLabels as label}
-                  <div class="bg-gray-500 w-fit hover:bg-gray-300 flex gap-2 justify-center items-center focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-4 rounded">
+                  <div
+                    class="bg-gray-500 w-fit hover:bg-gray-300 flex gap-2 justify-center items-center focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-4 rounded"
+                  >
                     <div on:click={addLabel(label.labelName)}>
-                        <div>{label.labelName}</div>
+                      <div>{label.labelName}</div>
                     </div>
-                    <Button class="w-fit text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm text-center" on:click={removeStoredLabel(label.labelName)}>
-                      <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 80 80"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
+                    <Button
+                      class="w-fit text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm text-center"
+                      on:click={removeStoredLabel(label.labelName)}
                     >
-                      <path
-                        d="M61 20L56.3735 64.4144C56.1612 66.4521 54.4437 68 52.395 68H27.605C25.5563 68 23.8388 66.4521 23.6265 64.4144L19 20"
-                        stroke="black"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M65 20H15"
-                        stroke="black"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M27.8555 19.9986L33.926 12.3865H46.0747L52.1452 19.9986"
-                        stroke="black"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 80 80"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M61 20L56.3735 64.4144C56.1612 66.4521 54.4437 68 52.395 68H27.605C25.5563 68 23.8388 66.4521 23.6265 64.4144L19 20"
+                          stroke="black"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                        <path
+                          d="M65 20H15"
+                          stroke="black"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                        <path
+                          d="M27.8555 19.9986L33.926 12.3865H46.0747L52.1452 19.9986"
+                          stroke="black"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
                     </Button>
                   </div>
                 {/each}
@@ -567,8 +551,8 @@
     </div>
   </div>
 {/if}
-  
-  <!-- <div class="grid grid-cols-2" >
+
+<!-- <div class="grid grid-cols-2" >
     <div>
       <form class="w-full max-w-sm">
         <div>
@@ -769,4 +753,3 @@
 
 <style>
 </style>
-
