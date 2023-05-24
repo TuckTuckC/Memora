@@ -20,4 +20,6 @@ export const notes = writable([])
 
 export const signModalState = writable(false);
 
+export const onHomePage = writable();
+
 export const dateTime = writable(getDateTime());
