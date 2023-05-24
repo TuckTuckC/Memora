@@ -115,14 +115,16 @@
       namesToCheck.push(doc.data().labelName);
     });
     if (namesToCheck.includes(labelName)) {
-        console.log("No can do, this label is already applied and we don't want duplicates");
+      console.log(
+        "No can do, this label is already applied and we don't want duplicates"
+      );
     } else {
       console.log("Adding this label: ", labelName);
       labelsAdded.push(labelName);
       labelsAdded = labelsAdded;
       const newDoc = await addDoc(taskLabelsRef, {
-      labelName: labelName,
-    });
+        labelName: labelName,
+      });
     }
   }
 
@@ -181,7 +183,7 @@
 </script>
 
 {#if store.currentUser}
-  <div>
+  <div class="flex flex-col flex-1">
     <div class="text-center flex mb-2">
       <Button
         on:click={() => (hidden4 = false)}
