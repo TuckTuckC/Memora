@@ -12,6 +12,8 @@
     DropdownDivider,
     DarkMode,
   } from "flowbite-svelte";
+  import Auth from "../components/Auth.svelte";
+  import { signModalState } from "../stores/store";
 
   let store;
   authStore.subscribe((value) => {
@@ -60,7 +62,12 @@
       <DropdownItem>Settings</DropdownItem>
       <DropdownItem>Earnings</DropdownItem>
       <DropdownDivider />
-      <DropdownItem on:click={authHandlers.logout}>Sign out</DropdownItem>
+      <DropdownItem
+        on:click={store.currentUser
+          ? authHandlers.logout
+          : signModalState.set(true)}
+        >{store.currentUser ? "Sign out" : "Log In"}</DropdownItem
+      >
     </Dropdown>
   </NavUl>
 </Navbar>
