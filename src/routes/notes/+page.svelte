@@ -116,7 +116,7 @@
     I"M ON THE HOMEPAGE
   {/if}
   {#if window.location.pathname == "/notes"}
-    <div class="flex flex-col flex-2">
+    <div class="flex flex-col flex-2 w-9/12 self-center">
       <div class="text-center flex mb-2">
         <Button
           on:click={() => (hidden4 = false)}
