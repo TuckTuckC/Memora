@@ -214,7 +214,7 @@
           {#each $notes as note}
             <Card
               on:click={openEdit(note.id)}
-              class="m-2 w-auto max-w-xs h-48 overflow-hidden cursor-pointer !bg-lightnotebg dark:!bg-darknotebg"
+              class="m-2 w-auto max-w-xs h-fit cursor-pointer !bg-lightnotebg dark:!bg-darknotebg"
             >
               <h5
                 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
@@ -222,13 +222,13 @@
                 {note.title}
               </h5>
               <p
-                class="font-normal text-gray-700 dark:text-gray-200 leading-tight mb-4"
+                class="font-normal text-gray-700 dark:text-gray-200 leading-tight h-fit max-h-32 overflow-auto mb-4"
               >
                 {note.body}
               </p>
               <Button
                 color="red"
-                class="w-fit mt-6 bg-redbtn dark:!bg-darkredbtn flex self-end bottom-0"
+                class="w-fit mt-0 bg-redbtn dark:!bg-darkredbtn flex self-end bottom-0"
                 on:click={deleteNote(note.id)}
                 ><svg
                   width="20"
