@@ -21,7 +21,13 @@
   import { db } from "../../lib/firebase/firebase.client";
   import { authStore } from "../../stores/authStore";
   import { get } from "svelte/store";
-  import { dateTime, notes } from "../../stores/store";
+  import { dateTime, notes, oldNotes } from "../../stores/store";
+  import {
+    formatISO,
+    parseISO,
+    compareDesc,
+    differenceInWeeks,
+  } from "date-fns";
 
   let title = "";
   let body = "";
@@ -43,11 +49,24 @@
   onSnapshot(notesCollection, (snapshot) => {
     if (store.currentUser) {
       let tempNotes = [];
+      let tempOldNotes = [];
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
       snapshot.docs.forEach((doc) => {
-        doc.data().user_id == store.currentUser.uid
-          ? tempNotes.push({ ...doc.data(), id: doc.id })
-          : null;
+        let note = { ...doc.data(), id: doc.id };
+        if (doc.data().user_id == store.currentUser.uid) {
+          tempNotes.push(note);
+          parseISO(note.updatedAt) <= oneWeekAgo
+            ? tempOldNotes.push(note)
+            : null;
+        }
       });
+      oldNotes.set(tempOldNotes);
+      console.log("OLD NOTES", tempOldNotes);
+      tempNotes.sort((a, b) =>
+        compareDesc(parseISO(a.updatedAt), parseISO(b.updatedAt))
+      );
+      console.log(tempNotes);
       notes.set(tempNotes);
     }
   });
@@ -79,7 +98,7 @@
     hidden3 = false;
     await setDoc(
       doc(db, "notes", id),
-      { updatedAt: `${get(dateTime).date} at ${get(dateTime).time}` },
+      { updatedAt: `${formatISO(new Date())}` },
       { merge: true }
     );
   }
@@ -114,13 +133,7 @@
 {#if store.currentUser}
   {#if window.location.pathname == "/"}
     <div class="flex flex-col flex-2 w-9/12 self-center">
-      <div class="text-center flex mb-2">
-        <Button
-          on:click={() => (hidden4 = false)}
-          class="!bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
-          >Create New Note</Button
-        >
-      </div>
+      <div class="text-center flex mb-2" />
       <Drawer
         transitionType="fly"
         {transitionParams}
@@ -205,57 +218,124 @@
           >
         </form>
       </Drawer>
-
+      <p class="text-center pb-4 border-b-2 text-2xl dark:text-white">
+        Forgot About These?
+      </p>
       <div class="flex flex-wrap border-r-2">
         {#if $notes}
-          {#each $notes as note}
-            <Card
-              on:click={openEdit(note.id)}
-              class="m-2 w-auto max-w-[16rem] h-fit cursor-pointer !bg-lightnotebg dark:!bg-darknotebg"
-            >
-              <h5
-                class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
-              >
-                {note.title}
-              </h5>
-              <p
-                class="font-normal text-gray-700 dark:text-gray-200 leading-tight h-fit max-h-32 overflow-auto mb-4"
-              >
-                {note.body}
-              </p>
-              <Button
-                color="red"
-                class="w-fit mt-0 bg-redbtn dark:!bg-darkredbtn flex self-end bottom-0"
-                on:click={deleteNote(note.id)}
-                ><svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 80 80"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
+          {#if $oldNotes}
+            <div class="flex flex-wrap w-full pb-6">
+              {#each $oldNotes as oldNote}
+                <Card
+                  on:click={openEdit(oldNote.id)}
+                  class="m-2 w-auto max-w-[16rem] h-fit cursor-pointer !bg-lightnotebg dark:!bg-darknotebg"
                 >
-                  <path
-                    d="M61 20L56.3735 64.4144C56.1612 66.4521 54.4437 68 52.395 68H27.605C25.5563 68 23.8388 66.4521 23.6265 64.4144L19 20"
-                    stroke="black"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M65 20H15"
-                    stroke="black"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M27.8555 19.9986L33.926 12.3865H46.0747L52.1452 19.9986"
-                    stroke="black"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg></Button
-              >
-            </Card>
-          {/each}
+                  <h5
+                    class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+                  >
+                    {oldNote.title}
+                  </h5>
+                  <p
+                    class="font-normal text-gray-700 dark:text-gray-200 leading-tight h-fit max-h-32 overflow-auto mb-4"
+                  >
+                    {oldNote.body}
+                  </p>
+                  <Button
+                    color="red"
+                    class="w-fit mt- bg-redbtn dark:!bg-darkredbtn flex self-end bottom-0"
+                    on:click={deleteNote(oldNote.id)}
+                    ><svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 80 80"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M61 20L56.3735 64.4144C56.1612 66.4521 54.4437 68 52.395 68H27.605C25.5563 68 23.8388 66.4521 23.6265 64.4144L19 20"
+                        stroke="black"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M65 20H15"
+                        stroke="black"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M27.8555 19.9986L33.926 12.3865H46.0747L52.1452 19.9986"
+                        stroke="black"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg></Button
+                  >
+                </Card>
+              {/each}
+            </div>
+          {/if}
+          <div class="flex flex-col w-full pt-6">
+            <p class="text-center pb-4 border-b-2 text-2xl dark:text-white">
+              Recents
+            </p>
+            <Button
+              on:click={() => (hidden4 = false)}
+              class="w-fit mt-6 !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
+              >Create New Note</Button
+            >
+            <div class="flex flex-row flex-wrap justify-center w-full pt-6">
+              {#each $notes as note}
+                <Card
+                  on:click={openEdit(note.id)}
+                  class="m-2 w-auto max-w-[16rem] h-fit cursor-pointer !bg-lightnotebg dark:!bg-darknotebg"
+                >
+                  <h5
+                    class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+                  >
+                    {note.title}
+                  </h5>
+                  <p
+                    class="font-normal text-gray-700 dark:text-gray-200 leading-tight h-fit max-h-32 overflow-auto mb-4"
+                  >
+                    {note.body}
+                  </p>
+                  <Button
+                    color="red"
+                    class="w-fit mt-0 bg-redbtn dark:!bg-darkredbtn flex self-end bottom-0"
+                    on:click={deleteNote(note.id)}
+                    ><svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 80 80"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M61 20L56.3735 64.4144C56.1612 66.4521 54.4437 68 52.395 68H27.605C25.5563 68 23.8388 66.4521 23.6265 64.4144L19 20"
+                        stroke="black"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M65 20H15"
+                        stroke="black"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M27.8555 19.9986L33.926 12.3865H46.0747L52.1452 19.9986"
+                        stroke="black"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg></Button
+                  >
+                </Card>
+              {/each}
+            </div>
+          </div>
+
           <Drawer
             transitionType="fly"
             {transitionParams}
