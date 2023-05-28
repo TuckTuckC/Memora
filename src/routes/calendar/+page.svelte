@@ -33,10 +33,27 @@
 
   function generateGrid() {
     const totalDays = getDaysInMonth(date);
+    const startingDay = new Date(currentYear, currentMonth, 1).getDay();
     const grid = [];
+
+    for (let i = 0; i < startingDay; i++) {
+      grid.push("");
+    }
 
     for (let day = 1; day <= totalDays; day++) {
       grid.push(day);
+    }
+
+    if (grid.length < 35) {
+      for (let i = grid.length; i < 35; i++) {
+        grid.push("");
+      }
+    }
+
+    if (grid.length > 35 && grid.length < 42) {
+      for (let i = grid.length; i < 42; i++) {
+        grid.push("");
+      }
     }
 
     console.log(totalDays);
@@ -60,7 +77,7 @@
   </div>
   <div class="flex flex-col">
     <div
-      class="flex place-content-evenly mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight"
+      class="grid grid-cols-7 justify-items-center mb-4 font-normal text-gray-700 dark:text-gray-400 leading-tight"
     >
       <div>Sun</div>
       <div>Mon</div>
@@ -70,10 +87,10 @@
       <div>Fri</div>
       <div>Sat</div>
     </div>
-    <div class="grid grid-cols-7">
+    <div class="grid grid-cols-7 gap-4 justify-items-center">
       {#if $daysGrid}
         {#each $daysGrid as day}
-          <div class="text-center">{day}</div>
+          <div class="text-center w-[12rem] h-[7rem] border-2">{day}</div>
         {/each}
       {/if}
     </div>

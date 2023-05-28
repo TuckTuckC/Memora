@@ -228,7 +228,7 @@
               {#each $oldNotes as oldNote}
                 <Card
                   on:click={openEdit(oldNote.id)}
-                  class="m-2 w-auto max-w-[16rem] h-fit cursor-pointer !bg-lightnotebg dark:!bg-darknotebg"
+                  class="m-2 w-auto max-w-[16.1rem] h-fit cursor-pointer !bg-lightnotebg dark:!bg-darknotebg"
                 >
                   <h5
                     class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
@@ -288,7 +288,7 @@
               {#each $notes as note}
                 <Card
                   on:click={openEdit(note.id)}
-                  class="m-2 w-auto max-w-[16rem] h-fit cursor-pointer !bg-lightnotebg dark:!bg-darknotebg"
+                  class="m-2 w-auto max-w-[16.1rem] h-fit cursor-pointer !bg-lightnotebg dark:!bg-darknotebg"
                 >
                   <h5
                     class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
