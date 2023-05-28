@@ -9,23 +9,26 @@
     getDaysInMonth,
   } from "date-fns";
   import { Card, Button } from "flowbite-svelte";
+  import { writable } from "svelte/store";
 
   let date = new Date();
 
   let currentMonth = getMonth(date);
   let currentYear = getYear(date);
-  let daysCt = getDaysInMonth(date);
+  const daysGrid = writable([]);
 
   function previousMonth() {
     date = subMonths(date, 1);
     currentMonth = getMonth(date);
     currentYear = getYear(date);
+    generateGrid();
   }
 
   function nextMonth() {
     date = addMonths(date, 1);
     currentMonth = getMonth(date);
     currentYear = getYear(date);
+    generateGrid();
   }
 
   function generateGrid() {
@@ -36,12 +39,11 @@
       grid.push(day);
     }
 
-    return grid;
+    console.log(totalDays);
+    daysGrid.set(grid);
   }
 
-  $: {
-    generateGrid();
-  }
+  generateGrid();
 </script>
 
 <div class="flex flex-col self-center p-4 w-5/6 border-2">
@@ -69,9 +71,11 @@
       <div>Sat</div>
     </div>
     <div class="grid grid-cols-7">
-      {#each generateGrid() as day}
-        <div class="text-center">{day}</div>
-      {/each}
+      {#if $daysGrid}
+        {#each $daysGrid as day}
+          <div class="text-center">{day}</div>
+        {/each}
+      {/if}
     </div>
   </div>
 </div>
