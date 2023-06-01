@@ -7,6 +7,8 @@
     subMonths,
     format,
     getDaysInMonth,
+    startOfDay,
+    set,
   } from "date-fns";
   import {
     Card,
@@ -16,9 +18,11 @@
     Badge,
     Label,
     Input,
+    Select,
     Drawer,
     CloseButton,
     Textarea,
+    Datepicker,
   } from "flowbite-svelte";
   import { writable } from "svelte/store";
   import {
@@ -116,6 +120,7 @@
       );
       console.log("EVENTS", tempEvents);
       events.set(tempEvents);
+      console.log("EVENTS", events);
     }
   });
 
@@ -139,13 +144,166 @@
         tempUserDays.map((day) => formatISO(parseISO(day.date)))
       );
       console.log("LOOKUP", $userDaysLookup);
+      console.log("LOOKUP", tempUserDays);
     }
   });
 
+  // Selections
+  let selHour;
+  let selMinute;
+
+  let selYearEnd;
+  let selMonthEnd;
+  let selDayEnd;
+  let selHourEnd;
+  let selMinuteEnd;
+  let selStart;
+  const year = writable("");
+  const month = writable("");
+  const day = writable("");
+
+  $: {
+    if (selStart) {
+      const [yearVal, monthVal, dayVal] = selStart.split("-");
+      year.set(yearVal);
+      month.set(monthVal);
+      day.set(dayVal);
+      console.log($year, $month, $day);
+    }
+  }
+
+  let years = [
+    { value: "2023", name: "2023" },
+    { value: "2024", name: "2024" },
+    { value: "2025", name: "2025" },
+  ];
+  let months = [
+    { value: "01", name: "January" },
+    { value: "02", name: "February" },
+    { value: "03", name: "March" },
+    { value: "04", name: "April" },
+    { value: "05", name: "May" },
+    { value: "06", name: "June" },
+    { value: "07", name: "July" },
+    { value: "08", name: "August" },
+    { value: "09", name: "September" },
+    { value: "10", name: "October" },
+    { value: "11", name: "November" },
+    { value: "12", name: "December" },
+  ];
+  let days = [
+    { value: "01", name: "1" },
+    { value: "02", name: "2" },
+    { value: "03", name: "3" },
+    { value: "04", name: "4" },
+    { value: "05", name: "5" },
+    { value: "06", name: "6" },
+    { value: "07", name: "7" },
+    { value: "08", name: "8" },
+    { value: "09", name: "9" },
+    { value: "10", name: "10" },
+    { value: "11", name: "11" },
+    { value: "12", name: "12" },
+    { value: "13", name: "13" },
+    { value: "14", name: "14" },
+    { value: "15", name: "15" },
+    { value: "16", name: "16" },
+    { value: "17", name: "17" },
+    { value: "18", name: "18" },
+    { value: "19", name: "19" },
+    { value: "20", name: "20" },
+    { value: "21", name: "21" },
+    { value: "22", name: "22" },
+    { value: "23", name: "23" },
+    { value: "24", name: "24" },
+    { value: "25", name: "25" },
+    { value: "26", name: "26" },
+    { value: "27", name: "27" },
+    { value: "28", name: "28" },
+    { value: "29", name: "29" },
+    { value: "30", name: "30" },
+    { value: "31", name: "31" },
+  ];
+  let hours = [
+    { value: "01", name: "1" },
+    { value: "02", name: "2" },
+    { value: "03", name: "3" },
+    { value: "04", name: "4" },
+    { value: "05", name: "5" },
+    { value: "06", name: "6" },
+    { value: "07", name: "7" },
+    { value: "08", name: "8" },
+    { value: "09", name: "9" },
+    { value: "10", name: "10" },
+    { value: "11", name: "11" },
+    { value: "12", name: "12" },
+  ];
+  let minutes = [
+    { value: "01", name: "1" },
+    { value: "02", name: "2" },
+    { value: "03", name: "3" },
+    { value: "04", name: "4" },
+    { value: "05", name: "5" },
+    { value: "06", name: "6" },
+    { value: "07", name: "7" },
+    { value: "08", name: "8" },
+    { value: "09", name: "9" },
+    { value: "10", name: "10" },
+    { value: "11", name: "11" },
+    { value: "12", name: "12" },
+    { value: "13", name: "13" },
+    { value: "14", name: "14" },
+    { value: "15", name: "15" },
+    { value: "16", name: "16" },
+    { value: "17", name: "17" },
+    { value: "18", name: "18" },
+    { value: "19", name: "19" },
+    { value: "20", name: "20" },
+    { value: "21", name: "21" },
+    { value: "22", name: "22" },
+    { value: "23", name: "23" },
+    { value: "24", name: "24" },
+    { value: "25", name: "25" },
+    { value: "26", name: "26" },
+    { value: "27", name: "27" },
+    { value: "28", name: "28" },
+    { value: "29", name: "29" },
+    { value: "30", name: "30" },
+    { value: "31", name: "31" },
+    { value: "32", name: "32" },
+    { value: "33", name: "33" },
+    { value: "34", name: "34" },
+    { value: "35", name: "35" },
+    { value: "36", name: "36" },
+    { value: "37", name: "37" },
+    { value: "38", name: "38" },
+    { value: "39", name: "39" },
+    { value: "40", name: "40" },
+    { value: "41", name: "41" },
+    { value: "42", name: "42" },
+    { value: "43", name: "43" },
+    { value: "44", name: "44" },
+    { value: "45", name: "45" },
+    { value: "46", name: "46" },
+    { value: "47", name: "47" },
+    { value: "48", name: "48" },
+    { value: "49", name: "49" },
+    { value: "50", name: "50" },
+    { value: "51", name: "51" },
+    { value: "52", name: "52" },
+    { value: "53", name: "53" },
+    { value: "54", name: "54" },
+    { value: "55", name: "55" },
+    { value: "56", name: "56" },
+    { value: "57", name: "57" },
+    { value: "58", name: "58" },
+    { value: "59", name: "59" },
+  ];
+
   let title = "";
   let details = "";
-  let start = "";
-  let end = "";
+  $: start = `${$year}-${$month}-${$day}T${selHour}:${selMinute}:00-04:00`;
+  $: end = `${selYearEnd}-${selMonthEnd}-${selDayEnd}T${selHourEnd}:${selMinuteEnd}:00-04:00`;
   let color = "";
   let hidden4 = true;
   let transitionParams = {
@@ -162,14 +320,27 @@
       end: end,
       color: color,
       uid: store.currentUser.uid,
+    }).then((newDoc) => {
+      console.log("EVENT DATA", newDoc);
+      newDay({ id: newDoc.id, start });
     });
+  }
+  function newDay(doc) {
+    console.log("NEW DAY LOGS", doc);
+
+    const newDoc = addDoc(userDaysCollection, {
+      date: formatISO(startOfDay(parseISO(doc.start))),
+      events: [doc.id],
+      uid: store.currentUser.uid,
+    });
+    console.log("DAY DATA", newDoc);
+    console.log(`Your doc was created at ${newDoc.path}`);
     title = "";
     details = "";
     start = "";
     end = "";
     color = "";
     hidden4 = true;
-    console.log(`Your doc was created at ${newDoc.path}`);
   }
 
   async function getSingleDay(date) {
@@ -179,6 +350,7 @@
   }
 
   async function getSingleEvent(eventId) {
+    console.log("GET SINGLE EVENT", eventId);
     return await getDoc(doc(db, "events", eventId));
   }
   const tempEvents = writable([]);
@@ -187,11 +359,15 @@
       query(collection(db, "userDays"), where("date", "==", date))
     );
 
+    console.log("day date", date);
+
     let eventIds = [];
 
     querySnap.forEach((doc) => {
+      console.log("events loop", doc.data());
       let eventData = doc.data().events;
-      let docEventIds = eventData.map((eventRef) => eventRef.id);
+      console.log("events loop 2", eventData);
+      let docEventIds = eventData.map((eventRef) => eventRef);
 
       eventIds.push(...docEventIds);
     });
@@ -333,23 +509,17 @@
     </div>
     <div class="mb-6">
       <Label for="body" class="mb-2">Start</Label>
-      <Textarea
-        id="message"
-        placeholder="Write note body..."
-        rows="4"
-        name="message"
-        bind:value={start}
-      />
+      <input type="date" bind:value={selStart} />
+      <Select class="mt-2" items={hours} bind:value={selHour} />
+      <Select class="mt-2" items={minutes} bind:value={selMinute} />
     </div>
     <div class="mb-6">
       <Label for="body" class="mb-2">End</Label>
-      <Textarea
-        id="message"
-        placeholder="Write note body..."
-        rows="4"
-        name="message"
-        bind:value={end}
-      />
+      <Select class="mt-2" items={years} bind:value={selYearEnd} />
+      <Select class="mt-2" items={months} bind:value={selMonthEnd} />
+      <Select class="mt-2" items={days} bind:value={selDayEnd} />
+      <Select class="mt-2" items={hours} bind:value={selHourEnd} />
+      <Select class="mt-2" items={minutes} bind:value={selMinuteEnd} />
     </div>
     <div class="mb-6">
       <Label for="body" class="mb-2">Color</Label>
