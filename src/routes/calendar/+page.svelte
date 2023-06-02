@@ -31,6 +31,8 @@
     onSnapshot,
     deleteDoc,
     setDoc,
+    updateDoc,
+    arrayUnion,
     doc,
     getDoc,
     getDocs,
@@ -183,16 +185,16 @@
   let selHour;
   let selMinute;
 
-  let selYearEnd;
-  let selMonthEnd;
-  let selDayEnd;
   let selHourEnd;
   let selMinuteEnd;
+
   let selStart;
   let selEnd;
+
   const year = writable("");
   const month = writable("");
   const day = writable("");
+
   const yearEnd = writable("");
   const monthEnd = writable("");
   const dayEnd = writable("");
@@ -267,20 +269,33 @@
     { value: "31", name: "31" },
   ];
   let hours = [
-    { value: "01", name: "1" },
-    { value: "02", name: "2" },
-    { value: "03", name: "3" },
-    { value: "04", name: "4" },
-    { value: "05", name: "5" },
-    { value: "06", name: "6" },
-    { value: "07", name: "7" },
-    { value: "08", name: "8" },
-    { value: "09", name: "9" },
-    { value: "10", name: "10" },
-    { value: "11", name: "11" },
-    { value: "12", name: "12" },
+    { value: "01", name: "1a" },
+    { value: "02", name: "2a" },
+    { value: "03", name: "3a" },
+    { value: "04", name: "4a" },
+    { value: "05", name: "5a" },
+    { value: "06", name: "6a" },
+    { value: "07", name: "7a" },
+    { value: "08", name: "8a" },
+    { value: "09", name: "9a" },
+    { value: "10", name: "10a" },
+    { value: "11", name: "11a" },
+    { value: "12", name: "12p" },
+    { value: "11", name: "1p" },
+    { value: "12", name: "2p" },
+    { value: "13", name: "3p" },
+    { value: "14", name: "4p" },
+    { value: "15", name: "5p" },
+    { value: "16", name: "6p" },
+    { value: "17", name: "7p" },
+    { value: "18", name: "8p" },
+    { value: "19", name: "9p" },
+    { value: "20", name: "10p" },
+    { value: "21", name: "11p" },
+    { value: "22", name: "12a" },
   ];
   let minutes = [
+    { value: "00", name: "0" },
     { value: "01", name: "1" },
     { value: "02", name: "2" },
     { value: "03", name: "3" },
@@ -364,7 +379,18 @@
       uid: store.currentUser.uid,
     }).then((newDoc) => {
       console.log("EVENT DATA", newDoc);
-      newDay({ id: newDoc.id, start });
+      if (
+        [...$dayEvents].some(
+          (d) => d.date === formatISO(startOfDay(parseISO(start)))
+        )
+      ) {
+        addEventToDay({
+          id: newDoc.id,
+          date: formatISO(startOfDay(parseISO(start))),
+        });
+      } else {
+        newDay({ id: newDoc.id, start });
+      }
     });
   }
   function newDay(doc) {
@@ -382,6 +408,26 @@
     start = "";
     end = "";
     color = "";
+    hidden4 = true;
+  }
+
+  async function addEventToDay(doc) {
+    let querySnap = await getDocs(
+      query(collection(db, "userDays"), where("date", "==", doc.date))
+    );
+
+    if (!querySnap.empty) {
+      const dayDoc = querySnap.docs[0];
+
+      // Get the existing events array from the day's document
+      const docEvents = dayDoc.data().events || [];
+
+      // Add the new event to the array
+      docEvents.push(doc.id);
+
+      // Update the events array in the day's document
+      await updateDoc(dayDoc.ref, { events: arrayUnion(doc.id) });
+    }
     hidden4 = true;
   }
 
@@ -427,7 +473,7 @@
       {#if $daysGrid}
         {#each $daysGrid as day}
           <div
-            class="text-center w-[12rem] h-[7rem] border-2 dark:text-gray-400"
+            class="text-center w-[12rem] h-[7rem] border-2 dark:text-gray-400 overflow-hidden"
           >
             {day}
             {#if $dayEvents && [...$dayEvents].some((d) => d.date === formatISO(new Date(currentYear, currentMonth, day)))}
