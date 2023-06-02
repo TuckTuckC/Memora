@@ -104,6 +104,7 @@
   });
 
   let userDaysLookup = writable([]);
+  const dayEvents = writable([]);
 
   const eventsCollection = collection(db, "events");
   const userDaysCollection = collection(db, "userDays");
@@ -118,9 +119,8 @@
       tempEvents.sort((a, b) =>
         compareDesc(parseISO(a.start), parseISO(b.start))
       );
-      console.log("EVENTS", tempEvents);
       events.set(tempEvents);
-      console.log("EVENTS", events);
+      console.log("EVENTS", $events);
     }
   });
 
@@ -143,10 +143,41 @@
       userDaysLookup.set(
         tempUserDays.map((day) => formatISO(parseISO(day.date)))
       );
-      console.log("LOOKUP", $userDaysLookup);
-      console.log("LOOKUP", tempUserDays);
+      console.log("DAYS", $userDays);
+
+      matchDaysWithEvents();
     }
   });
+
+  function matchDaysWithEvents() {
+    const days = $userDays;
+    const eventsData = $events;
+
+    if (days.length > 0 && eventsData.length > 0) {
+      const matchedDays = days.map((day) => {
+        const matchedEvents = [];
+        const date = day.date;
+        const uid = day.uid;
+        eventsData.forEach((event) => {
+          console.log(
+            date,
+            formatISO(startOfDay(parseISO(event.start))) == date,
+            event.title
+          );
+          if (formatISO(startOfDay(parseISO(event.start))) == date) {
+            matchedEvents.push(event);
+          }
+        });
+        console.log("MATCHED EVENTS", matchedEvents);
+        console.log("EVENTS", $events);
+
+        return { date, matchedEvents, uid };
+      });
+
+      dayEvents.set(matchedDays);
+      console.log("DAY EVENTS", $dayEvents);
+    }
+  }
 
   // Selections
   let selHour;
@@ -158,9 +189,13 @@
   let selHourEnd;
   let selMinuteEnd;
   let selStart;
+  let selEnd;
   const year = writable("");
   const month = writable("");
   const day = writable("");
+  const yearEnd = writable("");
+  const monthEnd = writable("");
+  const dayEnd = writable("");
 
   $: {
     if (selStart) {
@@ -169,6 +204,13 @@
       month.set(monthVal);
       day.set(dayVal);
       console.log($year, $month, $day);
+    }
+    if (selEnd) {
+      const [yearVal, monthVal, dayVal] = selStart.split("-");
+      yearEnd.set(yearVal);
+      monthEnd.set(monthVal);
+      dayEnd.set(dayVal);
+      console.log($yearEnd, $monthEnd, $dayEnd);
     }
   }
 
@@ -303,7 +345,7 @@
   let title = "";
   let details = "";
   $: start = `${$year}-${$month}-${$day}T${selHour}:${selMinute}:00-04:00`;
-  $: end = `${selYearEnd}-${selMonthEnd}-${selDayEnd}T${selHourEnd}:${selMinuteEnd}:00-04:00`;
+  $: end = `${$yearEnd}-${$monthEnd}-${$dayEnd}T${selHourEnd}:${selMinuteEnd}:00-04:00`;
   let color = "";
   let hidden4 = true;
   let transitionParams = {
@@ -350,57 +392,11 @@
   }
 
   async function getSingleEvent(eventId) {
-    console.log("GET SINGLE EVENT", eventId);
     return await getDoc(doc(db, "events", eventId));
   }
   const tempEvents = writable([]);
-  async function handleLoadDay(date) {
-    let querySnap = await getDocs(
-      query(collection(db, "userDays"), where("date", "==", date))
-    );
-
-    console.log("day date", date);
-
-    let eventIds = [];
-
-    querySnap.forEach((doc) => {
-      console.log("events loop", doc.data());
-      let eventData = doc.data().events;
-      console.log("events loop 2", eventData);
-      let docEventIds = eventData.map((eventRef) => eventRef);
-
-      eventIds.push(...docEventIds);
-    });
-
-    console.log("event ids", eventIds);
-    let eventsData = [];
-    let tempEventsData = [];
-    // Retrieve event details based on the event IDs
-    for (let i = 0; i < eventIds.length; i++) {
-      let event = (await getSingleEvent(eventIds[i])).data();
-      //   tempEvents.push({
-      //     title: event.title,
-      //     description: event.description,
-      //     start: event.start,
-      //     end: event.end,
-      //   });
-      tempEventsData = [
-        ...tempEventsData,
-        {
-          title: event.title,
-          description: event.description,
-          start: event.start,
-          end: event.end,
-        },
-      ];
-      tempEvents.set(tempEventsData);
-    }
-    console.log("temp events data", tempEvents);
-
-    // Update the events store with the new data
-    events.set(eventsData);
-    console.log("TEMP EVENTS", tempEvents);
-  }
+  const tempDays = writable([]);
+  async function handleLoadDay(date) {}
 </script>
 
 <div class="flex flex-col self-center p-4 w-5/6 border-2">
@@ -434,14 +430,16 @@
             class="text-center w-[12rem] h-[7rem] border-2 dark:text-gray-400"
           >
             {day}
-            {#if $userDaysLookup && Array.from($userDaysLookup).includes(formatISO(new Date(currentYear, currentMonth, day)))}<ul
+            {#if $dayEvents && [...$dayEvents].some((d) => d.date === formatISO(new Date(currentYear, currentMonth, day)))}
+              <ul
                 class="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400"
-                onload={handleLoadDay(
-                  formatISO(new Date(currentYear, currentMonth, day))
-                )}
               >
-                {#each $tempEvents as event}
-                  <li>{event.title}</li>
+                {#each $dayEvents as eventDay}
+                  {#if eventDay.date === formatISO(new Date(currentYear, currentMonth, day))}
+                    {#each eventDay.matchedEvents as event}
+                      <li>{event.title}</li>
+                    {/each}
+                  {/if}
                 {/each}
               </ul>
             {/if}
@@ -510,16 +508,34 @@
     <div class="mb-6">
       <Label for="body" class="mb-2">Start</Label>
       <input type="date" bind:value={selStart} />
-      <Select class="mt-2" items={hours} bind:value={selHour} />
-      <Select class="mt-2" items={minutes} bind:value={selMinute} />
+      <Select
+        class="mt-2"
+        items={hours}
+        placeholder="Hour..."
+        bind:value={selHour}
+      />
+      <Select
+        class="mt-2"
+        items={minutes}
+        placeholder="Minute..."
+        bind:value={selMinute}
+      />
     </div>
     <div class="mb-6">
       <Label for="body" class="mb-2">End</Label>
-      <Select class="mt-2" items={years} bind:value={selYearEnd} />
-      <Select class="mt-2" items={months} bind:value={selMonthEnd} />
-      <Select class="mt-2" items={days} bind:value={selDayEnd} />
-      <Select class="mt-2" items={hours} bind:value={selHourEnd} />
-      <Select class="mt-2" items={minutes} bind:value={selMinuteEnd} />
+      <input type="date" bind:value={selEnd} />
+      <Select
+        class="mt-2"
+        items={hours}
+        placeholder="Hour..."
+        bind:value={selHourEnd}
+      />
+      <Select
+        class="mt-2"
+        items={minutes}
+        placeholder="Minute..."
+        bind:value={selMinuteEnd}
+      />
     </div>
     <div class="mb-6">
       <Label for="body" class="mb-2">Color</Label>
