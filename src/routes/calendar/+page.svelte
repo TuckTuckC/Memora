@@ -80,7 +80,6 @@
         compareDesc(parseISO(a.start), parseISO(b.start))
       );
       events.set(tempEvents);
-      console.log("EVENTS", $events);
     }
   });
 

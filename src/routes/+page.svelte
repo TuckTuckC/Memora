@@ -2,7 +2,7 @@
   import Auth from "../components/Auth.svelte";
   import Notes from "./notes/+page.svelte";
   import Tasks from "./tasks/+page.svelte";
-  import { authHandlers, authStore } from "../stores/authStore";
+  import { authStore } from "../stores/authStore";
 </script>
 
 <svelte:head>
