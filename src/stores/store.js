@@ -22,6 +22,7 @@ export const oldNotes = writable([])
 export const events = writable([])
 
 export const userDays = writable([])
+export const eventDays = writable([])
 
 export const signModalState = writable(false);
 

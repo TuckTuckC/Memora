@@ -71,9 +71,3 @@
     </Dropdown>
   </NavUl>
 </Navbar>
-
-<style>
-  a:hover {
-    text-decoration: none;
-  }
-</style>

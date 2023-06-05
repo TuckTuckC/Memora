@@ -8,10 +8,6 @@
     subMonths,
     format,
     getDaysInMonth,
-    startOfDay,
-    formatISO,
-    parseISO,
-    compareDesc,
   } from "date-fns";
   import {
     Button,
@@ -24,24 +20,10 @@
     CloseButton,
     Textarea,
   } from "flowbite-svelte";
-  import {
-    collection,
-    addDoc,
-    onSnapshot,
-    deleteDoc,
-    setDoc,
-    updateDoc,
-    arrayUnion,
-    doc,
-    getDoc,
-    getDocs,
-    query,
-    where,
-  } from "firebase/firestore";
   import { authStore } from "../../stores/authStore";
-  import { events, userDays } from "../../stores/store";
-  import { db } from "../../lib/firebase/firebase.client";
+  import {newEvent} from "../../controllers/events";
   import { writable } from "svelte/store";
+  import DayBlock from './DayBlock.svelte';
 
   let date = new Date();
 
@@ -63,50 +45,14 @@
 
   generateGrid();
 
-  let userDaysLookup = writable([]);
-  const dayEvents = writable([]);
-
-  const eventsCollection = collection(db, "events");
-  const userDaysCollection = collection(db, "userDays");
-
-  onSnapshot(eventsCollection, (snapshot) => {
-    if (store.currentUser) {
-      let tempEvents = [];
-      snapshot.docs.forEach((doc) => {
-        let event = { ...doc.data(), id: doc.id };
-        doc.data().uid == store.currentUser.uid ? tempEvents.push(event) : null;
-      });
-      tempEvents.sort((a, b) =>
-        compareDesc(parseISO(a.start), parseISO(b.start))
-      );
-      events.set(tempEvents);
-    }
-  });
-
-  onSnapshot(userDaysCollection, (snapshot) => {
-    if (store.currentUser) {
-      let tempUserDays = [];
-      let tempUserDaysLookup = [];
-      snapshot.docs.forEach((doc) => {
-        let event = { ...doc.data(), id: doc.id };
-        if (doc.data().uid == store.currentUser.uid) {
-          tempUserDays.push(event);
-          tempUserDaysLookup.push(event.start);
-        }
-      });
-      tempUserDays.sort((a, b) =>
-        compareDesc(parseISO(a.start), parseISO(b.start))
-      );
-      userDays.set(tempUserDays);
-
-      userDaysLookup.set(
-        tempUserDays.map((day) => formatISO(parseISO(day.date)))
-      );
-      console.log("DAYS", $userDays);
-
-      matchDaysWithEvents();
-    }
-  });
+  function reset() {
+    title = "";
+  details = "";
+  start = "";
+  end = "";
+  color = "";
+  hidden4 = true;
+  }
 
   function previousMonth() {
     date = subMonths(date, 1);
@@ -150,98 +96,6 @@
     daysGrid.set(grid);
   }
 
-  function matchDaysWithEvents() {
-    const days = $userDays;
-    const eventsData = $events;
-
-    if (days.length > 0 && eventsData.length > 0) {
-      const matchedDays = days.map((day) => {
-        const matchedEvents = [];
-        const date = day.date;
-        const uid = day.uid;
-        eventsData.forEach((event) => {
-          console.log(
-            date,
-            formatISO(startOfDay(parseISO(event.start))) == date,
-            event.title
-          );
-          if (formatISO(startOfDay(parseISO(event.start))) == date) {
-            matchedEvents.push(event);
-          }
-        });
-        console.log("MATCHED EVENTS", matchedEvents);
-        console.log("EVENTS", $events);
-
-        return { date, matchedEvents, uid };
-      });
-
-      dayEvents.set(matchedDays);
-      console.log("DAY EVENTS", $dayEvents);
-    }
-  }
-
-  function newEvent() {
-    const newDoc = addDoc(eventsCollection, {
-      title: title,
-      details: details,
-      start: start,
-      end: end,
-      color: color,
-      uid: store.currentUser.uid,
-    }).then((newDoc) => {
-      console.log("EVENT DATA", newDoc);
-      if (
-        [...$dayEvents].some(
-          (d) => d.date === formatISO(startOfDay(parseISO(start)))
-        )
-      ) {
-        addEventToDay({
-          id: newDoc.id,
-          date: formatISO(startOfDay(parseISO(start))),
-        });
-      } else {
-        newDay({ id: newDoc.id, start });
-      }
-    });
-  }
-
-  function newDay(doc) {
-    console.log("NEW DAY LOGS", doc);
-
-    const newDoc = addDoc(userDaysCollection, {
-      date: formatISO(startOfDay(parseISO(doc.start))),
-      events: [doc.id],
-      uid: store.currentUser.uid,
-    });
-    console.log("DAY DATA", newDoc);
-    console.log(`Your doc was created at ${newDoc.path}`);
-    title = "";
-    details = "";
-    start = "";
-    end = "";
-    color = "";
-    hidden4 = true;
-  }
-
-  async function addEventToDay(doc) {
-    let querySnap = await getDocs(
-      query(collection(db, "userDays"), where("date", "==", doc.date))
-    );
-
-    if (!querySnap.empty) {
-      const dayDoc = querySnap.docs[0];
-
-      // Get the existing events array from the day's document
-      const docEvents = dayDoc.data().events || [];
-
-      // Add the new event to the array
-      docEvents.push(doc.id);
-
-      // Update the events array in the day's document
-      await updateDoc(dayDoc.ref, { events: arrayUnion(doc.id) });
-    }
-    hidden4 = true;
-  }
 
   // Event Selections
   let selHour;
@@ -267,14 +121,12 @@
       year.set(yearVal);
       month.set(monthVal);
       day.set(dayVal);
-      console.log($year, $month, $day);
     }
     if (selEnd) {
       const [yearVal, monthVal, dayVal] = selStart.split("-");
       yearEnd.set(yearVal);
       monthEnd.set(monthVal);
       dayEnd.set(dayVal);
-      console.log($yearEnd, $monthEnd, $dayEnd);
     }
   }
 
@@ -401,24 +253,7 @@
     <div class="grid grid-cols-7 gap-4 justify-items-center">
       {#if $daysGrid}
         {#each $daysGrid as day}
-          <div
-            class="text-center w-[12rem] h-[7rem] border-2 dark:text-gray-400 overflow-hidden"
-          >
-            {day}
-            {#if $dayEvents && [...$dayEvents].some((d) => d.date === formatISO(new Date(currentYear, currentMonth, day)))}
-              <ul
-                class="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400"
-              >
-                {#each $dayEvents as eventDay}
-                  {#if eventDay.date === formatISO(new Date(currentYear, currentMonth, day))}
-                    {#each eventDay.matchedEvents as event}
-                      <li>{event.title}</li>
-                    {/each}
-                  {/if}
-                {/each}
-              </ul>
-            {/if}
-          </div>
+          <DayBlock {day} {currentYear} {currentMonth}/>
         {/each}
       {/if}
     </div>
@@ -525,7 +360,7 @@
     <Button
       type="submit"
       class="w-full !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
-      on:click={newEvent}
+      on:click={() => {newEvent({title, details, start, end, color}), reset()}}
       ><svg
         width="30"
         height="30"

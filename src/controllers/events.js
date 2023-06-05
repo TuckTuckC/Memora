@@ -1,74 +1,111 @@
-import "firebase/firestore";
+import { formatISO, parseISO, startOfDay } from "date-fns";
 import {
   collection,
   addDoc,
   onSnapshot,
   deleteDoc,
   setDoc,
-  doc,
+  updateDoc,
+  arrayUnion,
   getDoc,
+  getDocs,
+  query,
+  where,
 } from "firebase/firestore";
 import { db } from "../lib/firebase/firebase.client";
+import { notes, oldNotes, events, userDays, eventDays } from "../stores/store";
+import { writable, get } from "svelte/store";
 import { authStore } from "../stores/authStore";
-import { notes, oldNotes, events } from "../stores/store";
-import {
-  formatISO,
-  parseISO,
-  compareDesc,
-  differenceInWeeks,
-} from "date-fns";
 
 let store;
 authStore.subscribe((value) => {
   store = value;
 });
 
-export function initData() {
-    const notesCollection = collection(db, "notes");
-    const eventsCollection = collection(db, "events");
-    const userDaysCollection = collection(db, "userDays");
+const eventsCollection = collection(db, "events");
+const userDaysCollection = collection(db, "userDays");
 
-    onSnapshot(notesCollection, (snapshot) => {
-      if (store.currentUser) {
-        let tempNotes = [];
-        let tempOldNotes = [];
-        const oneWeekAgo = new Date();
-        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-        snapshot.docs.forEach((doc) => {
-          let note = { ...doc.data(), id: doc.id };
-          if (doc.data().user_id == store.currentUser.uid) {
-            tempNotes.push(note);
-            parseISO(note.updatedAt) <= oneWeekAgo
-              ? tempOldNotes.push(note)
-              : null;
-          }
-        });
-        oldNotes.set(tempOldNotes);
-        tempNotes.sort((a, b) =>
-          compareDesc(parseISO(a.updatedAt), parseISO(b.updatedAt))
+export function matchDaysWithEvents(match) {
+  console.log(match.userDays, match.events);
+  if (match.userDays.length > 0 && match.events.length > 0) {
+    const matchedDays = match.userDays.map((day) => {
+      const matchedEvents = [];
+      const date = day.date;
+      const uid = day.uid;
+      match.events.forEach((event) => {
+        console.log(
+          date,
+          formatISO(startOfDay(parseISO(event.start))) == date,
+          event.title
         );
-        console.log(tempNotes);
-        notes.set(tempNotes);
-      }
-    });
+        if (formatISO(startOfDay(parseISO(event.start))) == date) {
+          matchedEvents.push(event);
+        }
+      });
+      console.log("MATCHED EVENTS", matchedEvents);
+      console.log("EVENTS", match.events);
 
-    onSnapshot(eventsCollection, (snapshot) => {
-      if (store.currentUser) {
-        let tempEvents = [];
-        snapshot.docs.forEach((doc) => {
-          let event = { ...doc.data(), id: doc.id };
-          doc.data().uid == store.currentUser.uid
-            ? tempEvents.push(event)
-            : null;
-        });
-        tempEvents.sort((a, b) =>
-          compareDesc(parseISO(a.start), parseISO(b.start))
-        );
-        events.set(tempEvents);
-      }
+      return { date, matchedEvents, uid };
     });
+    eventDays.set(matchedDays);
+    console.log("MATCH", get(eventDays));
   }
+}
 
-  if (store.currentUser) {
-    initData();
+export function newEvent(doc) {
+  console.log("DOC", doc.title);
+  addDoc(eventsCollection, {
+    title: doc.title,
+    details: doc.details,
+    start: doc.start,
+    end: doc.end,
+    color: doc.color,
+    uid: store.currentUser.uid,
+  }).then((newDoc) => {
+    console.log("EVENT DATA", newDoc);
+    console.log("EVENT DAYS", get(eventDays));
+    if (
+      [...get(eventDays)].some(
+        (d) => d.date === formatISO(startOfDay(parseISO(doc.start)))
+      )
+    ) {
+      addEventToDay({
+        id: newDoc.id,
+        date: formatISO(startOfDay(parseISO(doc.start))),
+      });
+    } else {
+      newDay({ id: newDoc.id, start: doc.start });
+    }
+  });
+}
+
+async function addEventToDay(doc) {
+  let querySnap = await getDocs(
+    query(collection(db, "userDays"), where("date", "==", doc.date))
+  );
+
+  if (!querySnap.empty) {
+    const dayDoc = querySnap.docs[0];
+
+    // Get the existing events array from the day's document
+    const docEvents = dayDoc.data().events || [];
+
+    // Add the new event to the array
+    docEvents.push(doc.id);
+
+    // Update the events array in the day's document
+    await updateDoc(dayDoc.ref, { events: arrayUnion(doc.id) });
   }
+}
+
+function newDay(doc) {
+  console.log("NEW DAY LOGS", doc);
+
+  const newDoc = addDoc(userDaysCollection, {
+    date: formatISO(startOfDay(parseISO(doc.start))),
+    events: [doc.id],
+    uid: store.currentUser.uid,
+  });
+  console.log("DAY DATA", newDoc);
+  console.log(`Your doc was created at ${newDoc.path}`);
+}

@@ -6,7 +6,7 @@
   import { onMount } from "svelte";
   import { authStore } from "../stores/authStore";
   import { auth } from "../lib/firebase/firebase.client";
-  import { initData } from "../controllers/events";
+  import { initData } from "../controllers/data";
 
   $: {
     if ($authStore.currentUser) {

@@ -25,8 +25,6 @@ authStore.subscribe((value) => {
 
 const notesCollection = collection(db, "notes");
 
-$: console.log(store);
-
 export function newNote(title, body) {
     console.log(body, title);
     const newDoc = addDoc(notesCollection, {
