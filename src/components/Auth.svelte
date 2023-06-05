@@ -2,7 +2,7 @@
   import { authHandlers, authStore } from "../stores/authStore";
   import { collection, addDoc } from "firebase/firestore";
   import { db } from "../lib/firebase/firebase.client";
-  import { dateTime, notes, signModalState } from "../stores/store";
+  import { dateTime, notes, oldNotes, signModalState } from "../stores/store";
 
   import { Button, Modal, Label, Input, Checkbox } from "flowbite-svelte";
 
@@ -64,15 +64,54 @@
     // If there currently is a user in firebase, add the new user the the users collection in firestore
     if ($authStore.currentUser) {
       signModalState.set(false);
+
+      // Get NOTES
+      const notesCollection = collection(db, "notes");
+
       onSnapshot(notesCollection, (snapshot) => {
-        let tempNotes = [];
-        snapshot.docs.forEach((doc) => {
-          doc.data().user_id == store.currentUser.uid
-            ? tempNotes.push({ ...doc.data(), id: doc.id })
-            : null;
-        });
-        notes.set(tempNotes);
+        if (store.currentUser) {
+          let tempNotes = [];
+          let tempOldNotes = [];
+          const oneWeekAgo = new Date();
+          oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+          snapshot.docs.forEach((doc) => {
+            let note = { ...doc.data(), id: doc.id };
+            if (doc.data().user_id == store.currentUser.uid) {
+              tempNotes.push(note);
+              parseISO(note.updatedAt) <= oneWeekAgo
+                ? tempOldNotes.push(note)
+                : null;
+            }
+          });
+          oldNotes.set(tempOldNotes);
+          console.log("OLD NOTES", tempOldNotes);
+          tempNotes.sort((a, b) =>
+            compareDesc(parseISO(a.updatedAt), parseISO(b.updatedAt))
+          );
+          console.log(tempNotes);
+          notes.set(tempNotes);
+        }
       });
+
+      const eventsCollection = collection(db, "events");
+      const userDaysCollection = collection(db, "userDays");
+
+      onSnapshot(eventsCollection, (snapshot) => {
+        if (store.currentUser) {
+          let tempEvents = [];
+          snapshot.docs.forEach((doc) => {
+            let event = { ...doc.data(), id: doc.id };
+            doc.data().uid == store.currentUser.uid
+              ? tempEvents.push(event)
+              : null;
+          });
+          tempEvents.sort((a, b) =>
+            compareDesc(parseISO(a.start), parseISO(b.start))
+          );
+          events.set(tempEvents);
+        }
+      });
+
       register = false;
       email = "";
       password = "";

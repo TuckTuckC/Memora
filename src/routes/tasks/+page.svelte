@@ -18,7 +18,12 @@
   import { dateTime } from "../../stores/store";
   import { storeTasks } from "../../stores/store";
   import { storeTasksLabels } from "../../stores/store";
-  import { formatDistanceToNow, formatDistanceToNowStrict, parseISO, formatISO } from 'date-fns'
+  import {
+    formatDistanceToNow,
+    formatDistanceToNowStrict,
+    parseISO,
+    formatISO,
+  } from "date-fns";
   import {
     Card,
     Button,
@@ -51,21 +56,23 @@
     let array = [];
     snapshot.docs.forEach((doc) => {
       // console.log(doc.data());
-      let result = formatDistanceToNowStrict(parseISO(doc.data().updatedAt)).split(" ");
-      let filtered = result.filter(word => word !== "in");
+      let result = formatDistanceToNowStrict(
+        parseISO(doc.data().updatedAt)
+      ).split(" ");
+      let filtered = result.filter((word) => word !== "in");
       // in cases of ~1 year, formatDistanceToNowStrict may return "in 1 year"
-      console.log(filtered);
+      // console.log(filtered);
       if (filtered[1] == "days") {
         olderDaysTasks.push(doc.data());
       }
       if (filtered[1] == "month" || filtered[1 == "month"]) {
         olderMonthsTasks.push(doc.data());
       }
-      console.log(olderMonthsTasks);
+      // console.log(olderMonthsTasks);
       array.push({ ...doc.data(), id: doc.id });
       olderMonthsTasks = olderMonthsTasks;
     });
-    console.log("This is the storeTasks array: ", array);
+    // console.log("This is the storeTasks array: ", array);
     // console.log(array);
     storeTasks.set(array);
   });
@@ -363,13 +370,27 @@
 
       <div class="flex flex-col justify-center items-center">
         {#if $storeTasks}
-          <div class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Upcoming Tasks</div>
-          <hr class="w-48 h-1 mx-auto my-4 bg-gray-800 border-0 rounded md:my-4 dark:bg-gray-100">
-          <div class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">These have been here a while...</div>
+          <div
+            class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+          >
+            Upcoming Tasks
+          </div>
+          <hr
+            class="w-48 h-1 mx-auto my-4 bg-gray-800 border-0 rounded md:my-4 dark:bg-gray-100"
+          />
+          <div
+            class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+          >
+            These have been here a while...
+          </div>
           {#if olderMonthsTasks}
-            <div class="mb-2 text-1xl font-bold tracking-tight text-gray-900 dark:text-white">Oldermonthstasks should be working...</div>
+            <div
+              class="mb-2 text-1xl font-bold tracking-tight text-gray-900 dark:text-white"
+            >
+              Oldermonthstasks should be working...
+            </div>
             {#each olderMonthsTasks as olderMonthsTask}
-                <Card
+              <Card
                 on:click={openEdit(olderMonthsTask.id)}
                 class="m-2 relative w-3/5 max-w-xs h-48 overflow-hidden cursor-pointer !bg-lightnotebg dark:!bg-darknotebg"
               >
@@ -433,7 +454,9 @@
               </Card>
             {/each}
           {/if}
-          <hr class="w-48 h-1 mx-auto my-4 bg-gray-800 border-0 rounded md:my-4 dark:bg-gray-100">
+          <hr
+            class="w-48 h-1 mx-auto my-4 bg-gray-800 border-0 rounded md:my-4 dark:bg-gray-100"
+          />
           <!-- {#each $storeTasks as task}
             <Card
               on:click={openEdit(task.id)}

@@ -17,9 +17,13 @@ export const storeTasks = writable([]);
 export const storeTasksLabels = writable([]);
 
 export const notes = writable([])
+export const oldNotes = writable([])
+
+export const events = writable([])
+
+export const userDays = writable([])
+export const eventDays = writable([])
 
 export const signModalState = writable(false);
-
-export const onHomePage = writable();
 
 export const dateTime = writable(getDateTime());

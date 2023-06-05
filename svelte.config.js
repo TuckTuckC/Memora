@@ -12,4 +12,4 @@ const config = {
 	preprocess: vitePreprocess()
 };
 
-module.exports = config;
+export default config;
