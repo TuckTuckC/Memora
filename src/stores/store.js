@@ -18,6 +18,7 @@ export const storeTasksLabels = writable([]);
 
 export const notes = writable([])
 export const oldNotes = writable([])
+export const oldTasks = writable([])
 
 export const events = writable([])
 

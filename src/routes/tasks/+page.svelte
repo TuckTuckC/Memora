@@ -11,13 +11,12 @@
     where,
     onSnapshot,
   } from "firebase/firestore";
-  import { db } from "../../lib/firebase/firebase.client";
   import "firebase/firestore";
   import { authStore } from "../../stores/authStore";
   import { get } from "svelte/store";
   import { dateTime } from "../../stores/store";
   import { storeTasks } from "../../stores/store";
-  import { storeTasksLabels } from "../../stores/store";
+  import { storeTasksLabels, oldTasks } from "../../stores/store";
   import {
     formatDistanceToNow,
     formatDistanceToNowStrict,
@@ -36,8 +35,6 @@
 
   let idTemp = "";
   let dark = true;
-  let olderDaysTasks = [];
-  let olderMonthsTasks = [];
 
   let title = "";
   let body = "";
@@ -46,46 +43,7 @@
   let store;
   authStore.subscribe((value) => {
     store = value;
-  });
-  // console.log("datetime", get(dateTime));
-  // console.log(`${get(dateTime).date} at ${get(dateTime).time}`);
-  const tasksCollection = collection(db, "tasks");
-  const taskLabelsRef = collection(db, "taskLabels");
-
-  onSnapshot(tasksCollection, (snapshot) => {
-    let array = [];
-    snapshot.docs.forEach((doc) => {
-      // console.log(doc.data());
-      let result = formatDistanceToNowStrict(
-        parseISO(doc.data().updatedAt)
-      ).split(" ");
-      let filtered = result.filter((word) => word !== "in");
-      // in cases of ~1 year, formatDistanceToNowStrict may return "in 1 year"
-      // console.log(filtered);
-      if (filtered[1] == "days") {
-        olderDaysTasks.push(doc.data());
-      }
-      if (filtered[1] == "month" || filtered[1 == "month"]) {
-        olderMonthsTasks.push(doc.data());
-      }
-      // console.log(olderMonthsTasks);
-      array.push({ ...doc.data(), id: doc.id });
-      olderMonthsTasks = olderMonthsTasks;
-    });
-    // console.log("This is the storeTasks array: ", array);
-    // console.log(array);
-    storeTasks.set(array);
-  });
-
-  onSnapshot(taskLabelsRef, (snapshot) => {
-    let array = [];
-    snapshot.docs.forEach((doc) => {
-      // console.log(doc.data());
-      array.push({ ...doc.data() });
-    });
-    // console.log(array);
-    storeTasksLabels.set(array);
-  });
+  }); 
 
   function addLabel(labelName) {
     //ensure that the label isn't already added/applied
@@ -110,20 +68,7 @@
     labelsAdded = labelsAdded;
   }
 
-  async function newTask() {
-    const newDoc = await addDoc(tasksCollection, {
-      body: body,
-      createdAt: `${formatISO(new Date())}`,
-      title: title,
-      updatedAt: `${formatISO(new Date())}`,
-      user_id: store.currentUser.uid,
-      labels: labelsAdded,
-    });
-    labelsAdded = [];
-    console.log(`Your doc was created at ${newDoc.path}`);
-    console.log("labelsAdded is now: ", labelsAdded);
-    hidden4 = true;
-  }
+  
 
   async function makeNewLabel() {
     /*need to add a check here to ensure label name is NOT used (necessary for our delete function)*/
@@ -383,35 +328,35 @@
           >
             These have been here a while...
           </div>
-          {#if olderMonthsTasks}
+          {#if oldTasks}
             <div
               class="mb-2 text-1xl font-bold tracking-tight text-gray-900 dark:text-white"
             >
-              Oldermonthstasks should be working...
+            oldTasks should be working...
             </div>
-            {#each olderMonthsTasks as olderMonthsTask}
+            {#each $oldTasks as oldTask}
               <Card
-                on:click={openEdit(olderMonthsTask.id)}
+                on:click={openEdit(oldTask.id)}
                 class="m-2 relative w-3/5 max-w-xs h-48 overflow-hidden cursor-pointer !bg-lightnotebg dark:!bg-darknotebg"
               >
                 <h5
                   class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
                 >
-                  {olderMonthsTask.title}
+                  {oldTask.title}
                 </h5>
                 <p
                   class="font-normal text-gray-700 dark:text-gray-200 leading-tight mb-4"
                 >
-                  {olderMonthsTask.body}
+                  {oldTask.body}
                 </p>
                 <p
                   class="font-normal text-gray-700 dark:text-gray-200 leading-tight mb-4"
                 >
-                  {formatDistanceToNow(parseISO(olderMonthsTask.updatedAt))} ago
+                  {formatDistanceToNow(parseISO(oldTask.updatedAt))} ago
                 </p>
-                {#if olderMonthsTask.labels}
+                {#if oldTask.labels}
                   <div class="flex justify-start items-center gap-2 flex-wrap">
-                    {#each olderMonthsTask.labels as label}
+                    {#each oldTask.labels as label}
                       <Label
                         class="text-sm w-fit text-gray-700 block mb-2 p-2 border-solid border-2 border-white rounded dark:text-gray-400 leading-tight"
                       >
@@ -423,7 +368,7 @@
                 <Button
                   color="red"
                   class="w-fit absolute top-1 right-1 m-2 bg-redbtn dark:!bg-darkredbtn"
-                  on:click={deleteStoredTask(olderMonthsTask.id)}
+                  on:click={deleteStoredTask(oldTask.id)}
                   ><svg
                     width="20"
                     height="20"
