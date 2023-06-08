@@ -38,6 +38,7 @@ export async function newTask(doc) {
     updatedAt: `${formatISO(new Date())}`,
     user_id: store.currentUser.uid,
     labels: get(labelsAdded),
+    color: doc.colorSel,
   });
   console.log(`Your doc was created at ${newDoc.path}`);
   console.log("labelsAdded is now: ", doc.labelsAdded);

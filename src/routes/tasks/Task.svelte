@@ -9,11 +9,14 @@
 
   export let openEdit;
   export let task;
+
 </script>
 
 <Card
 on:click={openEdit(task.id)}
-class="m-2 w-auto max-w-xs h-56 overflow-hidden cursor-pointer !bg-lightnotebg dark:!bg-darknotebg"
+id="taskCard"
+class={`m-2 w-auto max-w-xs h-56 overflow-hidden cursor-pointer !bg-lightnotebg dark:!bg-darknotebg border-8`}
+style={`border: 4px solid ${task.color ? `${task.color}` : "transparent"}`}
 >
 <h5
   class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"

@@ -7,7 +7,7 @@
   import { db } from "../../lib/firebase/firebase.client";
   import "firebase/firestore";
   import { authStore } from "../../stores/authStore";
-  import { storeTasks, storeTasksLabels, oldTasks, labelsAdded } from "../../stores/store";
+  import { storeTasks, storeTasksLabels, oldTasks, labelsAdded, colors } from "../../stores/store";
   import {
     formatDistanceToNow,
     parseISO,
@@ -15,6 +15,7 @@
   import {
     Card,
     Button,
+    ButtonGroup,
     Label,
     Input,
     Drawer,
@@ -33,6 +34,7 @@
   let title = "";
   let body = "";
   let labelName = "";
+  let colorSel = "";
   let store;
   authStore.subscribe((value) => {
     store = value;
@@ -41,6 +43,7 @@
   function reset() {
     title = "";
     body = "";
+    colorSel = "";
     labelsAdded.set([]);
     hidden4 = true;
     hidden3 = true;
@@ -57,6 +60,11 @@
     labelsAdded.set(docSnap.data().labels);
     idTemp = id;
     hidden3 = false;
+  }
+
+  function handleColor(d) {
+    console.log(d);
+    colorSel = d;
   }
 
   // Drawer JS
@@ -545,7 +553,6 @@
       <div class="text-center w-fit flex flex-col mb-2">
         <AccordionItem>
           <div slot="header" class="mb-6">
-            <Label for="title" class="block mb-2">Title</Label>
             <Input
               id="title"
               name="title"
@@ -596,27 +603,40 @@
                 </div>
               </div>
             </div>
-            {#if $storeTasksLabels}
-            <div class="flex flex-col">
-              <Label for="body" class="mb-2">Your Labels</Label>
-                <div class="mb-6 grid grid-cols-2 gap-2 justify-items-center">
-                  {#each $storeTasksLabels as label}
-                    <div
-                      class="bg-gray-500 w-fit hover:bg-gray-300 flex gap-2 justify-center items-center focus:shadow-outline focus:outline-none text-white font-bold p-1 rounded"
-                    >
-                      <div on:click={addLabel({labelName: label.labelName})}>
-                        <div>{label.labelName} </div>
+            <div>
+              <ButtonGroup class="flex justify-center items-center gap-2">
+                  <Button on:click={() => handleColor('#9BABB8')} class={`!bg-[#9BABB8] !p-1 !rounded-full w-[1rem] h-[1rem]`}></Button>
+                  <Button on:click={() => handleColor('#5C8984')} class={`!bg-[#5C8984] !p-1 !rounded-full w-[1rem] h-[1rem]`}></Button>
+                  <Button on:click={() => handleColor('#FCF9BE')} class={`!bg-[#FCF9BE] !p-1 !rounded-full w-[1rem] h-[1rem]`}></Button>
+                  <Button on:click={() => handleColor('#FF8787')} class={`!bg-[#FF8787] !p-1 !rounded-full w-[1rem] h-[1rem]`}></Button>
+                  <Button on:click={() => handleColor('#537188')} class={`!bg-[#537188] !p-1 !rounded-full w-[1rem] h-[1rem]`}></Button>
+                  <Button on:click={() => handleColor('#E8A0BF')} class={`!bg-[#E8A0BF] !p-1 !rounded-full w-[1rem] h-[1rem]`}></Button>
+                  <Button on:click={() => handleColor('#B2A4FF')} class={`!bg-[#B2A4FF] !p-1 !rounded-full w-[1rem] h-[1rem]`}></Button>
+                  <Button on:click={() => handleColor('#A7727D')} class={`!bg-[#A7727D] !p-1 !rounded-full w-[1rem] h-[1rem]`}></Button>
+              </ButtonGroup>
+              {#if $storeTasksLabels}
+              <div class="flex flex-col">
+  
+                <Label for="body" class="mb-2">Your Labels</Label>
+                  <div class="ml-2 mb-6 grid grid-cols-2 gap-2 justify-items-center">
+                    {#each $storeTasksLabels as label}
+                      <div
+                        class="bg-gray-500 w-fit hover:bg-gray-300 flex gap-2 justify-center justify-self-start items-center focus:shadow-outline focus:outline-none text-white font-bold p-1 rounded"
+                      >
+                        <div on:click={addLabel({labelName: label.labelName})}>
+                          <div>{label.labelName} </div>
+                        </div>
+                        <i on:click={removeStoredLabel(label.labelName)} class="bi bi-x"></i>
                       </div>
-                      <i on:click={removeStoredLabel(label.labelName)} class="bi bi-x"></i>
-                    </div>
-                  {/each}
-                </div>
+                    {/each}
+                  </div>
+              </div>
+              {/if}
             </div>
-            {/if}
           </div>
               <Button
                 class="w-full !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
-                on:click={() => {newTask({labelsAdded, body, title}), reset()}}
+                on:click={() => {newTask({labelsAdded, body, title, colorSel}), reset()}}
                 ><i class="bi bi-clipboard-plus-fill mr-2"></i>
                 Create Task</Button
               >
@@ -757,7 +777,7 @@
               <Button
                 type="submit"
                 class="w-full !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
-                on:click={() => {newTask({labelsAdded, body, title}), reset()}}
+                on:click={() => {newTask({labelsAdded, body, title, colorSel}), reset()}}
                 ><svg
                   width="30"
                   height="30"
