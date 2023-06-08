@@ -33,11 +33,6 @@ export function matchDaysWithEvents(match) {
       const date = day.date;
       const uid = day.uid;
       match.events.forEach((event) => {
-        console.log(
-          date,
-          formatISO(startOfDay(parseISO(event.start))) == date,
-          event.title
-        );
         if (formatISO(startOfDay(parseISO(event.start))) == date) {
           matchedEvents.push(event);
         }

@@ -1,5 +1,5 @@
 <script>
-  import { formatISO } from "date-fns";
+  import { formatISO, parseISO, format } from "date-fns";
   import {eventDays} from "../../stores/store";
   import { Button, Modal, Listgroup, ListgroupItem } from 'flowbite-svelte';
   import {writable} from 'svelte/store';
@@ -46,11 +46,10 @@
 <Modal title="Terms of Service" class="w-[30rem]" bind:open={clickOutsideModal} autoclose outsideclose>
   <Listgroup items={$tempDay.matchedEvents} let:item class="w-96">
     <ListgroupItem class="text-base font-semibold gap-2">
-      <p>{item.title}</p>
+      <p><span>{format(parseISO(item.start), "ha")}</span>: {item.title}</p>
     </ListgroupItem>
   </Listgroup>
   <svelte:fragment slot='footer'>
-    <Button on:click={() => alert('Handle "success"')}>I accept</Button>
-    <Button color="alternative">Decline</Button>
+    <Button color="green" on:click={() => alert('Handle "success"')}>Add Event</Button>
   </svelte:fragment>
 </Modal>
