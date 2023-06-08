@@ -20,27 +20,27 @@ import {
   formatISO,
 } from "date-fns";
 import { labelsAdded } from "../stores/store";
-import { get } from 'svelte/store'
+import { get } from "svelte/store";
 
 let store;
 authStore.subscribe((value) => {
   store = value;
-}); 
+});
 
 const tasksCollection = collection(db, "tasks");
-const taskLabelsRef = collection(db, "taskLabels");
 
 export async function newTask(doc) {
-    const newDoc = await addDoc(tasksCollection, {
-      body: doc.body,
-      createdAt: `${formatISO(new Date())}`,
-      title: doc.title,
-      updatedAt: `${formatISO(new Date())}`,
-      user_id: store.currentUser.uid,
-      labels: doc.labelsAdded,
-    });
-    console.log(`Your doc was created at ${newDoc.path}`);
-    console.log("labelsAdded is now: ", doc.labelsAdded);
+  console.log(doc);
+  const newDoc = await addDoc(tasksCollection, {
+    body: doc.body,
+    createdAt: `${formatISO(new Date())}`,
+    title: doc.title,
+    updatedAt: `${formatISO(new Date())}`,
+    user_id: store.currentUser.uid,
+    labels: get(labelsAdded),
+  });
+  console.log(`Your doc was created at ${newDoc.path}`);
+  console.log("labelsAdded is now: ", doc.labelsAdded);
 }
 
 export async function editTask(d) {
@@ -54,4 +54,8 @@ export async function editTask(d) {
   await setDoc(doc(db, "tasks", d.idTemp), newData, { merge: true });
 
   // console.log(`Your doc was updated at ${newData.path}`);
+}
+
+export async function deleteStoredTask(id) {
+  await deleteDoc(doc(db, "tasks", id));
 }
