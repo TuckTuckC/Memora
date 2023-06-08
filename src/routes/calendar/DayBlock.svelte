@@ -20,12 +20,14 @@
     }
   } )
 
+  console.log($tempDay);
 
 </script>
 
 <div
     class="text-center w-[12rem] h-[7rem] border-2 dark:text-gray-400 overflow-hidden"
     on:click={() => clickOutsideModal = true}
+    on:keydown={() => {}}
 >
     {day}
     {#if isValidDate}
