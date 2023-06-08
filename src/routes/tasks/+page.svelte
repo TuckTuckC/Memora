@@ -1,4 +1,5 @@
 <script>
+  import {writable, get,} from 'svelte/store';
   import {
     collection,
     addDoc,
@@ -11,12 +12,12 @@
     where,
     onSnapshot,
   } from "firebase/firestore";
+  import { db } from "../../lib/firebase/firebase.client";
   import "firebase/firestore";
   import { authStore } from "../../stores/authStore";
-  import { get } from "svelte/store";
   import { dateTime } from "../../stores/store";
   import { storeTasks } from "../../stores/store";
-  import { storeTasksLabels, oldTasks } from "../../stores/store";
+  import { storeTasksLabels, oldTasks, labelsAdded } from "../../stores/store";
   import {
     formatDistanceToNow,
     formatDistanceToNowStrict,
@@ -31,7 +32,10 @@
     Drawer,
     CloseButton,
     Textarea,
+    AccordionItem, Accordion
   } from "flowbite-svelte";
+  import { newTask, editTask } from "../../controllers/tasks";
+  import { makeNewLabel, removeStoredLabel, addLabel, removeAppliedLabel } from "../../controllers/labels";
 
   let idTemp = "";
   let dark = true;
@@ -39,72 +43,82 @@
   let title = "";
   let body = "";
   let labelName = "";
-  let labelsAdded = [];
   let store;
   authStore.subscribe((value) => {
     store = value;
   }); 
 
-  function addLabel(labelName) {
-    //ensure that the label isn't already added/applied
-    if (labelsAdded.includes(labelName)) {
-      console.log(
-        "No can do, this label is already applied and we don't want duplicates"
-      );
-    } else {
-      console.log("Adding this label: ", labelName);
-      labelsAdded.push(labelName);
-      labelsAdded = labelsAdded;
-    }
+  function reset() {
+    title = "";
+    body = "";
+    labelsAdded.set([]);
+    hidden4 = true;
+    hidden3 = true;
   }
 
-  function removeAppliedLabel(labelName) {
-    console.log("Removing this label: ", labelName);
-    console.log("labelsAdded before splicing", labelsAdded);
-    let indexToRemove = labelsAdded.indexOf(labelName);
-    console.log(indexToRemove);
-    labelsAdded.splice(indexToRemove, 1);
-    console.log("labelsAdded after splice", labelsAdded);
-    labelsAdded = labelsAdded;
+  function resetLabel() {
+    labelName = "";
   }
 
-  
+  // function addLabel(labelName) {
+  //   //ensure that the label isn't already added/applied
+  //   if (labelsAdded.includes(labelName)) {
+  //     console.log(
+  //       "No can do, this label is already applied and we don't want duplicates"
+  //     );
+  //   } else {
+  //     console.log("Adding this label: ", labelName);
+  //     labelsAdded.push(labelName);
+  //     labelsAdded = labelsAdded;
+  //   }
+  // }
 
-  async function makeNewLabel() {
-    /*need to add a check here to ensure label name is NOT used (necessary for our delete function)*/
-    console.log("HI MAKING NEW LABEL");
-    let namesToCheck = [];
-    const q = query(taskLabelsRef);
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
-      // console.log(doc.id, " => ", doc.data());
-      namesToCheck.push(doc.data().labelName);
-    });
-    if (namesToCheck.includes(labelName)) {
-      console.log(
-        "No can do, this label is already applied and we don't want duplicates"
-      );
-    } else {
-      console.log("Adding this label: ", labelName);
-      labelsAdded.push(labelName);
-      labelsAdded = labelsAdded;
-      const newDoc = await addDoc(taskLabelsRef, {
-        labelName: labelName,
-      });
-    }
-  }
+  // function removeAppliedLabel(labelName) {
+  //   let tempLabelsAdded = get(labelsAdded);
+  //   console.log("Removing this label: ", labelName);
+  //   console.log("labelsAdded before splicing", get(labelsAdded));
+  //   let indexToRemove = tempLabelsAdded.indexOf(labelName);
+  //   console.log(indexToRemove);
+  //   tempLabelsAdded.splice(indexToRemove, 1);
+  //   labelsAdded.set(tempLabelsAdded);
+  //   console.log("labelsAdded after splice", get(labelsAdded));
+  // }
 
-  async function removeStoredLabel(labelName) {
-    const q = query(taskLabelsRef, where("labelName", "==", labelName));
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      //documents cite using forEach -- should only run on one b/c of query == labelName
-      // doc.data() is never undefined for query doc snapshots
-      console.log(doc.id, " => ", doc.data());
-      deleteDoc(doc.ref);
-    });
-  }
+  // async function makeNewLabel() {
+  //   /*need to add a check here to ensure label name is NOT used (necessary for our delete function)*/
+  //   console.log("HI MAKING NEW LABEL");
+  //   let namesToCheck = [];
+  //   const q = query(taskLabelsRef);
+  //   const querySnapshot = await getDocs(q);
+  //   querySnapshot.forEach((doc) => {
+  //     // doc.data() is never undefined for query doc snapshots
+  //     // console.log(doc.id, " => ", doc.data());
+  //     namesToCheck.push(doc.data().labelName);
+  //   });
+  //   if (namesToCheck.includes(labelName)) {
+  //     console.log(
+  //       "No can do, this label is already applied and we don't want duplicates"
+  //     );
+  //   } else {
+  //     console.log("Adding this label: ", labelName);
+  //     labelsAdded.push(labelName);
+  //     labelsAdded = labelsAdded;
+  //     const newDoc = await addDoc(taskLabelsRef, {
+  //       labelName: labelName,
+  //     });
+  //   }
+  // }
+
+  // async function removeStoredLabel(labelName) {
+  //   const q = query(taskLabelsRef, where("labelName", "==", labelName));
+  //   const querySnapshot = await getDocs(q);
+  //   querySnapshot.forEach((doc) => {
+  //     //documents cite using forEach -- should only run on one b/c of query == labelName
+  //     // doc.data() is never undefined for query doc snapshots
+  //     console.log(doc.id, " => ", doc.data());
+  //     deleteDoc(doc.ref);
+  //   });
+  // }
 
   async function deleteStoredTask(id) {
     await deleteDoc(doc(db, "tasks", id));
@@ -114,28 +128,28 @@
     let docSnap = await getDoc(doc(db, "tasks", id));
     title = docSnap.data().title;
     body = docSnap.data().body;
-    labelsAdded = docSnap.data().labels;
+    labelsAdded.set(docSnap.data().labels);
     idTemp = id;
     console.log(docSnap.data());
     hidden3 = false;
   }
 
-  async function editTask() {
-    console.log("HERE", doc(db, "tasks", idTemp));
-    const newData = {
-      body: body,
-      title: title,
-      updatedAt: `${formatISO(new Date())}`,
-      labels: labelsAdded,
-    };
-    await setDoc(doc(db, "tasks", idTemp), newData, { merge: true });
+  // async function editTask() {
+  //   console.log("HERE", doc(db, "tasks", idTemp));
+  //   const newData = {
+  //     body: body,
+  //     title: title,
+  //     updatedAt: `${formatISO(new Date())}`,
+  //     labels: get(labelsAdded),
+  //   };
+  //   await setDoc(doc(db, "tasks", idTemp), newData, { merge: true });
 
-    title = "";
-    body = "";
-    labelsAdded = [];
-    hidden3 = true;
-    // console.log(`Your doc was updated at ${newData.path}`);
-  }
+  //   title = "";
+  //   body = "";
+  //   labelsAdded.set([]);
+  //   hidden3 = true;
+  //   // console.log(`Your doc was updated at ${newData.path}`);
+  // }
 
   // Drawer JS
   import { sineIn } from "svelte/easing";
@@ -213,13 +227,13 @@
           </div>
           <Button
             class="w-2/5 !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
-            on:click={makeNewLabel}>Create Label</Button
+            on:click={() => {makeNewLabel({labelName}), resetLabel()}}>Create Label</Button
           >
 
           <div class="mb-6">
             <Label for="body" class="mb-2">Applied Labels</Label>
             <div class="flex flex-wrap justify-start align-center">
-              {#each labelsAdded as labelAdded}
+              {#each $labelsAdded as labelAdded}
                 <div
                   class="bg-gray-500 w-fit hover:bg-gray-300 flex gap-2 justify-center items-center focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-2 rounded"
                 >
@@ -240,7 +254,7 @@
                 <div
                   class="bg-gray-500 w-fit hover:bg-gray-300 flex gap-2 justify-center items-center focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-4 rounded"
                 >
-                  <div on:click={addLabel(label.labelName)}>
+                  <div on:click={addLabel({labelName: label.labelName})}>
                     <div>{label.labelName}</div>
                   </div>
                   <Button
@@ -281,7 +295,7 @@
           <Button
             type="submit"
             class="w-full !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
-            on:click={newTask}
+            on:click={() => {newTask({labelsAdded, body, title}), reset()}}
             ><svg
               width="30"
               height="30"
@@ -516,11 +530,11 @@
                   bind:value={body}
                 />
               </div>
-              {#if labelsAdded.length > 0}
+              {#if $labelsAdded.length > 0}
                 <div class="mb-6">
                   <Label for="body" class="mb-2">Applied Labels</Label>
                   <div class="flex flex-wrap justify-start align-center">
-                    {#each labelsAdded as labelAdded}
+                    {#each $labelsAdded as labelAdded}
                       <div
                         class="bg-gray-500 w-fit hover:bg-gray-300 flex gap-2 justify-center items-center focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-2 rounded"
                       >
@@ -542,7 +556,7 @@
                     <div
                       class="bg-gray-500 w-fit hover:bg-gray-300 flex gap-2 justify-center items-center focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-4 rounded"
                     >
-                      <div on:click={addLabel(label.labelName)}>
+                      <div on:click={addLabel({labelName: label.labelName})}>
                         <div>{label.labelName}</div>
                       </div>
                       <Button
@@ -620,7 +634,21 @@
   {/if}
   {#if window.location.pathname == "/tasks"}
     <div class="flex flex-col flex-1">
-      <div class="text-center flex mb-2">
+      <div class="text-center flex flex-col mb-2">
+        <Accordion>
+          <h2 id="accordion-collapse-heading-1">
+            <button type="button" class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border border-b-0 border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800" data-accordion-target="#accordion-collapse-body-1" aria-expanded="true" aria-controls="accordion-collapse-body-1">
+              <span>What is Flowbite?</span>
+              <svg data-accordion-icon class="w-6 h-6 rotate-180 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+            </button>
+          </h2>
+          <div id="accordion-collapse-body-1" class="hidden" aria-labelledby="accordion-collapse-heading-1">
+            <div class="p-5 border border-b-0 border-gray-200 dark:border-gray-700 dark:bg-gray-900">
+              <p class="mb-2 text-gray-500 dark:text-gray-400">Flowbite is an open-source library of interactive components built on top of Tailwind CSS including buttons, dropdowns, modals, navbars, and more.</p>
+              <p class="text-gray-500 dark:text-gray-400">Check out this guide to learn how to <a href="/docs/getting-started/introduction/" class="text-blue-600 dark:text-blue-500 hover:underline">get started</a> and start developing websites even faster with components on top of Tailwind CSS.</p>
+            </div>
+          </div>
+        </Accordion>
         <Button
           on:click={() => (hidden4 = false)}
           class="!bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
@@ -688,13 +716,13 @@
           </div>
           <Button
             class="w-2/5 !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
-            on:click={makeNewLabel}>Create Label</Button
+            on:click={() => {makeNewLabel({labelName}), resetLabel()}}>Create Label</Button
           >
 
           <div class="mb-6">
             <Label for="body" class="mb-2">Applied Labels</Label>
             <div class="flex flex-wrap justify-start align-center">
-              {#each labelsAdded as labelAdded}
+              {#each $labelsAdded as labelAdded}
                 <div
                   class="bg-gray-500 w-fit hover:bg-gray-300 flex gap-2 justify-center items-center focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-2 rounded"
                 >
@@ -715,7 +743,7 @@
                 <div
                   class="bg-gray-500 w-fit hover:bg-gray-300 flex gap-2 justify-center items-center focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-4 rounded"
                 >
-                  <div on:click={addLabel(label.labelName)}>
+                  <div on:click={addLabel({labelName: label.labelName})}>
                     <div>{label.labelName}</div>
                   </div>
                   <Button
@@ -756,7 +784,7 @@
           <Button
             type="submit"
             class="w-full !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
-            on:click={newTask}
+            on:click={() => {newTask({labelsAdded, body, title}), reset()}}
             ><svg
               width="30"
               height="30"
@@ -899,11 +927,11 @@
                   bind:value={body}
                 />
               </div>
-              {#if labelsAdded.length > 0}
+              {#if $labelsAdded.length > 0}
                 <div class="mb-6">
                   <Label for="body" class="mb-2">Applied Labels</Label>
                   <div class="flex flex-wrap justify-start align-center">
-                    {#each labelsAdded as labelAdded}
+                    {#each $labelsAdded as labelAdded}
                       <div
                         class="bg-gray-500 w-fit hover:bg-gray-300 flex gap-2 justify-center items-center focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-2 rounded"
                       >
@@ -925,7 +953,7 @@
                     <div
                       class="bg-gray-500 w-fit hover:bg-gray-300 flex gap-2 justify-center items-center focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 m-4 rounded"
                     >
-                      <div on:click={addLabel(label.labelName)}>
+                      <div on:click={addLabel({labelName: label.labelName})}>
                         <div>{label.labelName}</div>
                       </div>
                       <Button
@@ -966,7 +994,7 @@
               <Button
                 type="submit"
                 class="w-full !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
-                on:click={editTask}
+                on:click={() => {editTask({title, body, idTemp}), reset()}}
                 ><svg
                   width="30"
                   height="30"
