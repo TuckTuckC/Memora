@@ -1,8 +1,5 @@
 <script>
   import Auth from "../components/Auth.svelte";
-  import Notes from "./notes/+page.svelte";
-  import Tasks from "./tasks/+page.svelte";
-  import { authStore } from "../stores/authStore";
 </script>
 
 <svelte:head>
@@ -11,12 +8,7 @@
 </svelte:head>
 
 <section>
-  <div class="flex flex-row w-9/12">
-    {#if $authStore.currentUser}
-      <Notes />
-      <Tasks />
-    {/if}
-  </div>
+  <h1>Memora</h1>
   <Auth />
 </section>
 

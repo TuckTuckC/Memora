@@ -2,9 +2,6 @@
   import { authHandlers, authStore } from "../stores/authStore";
   import { collection, addDoc } from "firebase/firestore";
   import { db } from "../lib/firebase/firebase.client";
-  import { dateTime, notes, oldNotes, signModalState } from "../stores/store";
-
-  import { Button, Modal, Label, Input, Checkbox } from "flowbite-svelte";
 
   let register = false;
   let email = "";
@@ -63,142 +60,84 @@
     }
     // If there currently is a user in firebase, add the new user the the users collection in firestore
     if ($authStore.currentUser) {
-      signModalState.set(false);
-
-      // Get NOTES
-      const notesCollection = collection(db, "notes");
-
-      onSnapshot(notesCollection, (snapshot) => {
-        if (store.currentUser) {
-          let tempNotes = [];
-          let tempOldNotes = [];
-          const oneWeekAgo = new Date();
-          oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-          snapshot.docs.forEach((doc) => {
-            let note = { ...doc.data(), id: doc.id };
-            if (doc.data().user_id == store.currentUser.uid) {
-              tempNotes.push(note);
-              parseISO(note.updatedAt) <= oneWeekAgo
-                ? tempOldNotes.push(note)
-                : null;
-            }
-          });
-          oldNotes.set(tempOldNotes);
-          console.log("OLD NOTES", tempOldNotes);
-          tempNotes.sort((a, b) =>
-            compareDesc(parseISO(a.updatedAt), parseISO(b.updatedAt))
-          );
-          console.log(tempNotes);
-          notes.set(tempNotes);
-        }
-      });
-
-      const eventsCollection = collection(db, "events");
-      const userDaysCollection = collection(db, "userDays");
-
-      onSnapshot(eventsCollection, (snapshot) => {
-        if (store.currentUser) {
-          let tempEvents = [];
-          snapshot.docs.forEach((doc) => {
-            let event = { ...doc.data(), id: doc.id };
-            doc.data().uid == store.currentUser.uid
-              ? tempEvents.push(event)
-              : null;
-          });
-          tempEvents.sort((a, b) =>
-            compareDesc(parseISO(a.start), parseISO(b.start))
-          );
-          events.set(tempEvents);
-        }
-      });
-
-      register = false;
-      email = "";
-      password = "";
-      confirmPassword = "";
-      window.location.href = "/";
+      window.location.href = "/privatedashboard";
     }
   }
 </script>
 
-<Modal
-  id="form-modal"
-  bind:open={$signModalState}
-  size="xs"
-  autoclose={false}
-  class="w-full"
->
-  <form class="flex flex-col space-y-6" on:submit={handleSubmit}>
-    <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
-      {register ? "Register" : "Log In"}
-    </h3>
-    <Label class="space-y-2">
-      <span>Email</span>
-      <Input
-        type="email"
-        name="email"
-        placeholder="name@company.com"
+<div class="w-full max-w-xs">
+  <form
+    on:submit={handleSubmit}
+    class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+  >
+    <div class="mb-4">
+      <h1>{register ? "Register" : "Log In"}</h1>
+      <input
         bind:value={email}
-        required
+        type="email"
+        placeholder="Email"
+        class="appearance-none border-b-2 border-blue-300 w-full py-2 px-3 mb-2 text-gray-700 leading-tight focus:outline-none focus:border-blue-400 transition duration-200"
       />
       <p class="text-red-500 text-xs italic">
         {emailErr ? "Please choose an email." : ""}
       </p>
-    </Label>
-    <Label class="space-y-2">
-      <span>Your password</span>
-      <Input
-        type="password"
-        name="password"
-        placeholder="•••••"
+    </div>
+    <div class="mb-6">
+      <input
         bind:value={password}
-        required
+        type="password"
+        placeholder="Password"
+        class="appearance-none border-b-2 border-blue-300 w-full py-2 px-3 mb-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-400 transition duration-200"
       />
       <p class="text-red-500 text-xs italic">
         {passErr ? "Please choose a password." : ""}
       </p>
-    </Label>
-    {#if register}
-      <Label class="space-y-2">
-        <span>Your password</span>
-        <Input
-          type="password"
-          name="password"
-          placeholder="•••••"
-          bind:value={confirmPassword}
-          required
-        />
-        <p class="text-red-500 text-xs italic">
-          {confErr ? "Please repeat your password." : ""}
-        </p>
-      </Label>
-    {/if}
-    <div class="flex items-start">
-      <!-- <Checkbox>Remember me</Checkbox> -->
+      {#if register}
+        <label>
+          <input
+            bind:value={confirmPassword}
+            type="password"
+            placeholder="Confirm Password"
+            class="appearance-none border-b-2 border-blue-300 w-full py-2 px-3 mb-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-400 transition duration-200"
+          />
+          <p class="text-red-500 text-xs italic">
+            {confErr ? "Please retype your password" : ""}
+          </p>
+        </label>
+      {/if}
     </div>
-    <Button type="submit" class="w-full1"
-      >{register ? "Register" : "Sign In"}</Button
-    >
-    <div class=" flex text-sm font-medium text-gray-500 dark:text-gray-300">
-      {register ? "Already Have an account?" : "Not Registered?"}<a
-        href="/"
-        class="text-blue-700 hover:underline dark:text-blue-500"
-        on:click={() => {
-          register = !register;
-        }}
-        on:keydown={() => {}}>{register ? "Log In" : "Sign Up"}</a
+    <div class="flex items-center justify-between mb-2">
+      <button
+        class="bg-blue-500 hover:bg-blue-700 hover:cursor-pointer text-white font-bold py-2 px-4 mb-4 rounded focus:outline-none focus:shadow-outline"
+        type="submit"
       >
-      <a
+        {register ? "Register" : "Sign In"}
+      </button>
+      <div
+        class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
         href="/"
-        class="ml-auto text-sm text-blue-700 hover:underline dark:text-blue-500"
         on:click={() => {
           authHandlers.resetPassword(email);
         }}
-        on:keydown={() => {}}>Lost password?</a
+        on:keydown={() => {}}
       >
+        Forgot Password?
+      </div>
+    </div>
+    <div class="flex flex-col justify-center items-center">
+      {register ? "Already have an account?" : "Don't have an account?"}
+      <div
+        class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-2 border border-blue-500 hover:border-transparent rounded w-fit text-sm"
+        on:click={() => {
+          register = !register;
+        }}
+        on:keydown={() => {}}
+      >
+        {register ? "Log In" : "Sign Up"}
+      </div>
     </div>
   </form>
-</Modal>
+</div>
 
 <style>
 </style>
