@@ -1,29 +1,11 @@
 <script>
-      import {
-    doc,
-    getDoc,
-    deleteDoc,
-  } from "firebase/firestore";
-  import { db } from "../../lib/firebase/firebase.client";
   import "firebase/firestore";
-  import { authStore } from "../../stores/authStore";
-  import { storeTasks, storeTasksLabels, oldTasks, labelsAdded } from "../../stores/store";
-  import {
-    formatDistanceToNow,
-    parseISO,
-  } from "date-fns";
   import {
     Card,
     Button,
     Label,
-    Input,
-    Drawer,
-    CloseButton,
-    Textarea,
-    Accordion
   } from "flowbite-svelte";
-  import { newTask, editTask, deleteStoredTask } from "../../controllers/tasks";
-  import { makeNewLabel, removeStoredLabel, addLabel, removeAppliedLabel } from "../../controllers/labels";
+  import { deleteStoredTask } from "../../controllers/tasks";
 
   export let openEdit;
   export let task;

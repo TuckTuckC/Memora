@@ -1,8 +1,8 @@
 <script>
+    import "bootstrap-icons/font/bootstrap-icons.css";
   import {
     doc,
     getDoc,
-    deleteDoc,
   } from "firebase/firestore";
   import { db } from "../../lib/firebase/firebase.client";
   import "firebase/firestore";
@@ -20,7 +20,9 @@
     Drawer,
     CloseButton,
     Textarea,
-    Accordion
+    Accordion,
+    AccordionItem,
+
   } from "flowbite-svelte";
   import { newTask, editTask } from "../../controllers/tasks";
   import { makeNewLabel, removeStoredLabel, addLabel, removeAppliedLabel } from "../../controllers/labels";
@@ -54,7 +56,6 @@
     body = docSnap.data().body;
     labelsAdded.set(docSnap.data().labels);
     idTemp = id;
-    console.log(docSnap.data());
     hidden3 = false;
   }
 
@@ -541,26 +542,110 @@
   {/if}
   {#if window.location.pathname == "/tasks"}
     <div class="flex flex-col flex-1">
-      <div class="text-center flex flex-col mb-2">
-        <Accordion>
-          <h2 id="accordion-collapse-heading-1">
-            <button type="button" class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border border-b-0 border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800" data-accordion-target="#accordion-collapse-body-1" aria-expanded="true" aria-controls="accordion-collapse-body-1">
-              <span>What is Flowbite?</span>
-              <svg data-accordion-icon class="w-6 h-6 rotate-180 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-            </button>
-          </h2>
-          <div id="accordion-collapse-body-1" class="hidden" aria-labelledby="accordion-collapse-heading-1">
-            <div class="p-5 border border-b-0 border-gray-200 dark:border-gray-700 dark:bg-gray-900">
-              <p class="mb-2 text-gray-500 dark:text-gray-400">Flowbite is an open-source library of interactive components built on top of Tailwind CSS including buttons, dropdowns, modals, navbars, and more.</p>
-              <p class="text-gray-500 dark:text-gray-400">Check out this guide to learn how to <a href="/docs/getting-started/introduction/" class="text-blue-600 dark:text-blue-500 hover:underline">get started</a> and start developing websites even faster with components on top of Tailwind CSS.</p>
-            </div>
+      <div class="text-center w-fit flex flex-col mb-2">
+        <AccordionItem>
+          <div slot="header" class="mb-6">
+            <Label for="title" class="block mb-2">Title</Label>
+            <Input
+              id="title"
+              name="title"
+              required
+              placeholder="Title"
+              bind:value={title}
+            />
           </div>
-        </Accordion>
-        <Button
-          on:click={() => (hidden4 = false)}
-          class="!bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
-          >Create New Task</Button
-        >
+          <div class="flex">
+            <div>
+              <div class="mb-6">
+                <Label for="body" class="mb-2">Body</Label>
+                <Textarea
+                  id="message"
+                  placeholder="Write task body..."
+                  rows="4"
+                  name="message"
+                  bind:value={body}
+                />
+              </div>
+              <div class="mb-6">
+                <Label for="newLabel" class="block mb-2">New Label</Label>
+                <Input
+                  id="newLabel"
+                  name="newLabel"
+                  placeholder="New Label"
+                  bind:value={labelName}
+                />
+              </div>
+              <Button
+                class="w-2/5 !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
+                on:click={() => {makeNewLabel({labelName}), resetLabel()}}>Create Label</Button
+              >
+    
+              <div class="mb-6">
+                <Label for="body" class="mb-2">Applied Labels</Label>
+                <div class="flex flex-col gap-2 items-center">
+                  {#each $labelsAdded as labelAdded}
+                    <div
+                    class="bg-gray-500 w-fit hover:bg-gray-300 flex gap-2 justify-center items-center focus:shadow-outline focus:outline-none text-white font-bold p-1 rounded"
+                  >
+                    <div>
+                      <div>{labelAdded} </div>
+                    </div>
+                    <i on:click={removeAppliedLabel(labelAdded)} class="bi bi-x"></i>
+                  </div>
+                  {/each}
+                </div>
+              </div>
+            </div>
+            {#if $storeTasksLabels}
+            <div class="flex flex-col">
+              <Label for="body" class="mb-2">Your Labels</Label>
+                <div class="mb-6 grid grid-cols-2 gap-2 justify-items-center">
+                  {#each $storeTasksLabels as label}
+                    <div
+                      class="bg-gray-500 w-fit hover:bg-gray-300 flex gap-2 justify-center items-center focus:shadow-outline focus:outline-none text-white font-bold p-1 rounded"
+                    >
+                      <div on:click={addLabel({labelName: label.labelName})}>
+                        <div>{label.labelName} </div>
+                      </div>
+                      <i on:click={removeStoredLabel(label.labelName)} class="bi bi-x"></i>
+                    </div>
+                  {/each}
+                </div>
+            </div>
+            {/if}
+          </div>
+              <Button
+                class="w-full !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
+                on:click={() => {newTask({labelsAdded, body, title}), reset()}}
+                ><svg
+                  width="30"
+                  height="30"
+                  viewBox="0 0 80 80"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M38.4 20.7417H14C12.8954 20.7417 12 21.6371 12 22.7417V66.7417C12 67.8463 12.8954 68.7417 14 68.7417H58C59.1046 68.7417 60 67.8463 60 66.7417V42.342"
+                    stroke="black"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M68.0145 21.8972C68.7943 21.1174 68.7943 19.8532 68.0145 19.0734L62.3577 13.4166C61.5753 12.6342 60.3069 12.6342 59.5246 13.4166L30.6996 42.2416C28.1991 44.7421 26.5974 48.0005 26.1449 51.5077L25.7115 54.8664C25.6479 55.359 26.0674 55.7785 26.56 55.715L29.9187 55.2816C33.4259 54.829 36.6844 53.2273 39.1849 50.7268L68.0145 21.8972Z"
+                    stroke="black"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M52.1455 20.8037L60.6261 29.2843"
+                    stroke="black"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                Create Task</Button
+              >
+        </AccordionItem>
       </div>
 
       <div class="flex flex-wrap">
