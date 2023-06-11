@@ -78,12 +78,14 @@ export function initData() {
       tempUserDays.sort((a, b) =>
         compareDesc(parseISO(a.start), parseISO(b.start))
       );
+
+      matchDaysWithEvents({ events: get(events), userDays: tempUserDays });
+
       userDays.set(tempUserDays);
 
       userDaysLookup.set(
         tempUserDays.map((day) => formatISO(parseISO(day.date)))
       );
-      matchDaysWithEvents({ events: get(events), userDays: get(userDays) });
     }
   });
 }
