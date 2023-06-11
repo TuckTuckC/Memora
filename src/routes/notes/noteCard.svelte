@@ -21,7 +21,7 @@
 <Card
   on:click={openEdit(note.id)}
   class={`m-2 w-auto ${
-    window.location.pathname === "/notes" ? "max-w-[16.1rem]" : "max-w-[15rem]"
+    window.location.pathname === "/notes" ? "max-w-[16rem]" : "max-w-[15.1rem]"
   } h-fit cursor-pointer !bg-lightnotebg dark:!bg-darknotebg`}
 >
   <h5
