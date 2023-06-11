@@ -1,4 +1,11 @@
-import { formatISO, parseISO, startOfDay } from "date-fns";
+import {
+  formatISO,
+  parseISO,
+  startOfDay,
+  compareAsc,
+  compareDesc,
+  parse,
+} from "date-fns";
 import {
   collection,
   addDoc,
@@ -32,6 +39,7 @@ export function matchDaysWithEvents(match) {
       const matchedEvents = [];
       const date = day.date;
       const uid = day.uid;
+      console.log("MATCHED EVENTS", match.events);
       match.events.forEach((event) => {
         // console.log(
         //   date,
@@ -42,8 +50,11 @@ export function matchDaysWithEvents(match) {
           matchedEvents.push(event);
         }
       });
-      // console.log("MATCHED EVENTS", matchedEvents);
-      // console.log("EVENTS", match.events);
+      let sortedEvents = matchedEvents.sort((a, b) => {
+        return compareAsc(parseISO(a.start), parseISO(b.start));
+      });
+      console.log("SORTED EVENTS", sortedEvents);
+      console.log("EVENTS", match.events);
 
       return { date, matchedEvents, uid };
     });
