@@ -29,6 +29,8 @@
   import { makeNewLabel, removeStoredLabel, addLabel, removeAppliedLabel } from "../../controllers/labels";
   import Task from './Task.svelte';
 
+  import {get} from 'svelte/store';
+
   let idTemp = "";
 
   let title = "";
@@ -61,6 +63,8 @@
     idTemp = id;
     hidden3 = false;
   }
+
+  $: console.log($oldTasks)
 
   function handleColor(d) {
     console.log(d);
@@ -254,20 +258,20 @@
             class="w-48 h-1 mx-auto my-4 bg-gray-800 border-0 rounded md:my-4 dark:bg-gray-100"
           />
           <div
-            class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+            class="mb-2 p-2 text-2xl text-center font-bold tracking-tight text-gray-900 dark:text-white"
           >
             These have been here a while...
           </div>
-          {#if oldTasks}
+          {#if $oldTasks}
             <div
               class="mb-2 text-1xl font-bold tracking-tight text-gray-900 dark:text-white"
             >
-            oldTasks should be working...
             </div>
-            {#each $oldTasks as oldTask}
-              <Card
+            {#each $oldTasks as task}
+              <Task {openEdit} {task} />
+              <!-- <Card
                 on:click={openEdit(oldTask.id)}
-                class="m-2 relative w-3/5 max-w-xs h-48 overflow-hidden cursor-pointer !bg-lightnotebg dark:!bg-darknotebg"
+                class="m-2 relative w-full max-w-xs h-48 overflow-hidden cursor-pointer !bg-lightnotebg dark:!bg-darknotebg"
               >
                 <h5
                   class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
@@ -326,7 +330,7 @@
                     />
                   </svg></Button
                 >
-              </Card>
+              </Card> -->
             {/each}
           {/if}
           <hr
