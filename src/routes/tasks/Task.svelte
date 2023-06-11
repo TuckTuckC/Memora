@@ -6,7 +6,11 @@
     Label,
   } from "flowbite-svelte";
   import { deleteStoredTask } from "../../controllers/tasks";
-
+  import {
+    formatDistanceToNow,
+    parseISO,
+  } from "date-fns";
+  
   export let openEdit;
   export let task;
 
@@ -28,6 +32,13 @@ style={`border: 4px solid ${task.color ? `${task.color}` : "transparent"}`}
 >
   {task.body}
 </p>
+{#if window.location.pathname === "/"}
+  <p
+    class="font-normal text-gray-700 dark:text-gray-200 leading-tight mb-4"
+  >
+    {formatDistanceToNow(parseISO(task.updatedAt))} ago
+  </p>
+{/if}
 {#if task.labels}
   <div class="flex justify-start items-center gap-2 flex-wrap">
     {#each task.labels as label}
