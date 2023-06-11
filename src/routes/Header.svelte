@@ -14,11 +14,13 @@
   } from "flowbite-svelte";
   import Auth from "../components/Auth.svelte";
   import { signModalState } from "../stores/store";
+  import { page } from '$app/stores';
 
   let store;
   authStore.subscribe((value) => {
     store = value;
   });
+
 
   let profileDrop = false;
 
@@ -38,11 +40,11 @@
   </NavBrand>
   <NavHamburger on:click={toggle} />
   <NavUl {hidden}>
-    <NavLi href="/" active={true}>Home</NavLi>
-    <NavLi href="/notes">Notes</NavLi>
-    <NavLi href="/tasks">Tasks</NavLi>
-    <NavLi href="/textEditor">Text Editor</NavLi>
-    <NavLi href="/calendar">Calendar</NavLi>
+    <NavLi href="/" active={$page.url.pathname === "/" ? true : false}>Home</NavLi>
+    <NavLi href="/notes" active={$page.url.pathname === "/notes" ? true : false}>Notes</NavLi>
+    <NavLi href="/tasks" active={$page.url.pathname === '/tasks' ? true : false}>Tasks</NavLi>
+    <NavLi href="/textEditor" active={$page.url.pathname === '/textEditor' ? true : false}>Text Editor</NavLi>
+    <NavLi href="/calendar" active={$page.url.pathname === '/calendar' ? true : false}>Calendar</NavLi>
     <NavLi id="nav-menu1" class="cursor-pointer"
       ><Chevron aligned>
         <div

@@ -33,7 +33,7 @@ const eventsCollection = collection(db, "events");
 const userDaysCollection = collection(db, "userDays");
 
 export function matchDaysWithEvents(match) {
-  console.log(match.userDays, match.events);
+  // console.log(match.userDays, match.events);
   if (match.userDays.length > 0 && match.events.length > 0) {
     const matchedDays = match.userDays.map((day) => {
       const matchedEvents = [];
@@ -41,6 +41,11 @@ export function matchDaysWithEvents(match) {
       const uid = day.uid;
       console.log("MATCHED EVENTS", match.events);
       match.events.forEach((event) => {
+        // console.log(
+        //   date,
+        //   formatISO(startOfDay(parseISO(event.start))) == date,
+        //   event.title
+        // );
         if (formatISO(startOfDay(parseISO(event.start))) == date) {
           matchedEvents.push(event);
         }
@@ -54,12 +59,12 @@ export function matchDaysWithEvents(match) {
       return { date, matchedEvents, uid };
     });
     eventDays.set(matchedDays);
-    console.log("MATCH", get(eventDays));
+    // console.log("MATCH", get(eventDays));
   }
 }
 
 export function newEvent(doc) {
-  console.log("DOC", doc.title);
+  // console.log("DOC", doc.title);
   addDoc(eventsCollection, {
     title: doc.title,
     details: doc.details,
@@ -68,8 +73,8 @@ export function newEvent(doc) {
     color: doc.color,
     uid: store.currentUser.uid,
   }).then((newDoc) => {
-    console.log("EVENT DATA", newDoc);
-    console.log("EVENT DAYS", get(eventDays));
+    // console.log("EVENT DATA", newDoc);
+    // console.log("EVENT DAYS", get(eventDays));
     if (
       [...get(eventDays)].some(
         (d) => d.date === formatISO(startOfDay(parseISO(doc.start)))
@@ -105,13 +110,13 @@ async function addEventToDay(doc) {
 }
 
 function newDay(doc) {
-  console.log("NEW DAY LOGS", doc);
+  // console.log("NEW DAY LOGS", doc);
 
   const newDoc = addDoc(userDaysCollection, {
     date: formatISO(startOfDay(parseISO(doc.start))),
     events: [doc.id],
     uid: store.currentUser.uid,
   });
-  console.log("DAY DATA", newDoc);
-  console.log(`Your doc was created at ${newDoc.path}`);
+  // console.log("DAY DATA", newDoc);
+  // console.log(`Your doc was created at ${newDoc.path}`);
 }
