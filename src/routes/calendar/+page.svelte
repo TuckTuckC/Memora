@@ -47,11 +47,11 @@
 
   function reset() {
     title = "";
-  details = "";
-  start = "";
-  end = "";
-  color = "";
-  hidden4 = true;
+    details = "";
+    start = "";
+    end = "";
+    color = "";
+    hidden4 = true;
   }
 
   function previousMonth() {

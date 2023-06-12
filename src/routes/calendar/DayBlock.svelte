@@ -1,5 +1,5 @@
 <script>
-  import { formatISO, parseISO, format, endOfDay, isWithinInterval } from "date-fns";
+  import { formatISO, parseISO, format, startOfDay, endOfDay, isWithinInterval, formatDistance } from "date-fns";
   import {eventDays} from "../../stores/store";
   import { Button, Modal, Listgroup, ListgroupItem } from 'flowbite-svelte';
   import {writable} from 'svelte/store';
@@ -13,12 +13,13 @@
   const dayEvents = writable([]);
   const dayEventTitles = writable([]);
   const tempDay = writable([]);
-  let isValidDate = '$eventDays && [...$eventDays].some((d) => startOfDay(d.date) === formatISO(new Date(currentYear,currentMonth, day)))'
-  $eventDays.forEach((d) => {
-    if (d.date === formatISO(new Date(currentYear, currentMonth, day))) {
+
+
+  $: {$eventDays.forEach((d) => {
+    if (formatISO(startOfDay(parseISO(d.date))) === formatISO(new Date(currentYear, currentMonth, day))) {
       tempDay.set(d)
     }
-  } )
+  } )}
 
   const startTime = new Date(currentYear, currentMonth, day);
   const endTime = endOfDay(startTime);
@@ -29,17 +30,15 @@
     currentTime = new Date(currentTime.getTime() + (30 * 60 * 1000)); // Increment by 30 minutes
   }
 
-  console.log("TEMP DAY", $tempDay);
-
 </script>
 
 <div
     class="text-center w-[12rem] h-[7rem] border-2 dark:text-gray-400 overflow-hidden"
-    on:click={() => {$tempDay.matchedEvents && $tempDay.matchedEvents.length > 0 ? clickOutsideModal = true : null}}
-    on:keydown={() => {}}
+    on:click={() => clickOutsideModal = true}
+    on:keydown={() => {console.log("Keydown pressed")}}
 >
     {day}
-    {#if isValidDate}
+    {#if $eventDays && [...$eventDays].some((d) => formatISO(startOfDay(parseISO(d.date))) === formatISO(startOfDay(new Date(currentYear,currentMonth, day))))}
       {#each $eventDays as eventDay}
         {#if eventDay.date === formatISO(new Date(currentYear, currentMonth, day))}
         <ul
@@ -58,16 +57,29 @@
   <Listgroup class="width: 100%;">
     {#each timelineSlots as slot}
     <ListgroupItem class="text-base font-semibold gap-2">
-      <p>
-        {#each $tempDay.matchedEvents as event}
-        {#if isWithinInterval(parseISO(event.start), { start: slot, end: new Date(slot.getTime() + (30 * 60 * 1000)) })}
-        <span>
+      <div>
+        <span>{format(new Date(slot), "h:mm a")}
+        <!-- {#if isWithinInterval(parseISO(event.start), { start: slot, end: new Date(slot.getTime() + (30 * 60 * 1000)) })}
           {format(parseISO(event.start), "h:mm a")}
+          {/if} -->
         </span>
-        : {event.title}
-        {/if}
+        <!-- check to see if this timeslot has a matching event in tempDay.matchedEvents
+        if it does, get that event and then display the title? -->
+        
+        <!-- {#if Array.from($tempDay.matchedEvents, (e => format(parseISO(e.start), "h:mm a")).includes(format(new Date(slot), "h:mm a")))}
+        YES
+        {/if} -->
+
+
+        {#each $tempDay.matchedEvents as event}
+          <!-- currently within timelineSlot's EACH slot
+          going over each matched event as event
+          if event time === timeslot time, display event title once -->
+          {#if format(parseISO(event.start), "h:mm a") === format(new Date(slot), "h:mm a")}
+            {event.title}
+          {/if}
         {/each}
-      </p>
+      </div>
     </ListgroupItem>
     {/each}
   </Listgroup>
