@@ -33,7 +33,8 @@
 </script>
 
 <div
-    class="text-center w-[12rem] h-[7rem] border-2 dark:text-gray-400 overflow-hidden"
+    class="text-center w-[12rem] h-[7rem] border-2 dark:text-gray-400 overflow-hidden shadow-none"
+    style={formatISO(new Date(currentYear, currentMonth, day)) == formatISO(startOfDay(new Date())) ? 'border-color:  #9376E0' : null}
     on:click={() => clickOutsideModal = true}
     on:keydown={() => {console.log("Keydown pressed")}}
 >
