@@ -68,32 +68,23 @@ export function matchDaysWithEvents(match) {
 }
 
 export function newEvent(doc) {
-  console.log("doc.start & doc.end, respectively", doc.start, " ", doc.end);
-
-  // const [hStart, mStart] = /(\d{2}):(\d{2})/.exec(
-  //   doc.start.slice(11, 16).split(":")
-  // );
   const hStart = doc.start.slice(11, 13);
   const mStart = doc.start.slice(14, 16);
   const startHours = parseInt(hStart, 10);
   const startMins = parseInt(mStart, 10);
   const startMinPos = startHours * 60 + startMins;
 
-  // const [hEnd, mEnd] = /(\d{2}):(\d{2})/.exec(doc.end.slice(11, 16).split(":"));
-  const hEnd = doc.start.slice(11, 13);
-  const mEnd = doc.start.slice(14, 16);
+  const hEnd = doc.end.slice(11, 13);
+  const mEnd = doc.end.slice(14, 16);
   const endHours = parseInt(hEnd, 10);
   const endMins = parseInt(mEnd, 10);
   const endMinPos = endHours * 60 + endMins;
 
-  // console.log("startMinutes", startMinutes);
-  // console.log("endMinutes", endMinutes);
-  // const duration = endMinutes - startMinutes;
   addDoc(eventsCollection, {
     title: doc.title,
     details: doc.details,
     start: doc.start,
-    TuckDuration: endMinPos - startMinPos,
+    duration: endMinPos - startMinPos,
     end: doc.end,
     color: doc.color,
     uid: store.currentUser.uid,
