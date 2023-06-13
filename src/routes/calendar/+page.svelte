@@ -11,6 +11,10 @@
   } from "date-fns";
   import {
     Button,
+    ButtonGroup,
+    Dropdown,
+    DropdownItem,
+    DropdownHeader,
     SpeedDial,
     SpeedDialButton,
     Label,
@@ -44,6 +48,11 @@
   });
 
   generateGrid();
+
+  function handleColor(d) {
+    console.log(d);
+    color = d;
+  }
 
   function reset() {
     title = "";
@@ -349,13 +358,17 @@
     </div>
     <div class="mb-6">
       <Label for="body" class="mb-2">Color</Label>
-      <Textarea
-        id="message"
-        placeholder="Write note body..."
-        rows="4"
-        name="message"
-        bind:value={color}
-      />
+
+      <ButtonGroup class="flex justify-center items-center gap-2">
+        <Button on:click={() => handleColor('#9BABB8')} class={`!bg-[#9BABB8] !p-1 !rounded-full w-[1rem] h-[1rem]`}></Button>
+        <Button on:click={() => handleColor('#5C8984')} class={`!bg-[#5C8984] !p-1 !rounded-full w-[1rem] h-[1rem]`}></Button>
+        <Button on:click={() => handleColor('#FCF9BE')} class={`!bg-[#FCF9BE] !p-1 !rounded-full w-[1rem] h-[1rem]`}></Button>
+        <Button on:click={() => handleColor('#FF8787')} class={`!bg-[#FF8787] !p-1 !rounded-full w-[1rem] h-[1rem]`}></Button>
+        <Button on:click={() => handleColor('#537188')} class={`!bg-[#537188] !p-1 !rounded-full w-[1rem] h-[1rem]`}></Button>
+        <Button on:click={() => handleColor('#E8A0BF')} class={`!bg-[#E8A0BF] !p-1 !rounded-full w-[1rem] h-[1rem]`}></Button>
+        <Button on:click={() => handleColor('#B2A4FF')} class={`!bg-[#B2A4FF] !p-1 !rounded-full w-[1rem] h-[1rem]`}></Button>
+        <Button on:click={() => handleColor('#A7727D')} class={`!bg-[#A7727D] !p-1 !rounded-full w-[1rem] h-[1rem]`}></Button>
+    </ButtonGroup>
     </div>
     <Button
       type="submit"

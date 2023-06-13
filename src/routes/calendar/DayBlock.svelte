@@ -41,13 +41,13 @@
     {#if $eventDays && [...$eventDays].some((d) => formatISO(startOfDay(parseISO(d.date))) === formatISO(startOfDay(new Date(currentYear,currentMonth, day))))}
       {#each $eventDays as eventDay}
         {#if eventDay.date === formatISO(new Date(currentYear, currentMonth, day))}
-        <ul
-          class="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400"
+        <div
+          class="max-w-md space-y-1 text-gray-200 list-disc list-inside dark:text-gray-400"
         >
           {#each eventDay.matchedEvents as event}
-            <li>{event.title}</li>
+            <div style={`background-color:  ${event.color ? `${event.color}` : "transparent"}`}>{event.title}</div>
           {/each}
-        </ul>
+        </div>
         {/if}
       {/each}
     {/if}
