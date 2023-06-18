@@ -55,35 +55,28 @@
 </div>
 
 <Modal title={format(new Date(currentYear, currentMonth, day), "EEE, MMM do")} class="w-[40rem] h-[60rem]" bind:open={clickOutsideModal} autoclose outsideclose>
-  <Listgroup class="width: 100%;">
+  <div class="grid grid-cols-4">
     {#each timelineSlots as slot}
-    <ListgroupItem class="text-base font-semibold gap-2">
+    <div class="text-base font-semibold gap-2 col-start-1">
       <div>
         <span>{format(new Date(slot), "h:mm a")}
-        <!-- {#if isWithinInterval(parseISO(event.start), { start: slot, end: new Date(slot.getTime() + (30 * 60 * 1000)) })}
-          {format(parseISO(event.start), "h:mm a")}
-          {/if} -->
         </span>
-        <!-- check to see if this timeslot has a matching event in tempDay.matchedEvents
-        if it does, get that event and then display the title? -->
-        
-        <!-- {#if Array.from($tempDay.matchedEvents, (e => format(parseISO(e.start), "h:mm a")).includes(format(new Date(slot), "h:mm a")))}
-        YES
-        {/if} -->
-
-
-        {#each $tempDay.matchedEvents as event}
-          <!-- currently within timelineSlot's EACH slot
-          going over each matched event as event
-          if event time === timeslot time, display event title once -->
-          {#if format(parseISO(event.start), "h:mm a") === format(new Date(slot), "h:mm a")}
-            {event.title}
-          {/if}
-        {/each}
       </div>
-    </ListgroupItem>
+    </div>
     {/each}
-  </Listgroup>
+    {#each $tempDay.matchedEvents as event}
+      <!-- currently within timelineSlot's EACH slot
+      going over each matched event as event
+      if event time === timeslot time, display event title once -->
+      <div class="col-start-2 border" style={`grid-row: ${timelineSlots.indexOf(new Date(parseISO(event.start)))} / ${timelineSlots.indexOf(new Date(parseISO(event.end)))};`}>
+        {event.title}
+        Start: {new Date(parseISO(event.start))}
+        TimeSlots: {timelineSlots[27]}
+        Index: {timelineSlots.indexOf("Tue Jun 13 2023 13:30:00 GMT-0400 (Eastern Daylight Time)")}
+        Duration: {(event.duration)}
+      </div>
+    {/each}
+  </div>
   <svelte:fragment slot='footer'>
     <Button color="green" on:click={() => alert('Handle "success"')}>Add Event</Button>
   </svelte:fragment>
