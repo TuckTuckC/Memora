@@ -1,5 +1,5 @@
 <script>
-  import { formatISO, parseISO, format, startOfDay, getHours, getMinutes, endOfDay, isWithinInterval, formatDistance } from "date-fns";
+  import { differenceInMinutes, formatISO, parseISO, format, startOfDay, getHours, getMinutes, endOfDay, isWithinInterval, formatDistance } from "date-fns";
   import {eventDays} from "../../stores/store";
   import { Button, Modal, Listgroup, ListgroupItem } from 'flowbite-svelte';
   import {writable} from 'svelte/store';
@@ -29,6 +29,31 @@
     return intervalCount
   }
 
+  function eventStack() {
+    let events = $tempDay.matchedEvents;
+    console.log(events.length);
+    let eStack = 0;
+    for (let e = 0; e < events.length; e++) {
+      // console.log("parseISO e.end is ", parseISO(e.end));
+      // console.log("startOfDay parseISO e.end is ", startOfDay(parseISO(e.end)));
+      console.log(differenceInMinutes(parseISO(events[e].end), startOfDay(parseISO(events[e].end))));
+      let stack = 0
+      for (let i = 0; i < events.length; i++) {
+        if (differenceInMinutes(parseISO(events[e].end), startOfDay(parseISO(events[e].end))) > differenceInMinutes(parseISO(events[i].start), startOfDay(parseISO(events[i].start)))) {
+          stack++;
+          console.log("Innermost for loop");
+        }
+
+      }
+      console.log("STACK", stack);
+      if (stack > eStack) {
+        eStack = stack;
+      }
+    }
+    console.log("eSTACK", eStack);
+    return eStack
+  }
+
   const startTime = new Date(currentYear, currentMonth, day);
   const endTime = endOfDay(startTime);
   let interval = 30;
@@ -44,7 +69,7 @@
 <div
     class="text-center w-[12rem] h-[7rem] border-2 dark:text-gray-400 overflow-hidden shadow-none"
     style={formatISO(new Date(currentYear, currentMonth, day)) == formatISO(startOfDay(new Date())) ? 'border-color:  #9376E0' : null}
-    on:click={() => clickOutsideModal = true}
+    on:click={() => {clickOutsideModal = true; eventStack()}}
     on:keydown={() => {console.log("Keydown pressed")}}
 >
     {day}
@@ -64,9 +89,9 @@
 </div>
 
 <Modal title={format(new Date(currentYear, currentMonth, day), "EEE, MMM do")} class="w-[40rem] h-[60rem]" bind:open={clickOutsideModal} autoclose outsideclose>
-  <div class="grid grid-cols-4">
+  <div class="grid" style={`grid-template-columns: repeat(${eventStack() + 1}, 1fr)`}>
     {#each timelineSlots as slot}
-    <div class="text-base font-semibold gap-2 col-start-1">
+    <div class="!h-4 text-sm text-base font-semibold gap-2 col-start-1 border-t">
       <div>
         <span>{format(new Date(slot), "h:mm a")}
         </span>
@@ -79,11 +104,6 @@
       if event time === timeslot time, display event title once -->
       <div class="col-start-2 border" style={`grid-row: ${convertTimeSlot(parseISO(event.start))} / span ${event.duration / interval};`}>
         {event.title}
-        Start: {new Date(parseISO(event.start))}
-        End: {new Date(parseISO(event.end))}
-        TimeSlots: {timelineSlots[27]}
-        Index: {timelineSlots.indexOf("Tue Jun 13 2023 13:30:00 GMT-0400 (Eastern Daylight Time)")}
-        Duration: {(event.duration)}
       </div>
     {/each}
   </div>
