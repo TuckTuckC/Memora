@@ -8,11 +8,14 @@
         console.log('CURR', curr);
         email = curr?.currentUser?.email
     })
+
+    let userEmailName = email.split("@")[0]
 </script>
 
 {#if $authStore.currentUser}
 <div>
-    <h1>CURRENT USER: {email}</h1>
+    <h1>Hello, {userEmailName}</h1>
+    <button on:click={() => {}}>Settings</button>
     <AuthReset />
     <button on:click={authHandlers.logout}>Logout</button>
 </div>
