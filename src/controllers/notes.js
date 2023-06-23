@@ -38,7 +38,7 @@ export async function deleteNote(id) {
   await deleteDoc(doc(db, "notes", id));
 }
 
-export async function editNote(title, body) {
+export async function editNote(title, body, idTemp) {
   console.log("HERE", doc(db, "notes", idTemp));
   const newData = {
     body: body,
