@@ -239,7 +239,7 @@
     <Button
       type="submit"
       class="w-full !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
-      on:click={editNote(title, body)}
+      on:click={()  => {hidden3= true; editNote(title, body, idTemp)}}
       ><svg
         width="30"
         height="30"
