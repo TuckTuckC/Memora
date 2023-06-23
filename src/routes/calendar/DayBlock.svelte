@@ -1,5 +1,5 @@
 <script>
-  import { formatISO, parseISO, format, startOfDay, endOfDay, isWithinInterval, formatDistance } from "date-fns";
+  import { formatISO, parseISO, format, startOfDay, getHours, getMinutes, endOfDay, isWithinInterval, formatDistance } from "date-fns";
   import {eventDays} from "../../stores/store";
   import { Button, Modal, Listgroup, ListgroupItem } from 'flowbite-svelte';
   import {writable} from 'svelte/store';
@@ -21,13 +21,22 @@
     }
   } )}
 
+  function convertTimeSlot(start) {
+    let hours = getHours(start)
+    let minutes = getMinutes(start)
+    let timeMinutes = (hours * 60) + minutes
+    let intervalCount = timeMinutes / interval + 1
+    return intervalCount
+  }
+
   const startTime = new Date(currentYear, currentMonth, day);
   const endTime = endOfDay(startTime);
+  let interval = 30;
   const timelineSlots = [];
   let currentTime = startTime;
   while (currentTime <= endTime) {
     timelineSlots.push(currentTime);
-    currentTime = new Date(currentTime.getTime() + (30 * 60 * 1000)); // Increment by 30 minutes
+    currentTime = new Date(currentTime.getTime() + (interval * 60 * 1000)); // Increment by 30 minutes
   }
 
 </script>
@@ -68,9 +77,10 @@
       <!-- currently within timelineSlot's EACH slot
       going over each matched event as event
       if event time === timeslot time, display event title once -->
-      <div class="col-start-2 border" style={`grid-row: ${timelineSlots.indexOf(new Date(parseISO(event.start)))} / ${timelineSlots.indexOf(new Date(parseISO(event.end)))};`}>
+      <div class="col-start-2 border" style={`grid-row: ${convertTimeSlot(parseISO(event.start))} / span ${event.duration / interval};`}>
         {event.title}
         Start: {new Date(parseISO(event.start))}
+        End: {new Date(parseISO(event.end))}
         TimeSlots: {timelineSlots[27]}
         Index: {timelineSlots.indexOf("Tue Jun 13 2023 13:30:00 GMT-0400 (Eastern Daylight Time)")}
         Duration: {(event.duration)}
