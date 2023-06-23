@@ -2,6 +2,9 @@
     import { auth } from "../../lib/firebase/firebase.client";
     import { authHandlers, authStore } from "../../stores/authStore";
     import AuthReset from '../../components/AuthReset.svelte';
+    import { ButtonGroup, Button, Modal } from 'flowbite-svelte';
+
+    let defaultModal = false;
 
     let email;
     authStore.subscribe(curr => {
@@ -13,15 +16,18 @@
 </script>
 
 {#if $authStore.currentUser}
-<div>
+<div class="flex flex-col w-full self-center gap-2">
     <h1>Hello, {userEmailName}</h1>
-    <button on:click={() => {}}>Settings</button>
-    <AuthReset />
-    <button on:click={authHandlers.logout}>Logout</button>
+    <Button class="w-2/12" color="alternative" on:click={() => {}}>Settings</Button>
+    <Button class="w-2/12" color="alternative" on:click={() => defaultModal = true}>Manage Account</Button>
+    <Button class="w-2/12" color="alternative" on:click={authHandlers.logout}>Log Out</Button>
+    
 </div>
 {:else}
 <div>Loading.....</div>
 {/if}
+
+<Modal class='w-full' title="Manage Account" bind:open={defaultModal} autoclose><AuthReset /></Modal>
 
 <style>
     div {

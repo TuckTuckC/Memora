@@ -1,61 +1,32 @@
 <script>
-  import { authHandlers } from "../stores/authStore";
+  import { authHandlers, authStore } from "../stores/authStore";
+  import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+  import { Button } from 'flowbite-svelte';
 
   let action = "";
+  let completedAction = "";
   let newEmail = "";
   let newPass = "";
 
+  let store;
+  authStore.subscribe((value) => {
+    store = value;
+  });
+
   async function handleSubmit() {
-    if (!action) {
-      return;
-    }
-
-    if (action === "updatePass") {
-      return await authHandlers.updatePassword(newPass);
-    }
-
-    if (action === "newEmail") {
-      return await authHandlers.updateEmail(newEmail);
-    }
+    completedAction = "updatePass";
+    await authHandlers.resetPassword(store.currentUser.email);
   }
 </script>
 
-<div class="container">
-  <div>
-    <button
-      on:click={() => {
-        action = "updateEmail";
-      }}>Update Email</button
+  {#if completedAction !== "updatePass"}
+    <Button color="alternative" class="w-2/12"
+      on:click={handleSubmit}>Update Password</Button
     >
-    <button
-      on:click={() => {
-        action = "updatePass";
-      }}>Update Password</button
-    >
-  </div>
-  {#if action === "updatePass"}
-    <form>
-      <label>
-        <input
-          bind:value={newPass}
-          type="password"
-          placeholder="New Password"
-        />
-      </label>
-
-      <button on:click={handleSubmit}>Submit</button>
-    </form>
   {/if}
-  {#if action === "updateEmail"}
-    <form>
-      <label>
-        <input bind:value={newEmail} type="email" placeholder="New Email" />
-      </label>
-
-      <button on:click={handleSubmit}>Submit</button>
-    </form>
+  {#if completedAction === "updatePass"}
+    <div>Your password reset email has been sent.</div>
   {/if}
-</div>
 
 <style>
   .container {
