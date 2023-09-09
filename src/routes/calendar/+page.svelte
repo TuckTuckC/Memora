@@ -26,7 +26,7 @@
   } from "flowbite-svelte";
   import { authStore } from "../../stores/authStore";
   import {newEvent} from "../../controllers/events";
-  import { writable } from "svelte/store";
+  import { writable, get } from "svelte/store";
   import DayBlock from './DayBlock.svelte';
 
   let date = new Date();
@@ -124,8 +124,15 @@
   const monthEnd = writable("");
   const dayEnd = writable("");
 
+  function addDayEvent(currentYear, currentMonth, selDay) {
+    selStart = `${currentYear < 10 ? `0${currentYear}` : currentYear}-${currentMonth < 10 ? `0${currentMonth}` : currentMonth}-${selDay < 10 ? `0${selDay}` : selDay}`
+    hidden4 = false;
+    console.log(selStart);
+  }
+
   $: {
     if (selStart) {
+      console.log(selStart);
       const [yearVal, monthVal, dayVal] = selStart.split("-");
       year.set(yearVal);
       month.set(monthVal);
@@ -262,7 +269,7 @@
     <div class="grid grid-cols-7 gap-4 justify-items-center h-full">
       {#if $daysGrid}
         {#each $daysGrid as day}
-          <DayBlock {day} {currentYear} {currentMonth}/>
+          <DayBlock {day} {currentYear} {currentMonth} {addDayEvent}/>
         {/each}
       {/if}
     </div>
