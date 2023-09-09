@@ -7,6 +7,7 @@
   export let day;
   export let currentYear;
   export let currentMonth;
+  export let addDayEvent;
 
   let clickOutsideModal = false;
 
@@ -121,6 +122,6 @@
     {/if}
   </div>
   <svelte:fragment slot='footer'>
-    <Button color="green" on:click={() => alert('Handle "success"')}>Add Event</Button>
+    <Button color="green" on:click={() => {addDayEvent(currentYear, currentMonth, day)}}>Add Event</Button>
   </svelte:fragment>
 </Modal>
