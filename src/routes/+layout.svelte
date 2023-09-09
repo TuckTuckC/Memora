@@ -38,15 +38,9 @@
 <div class="app dark:bg-darkbg">
   <Header />
 
-  <main>
+  <main class='dark:bg-darkbg'>
     <slot />
   </main>
-
-  <footer>
-    <p>
-      visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to learn SvelteKit
-    </p>
-  </footer>
 </div>
 
 <style>
@@ -65,6 +59,8 @@
     width: 100%;
     margin: 0 auto;
     box-sizing: border-box;
+    position: absolute;
+    top: 10%;
   }
 
   footer {

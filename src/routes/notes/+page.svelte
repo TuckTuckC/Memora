@@ -1,5 +1,6 @@
 <script>
   import "firebase/firestore";
+  
   import { setDoc, doc, getDoc } from "firebase/firestore";
   import {
     Button,
@@ -60,7 +61,7 @@
 </script>
 
 {#if store.currentUser}
-  <div class="flex flex-col flex-2 w-9/12 self-center">
+  <div class="flex flex-col flex-2 w-9/12">
     {#if window.location.pathname === "/"}
       <p class="text-center pb-4 border-b-2 text-2xl dark:text-white">
         Forgot About These?
@@ -75,7 +76,7 @@
         {#if $oldNotes && window.location.pathname === "/"}
           <div class="flex flex-wrap w-full pb-6">
             {#each $oldNotes as note}
-              <NoteCard {openEdit} {note} />
+              <NoteCard forgot={true} {openEdit} {note} />
             {/each}
           </div>
         {/if}
@@ -92,7 +93,7 @@
           >
           <div class="flex flex-row flex-wrap justify-center w-full pt-6">
             {#each $notes as note}
-              <NoteCard {openEdit} {note} />
+              <NoteCard forgot={false} {openEdit} {note} />
             {/each}
           </div>
         </div>

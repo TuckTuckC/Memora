@@ -5,6 +5,8 @@
     Card,
     Button,
     Label,
+    AccordionItem, 
+    Accordion
   } from "flowbite-svelte";
   import { deleteStoredTask } from "../../controllers/tasks";
   import {
@@ -17,7 +19,7 @@
 
 </script>
 
-<Card
+<!-- <Card
 on:click={openEdit(task.id)}
 id="taskCard"
 class={`m-2 w-auto max-w-xs h-56 overflow-hidden cursor-pointer !bg-lightnotebg dark:!bg-darknotebg border-8`}
@@ -57,4 +59,31 @@ style={`border: 4px solid ${task.color ? `${task.color}` : "transparent"}`}
   on:click={deleteStoredTask(task.id)}
   ><i class="bi bi-trash"></i></Button
 >
-</Card>
+</Card> -->
+
+<AccordionItem class='!w-full self-start'>
+  <span slot="header"><i class="bi bi-x-lg text-red-500 mr-4" on:click={(e) => {e.stopPropagation(); deleteStoredTask(task.id)}}></i>{task.title}</span>
+  <p class="mb-2 text-gray-500 dark:text-gray-400">{task.body}</p>
+  <p
+    class="font-normal text-gray-700 dark:text-gray-200 leading-tight mb-4"
+  >
+    {formatDistanceToNow(parseISO(task.updatedAt))} ago
+  </p>
+  {#if task.labels}
+  <div class="flex justify-start items-center gap-2 flex-wrap">
+    {#each task.labels as label}
+      <Label
+        class="text-sm w-fit text-gray-700 block mb-2 p-2 border-solid border-2 border-white rounded dark:text-gray-400 leading-tight"
+      >
+        {label}
+      </Label>
+    {/each}
+  </div>
+{/if}
+</AccordionItem>
+
+<style>
+  svg {
+    visibility: hidden;
+  }
+</style>

@@ -1,6 +1,6 @@
 <script>
   import { authHandlers, authStore } from "../stores/authStore";
-  import { collection, addDoc } from "firebase/firestore";
+  import { collection, addDoc, onSnapshot } from "firebase/firestore";
   import { db } from "../lib/firebase/firebase.client";
   import { dateTime, notes, oldNotes, signModalState } from "../stores/store";
 

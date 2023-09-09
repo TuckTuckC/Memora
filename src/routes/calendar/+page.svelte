@@ -259,7 +259,7 @@
       <div>Fri</div>
       <div>Sat</div>
     </div>
-    <div class="grid grid-cols-7 gap-4 justify-items-center">
+    <div class="grid grid-cols-7 gap-4 justify-items-center h-full">
       {#if $daysGrid}
         {#each $daysGrid as day}
           <DayBlock {day} {currentYear} {currentMonth}/>

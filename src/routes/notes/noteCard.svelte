@@ -10,6 +10,9 @@
     CloseButton,
     Textarea,
   } from "flowbite-svelte";
+  import { setDoc, doc, getDoc } from "firebase/firestore";
+  import { db } from "../../lib/firebase/firebase.client";
+  import { formatISO } from "date-fns";
   import { dateTime, notes, oldNotes } from "../../stores/store";
   import { newNote, deleteNote, editNote } from "../../controllers/notes";
 
@@ -17,6 +20,7 @@
 
   export let note;
   export let openEdit;
+  export let forgot;
 </script>
 
 <Card
@@ -35,10 +39,27 @@
   >
     {note.body}
   </p>
-  <Button
-    color="red"
-    class="w-fit mt-0 bg-redbtn dark:!bg-darkredbtn flex self-end bottom-0"
-    on:click={deleteNote(note.id)}
-    ><i class="bi bi-trash text-base"></i></Button
-  >
+  <div class='flex self-end gap-2'>
+    {#if (forgot)}
+    <Button
+      color="yellow"
+      class="w-fit mt-0 bg-yellowbtn dark:!bg-darkredbtn flex self-end bottom-0"
+      on:click={async (e) => {
+        e.stopPropagation();
+        await setDoc(
+          doc(db, "notes", note.id),
+          { updatedAt: `${formatISO(new Date())}` },
+          { merge: true }
+        );
+      }}
+      ><i class="bi bi-arrow-down-left"></i></Button
+    >
+    {/if}
+    <Button
+      color="red"
+      class="w-fit mt-0 bg-redbtn dark:!bg-darkredbtn flex self-end bottom-0"
+      on:click={(e) => {e.stopPropagation(); deleteNote(note.id);}}
+      ><i class="bi bi-trash text-base"></i></Button
+    >
+  </div>
 </Card>

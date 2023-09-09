@@ -35,19 +35,21 @@
     let events = $tempDay.matchedEvents;
     let eStack = 0;
     let tempArr = [];
-    for (let e = 0; e < events.length; e++) {
-      // add all events ($tempDay.matchedEvents) inside dayEStack writable with their respective eStack numbers
-      let stack = 1
-      for (let i = 0; i < events.length; i++) {
-        if (differenceInMinutes(parseISO(events[e].end), startOfDay(parseISO(events[e].end))) > differenceInMinutes(parseISO(events[i].start), startOfDay(parseISO(events[i].start)))) {
-          stack++;
-          tempArr = [...tempArr, {id: events[i].id, stack: stack}];
-          // console.log("Innermost for loop");
+    if ($tempDay.matchedEvents) {
+      for (let e = 0; e < events.length; e++) {
+        // add all events ($tempDay.matchedEvents) inside dayEStack writable with their respective eStack numbers
+        let stack = 1
+        for (let i = 0; i < events.length; i++) {
+          if (differenceInMinutes(parseISO(events[e].end), startOfDay(parseISO(events[e].end))) > differenceInMinutes(parseISO(events[i].start), startOfDay(parseISO(events[i].start)))) {
+            stack++;
+            tempArr = [...tempArr, {id: events[i].id, stack: stack}];
+            // console.log("Innermost for loop");
+          }
         }
-      }
-      console.log("STACK", stack);
-      if (stack > eStack) {
-        eStack = stack;
+        console.log("STACK", stack);
+        if (stack > eStack) {
+          eStack = stack;
+        }
       }
     }
     console.log("eSTACK", eStack);
@@ -79,7 +81,7 @@
 </script>
 
 <div
-    class="text-center w-[12rem] h-[7rem] border-2 dark:text-gray-400 overflow-hidden shadow-none"
+    class="text-center w-full h-[7rem] border-2 dark:text-gray-400 overflow-hidden shadow-none"
     style={formatISO(new Date(currentYear, currentMonth, day)) == formatISO(startOfDay(new Date())) ? 'border-color:  #9376E0' : null}
     on:click={() => {clickOutsideModal = true; eventStack()}}
     on:keydown={() => {console.log("Keydown pressed")}}
@@ -101,20 +103,22 @@
 </div>
 
 <Modal title={format(new Date(currentYear, currentMonth, day), "EEE, MMM do")} class="w-[40rem] h-[60rem]" bind:open={clickOutsideModal} autoclose outsideclose>
-  <div class="grid gap-2" style={`grid-template-columns: 17% repeat(${eventStack()}, 1fr)`}>
+  <div class="grid gap-2" style={`grid-template-columns: 17% repeat(${eventStack() - 1}, 1fr)`}>
     {#each timelineSlots as slot}
-    <div class="!h-4 text-sm text-base font-semibold gap-2 col-start-1 border-t">
+    <div class="!h-4 text-sm text-base font-semibold gap-2 colabout:blank#blocked-start-1 border-t">
       <div>
         <span>{format(new Date(slot), "h:mm a")}
         </span>
       </div>
     </div>
     {/each}
+    {#if $tempDay.matchedEvents}
     {#each $tempDay.matchedEvents as event}
-      <div class="border" style={`color: ${event.color ? `white` : "black"}; background-color:  ${event.color ? `${event.color}` : "transparent"}; grid-row: ${convertTimeSlot(parseISO(event.start))} / span ${event.duration / interval}; grid-column-start: ${matchEStack(event)}`}>
-        {event.title}
-      </div>
+    <div class="border" style={`color: ${event.color ? `white` : "black"}; background-color:  ${event.color ? `${event.color}` : "transparent"}; grid-row: ${convertTimeSlot(parseISO(event.start))} / span ${event.duration / interval}; grid-column-start: ${matchEStack(event)}`}>
+      {event.title}
+    </div>
     {/each}
+    {/if}
   </div>
   <svelte:fragment slot='footer'>
     <Button color="green" on:click={() => alert('Handle "success"')}>Add Event</Button>

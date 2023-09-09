@@ -11,7 +11,7 @@
 </svelte:head>
 
 <section>
-  <div class="flex flex-row w-9/12">
+  <div class="flex w-9/12 content-start">
     {#if $authStore.currentUser}
       <Notes />
       <Tasks />

@@ -262,77 +262,75 @@
           >
             These have been here a while...
           </div>
-          {#if $oldTasks}
-            <div
-              class="mb-2 text-1xl font-bold tracking-tight text-gray-900 dark:text-white"
-            >
-            </div>
-            {#each $oldTasks as task}
-              <Task {openEdit} {task} />
-              <!-- <Card
-                on:click={openEdit(oldTask.id)}
-                class="m-2 relative w-full max-w-xs h-48 overflow-hidden cursor-pointer !bg-lightnotebg dark:!bg-darknotebg"
-              >
-                <h5
-                  class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+          <div class='flex flex-col'>
+            {#if $oldTasks}
+              {#each $oldTasks as task}
+                <Task {openEdit} {task} />
+                <!-- <Card
+                  on:click={openEdit(oldTask.id)}
+                  class="m-2 relative w-full max-w-xs h-48 overflow-hidden cursor-pointer !bg-lightnotebg dark:!bg-darknotebg"
                 >
-                  {oldTask.title}
-                </h5>
-                <p
-                  class="font-normal text-gray-700 dark:text-gray-200 leading-tight mb-4"
-                >
-                  {oldTask.body}
-                </p>
-                <p
-                  class="font-normal text-gray-700 dark:text-gray-200 leading-tight mb-4"
-                >
-                  {formatDistanceToNow(parseISO(oldTask.updatedAt))} ago
-                </p>
-                {#if oldTask.labels}
-                  <div class="flex justify-start items-center gap-2 flex-wrap">
-                    {#each oldTask.labels as label}
-                      <Label
-                        class="text-sm w-fit text-gray-700 block mb-2 p-2 border-solid border-2 border-white rounded dark:text-gray-400 leading-tight"
-                      >
-                        {label}
-                      </Label>
-                    {/each}
-                  </div>
-                {/if}
-                <Button
-                  color="red"
-                  class="w-fit absolute top-1 right-1 m-2 bg-redbtn dark:!bg-darkredbtn"
-                  on:click={deleteStoredTask(oldTask.id)}
-                  ><svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 80 80"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <h5
+                    class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
                   >
-                    <path
-                      d="M61 20L56.3735 64.4144C56.1612 66.4521 54.4437 68 52.395 68H27.605C25.5563 68 23.8388 66.4521 23.6265 64.4144L19 20"
-                      stroke="black"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                    <path
-                      d="M65 20H15"
-                      stroke="black"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                    <path
-                      d="M27.8555 19.9986L33.926 12.3865H46.0747L52.1452 19.9986"
-                      stroke="black"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg></Button
-                >
-              </Card> -->
-            {/each}
-          {/if}
+                    {oldTask.title}
+                  </h5>
+                  <p
+                    class="font-normal text-gray-700 dark:text-gray-200 leading-tight mb-4"
+                  >
+                    {oldTask.body}
+                  </p>
+                  <p
+                    class="font-normal text-gray-700 dark:text-gray-200 leading-tight mb-4"
+                  >
+                    {formatDistanceToNow(parseISO(oldTask.updatedAt))} ago
+                  </p>
+                  {#if oldTask.labels}
+                    <div class="flex justify-start items-center gap-2 flex-wrap">
+                      {#each oldTask.labels as label}
+                        <Label
+                          class="text-sm w-fit text-gray-700 block mb-2 p-2 border-solid border-2 border-white rounded dark:text-gray-400 leading-tight"
+                        >
+                          {label}
+                        </Label>
+                      {/each}
+                    </div>
+                  {/if}
+                  <Button
+                    color="red"
+                    class="w-fit absolute top-1 right-1 m-2 bg-redbtn dark:!bg-darkredbtn"
+                    on:click={deleteStoredTask(oldTask.id)}
+                    ><svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 80 80"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M61 20L56.3735 64.4144C56.1612 66.4521 54.4437 68 52.395 68H27.605C25.5563 68 23.8388 66.4521 23.6265 64.4144L19 20"
+                        stroke="black"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M65 20H15"
+                        stroke="black"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M27.8555 19.9986L33.926 12.3865H46.0747L52.1452 19.9986"
+                        stroke="black"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg></Button
+                  >
+                </Card> -->
+              {/each}
+            {/if}
+          </div>
           <hr
             class="w-48 h-1 mx-auto my-4 bg-gray-800 border-0 rounded md:my-4 dark:bg-gray-100"
           />
@@ -553,8 +551,8 @@
     </div>
   {/if}
   {#if window.location.pathname == "/tasks"}
-    <div class="flex flex-col flex-1">
-      <div class="text-center w-fit flex flex-col mb-2">
+    <div class="flex flex-1">
+      <div class="text-center w-fit flex flex-col mb-2 w-[37rem] mr-20">
         <AccordionItem>
           <div slot="header" class="mb-6">
             <Input
@@ -647,7 +645,7 @@
         </AccordionItem>
       </div>
 
-      <div class="flex flex-wrap">
+      <div class="flex flex-col justify-center">
         {#if $storeTasks}
           {#each $storeTasks as task}
             <Task {task} {openEdit}/>
