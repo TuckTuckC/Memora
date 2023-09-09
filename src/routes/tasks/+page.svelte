@@ -85,7 +85,7 @@
 
 {#if store.currentUser}
   {#if window.location.pathname == "/"}
-    <div class="flex flex-col flex-1">
+    <div class="flex flex-col flex-1 border-2 border-gray rounded-lg p-2 ml-4 bg-blue-50 dark:text-white dark:bg-blue-950">
       <Drawer
         transitionType="fly"
         {transitionParams}
@@ -551,7 +551,7 @@
     </div>
   {/if}
   {#if window.location.pathname == "/tasks"}
-    <div class="flex flex-1">
+    <div class="flex flex-1 dark:text-white">
       <div class="text-center w-fit flex flex-col mb-2 w-[37rem] mr-20">
         <AccordionItem>
           <div slot="header" class="mb-6">

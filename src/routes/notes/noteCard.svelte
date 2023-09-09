@@ -27,7 +27,11 @@
   on:click={openEdit(note.id)}
   class={`m-2 w-auto ${
     window.location.pathname === "/notes" ? "max-w-[16rem]" : "max-w-[15.1rem]"
-  } h-fit cursor-pointer !bg-lightnotebg dark:!bg-darknotebg`}
+  } 
+  ${
+    window.location.pathname === "/" ? "bg-white" : "!bg-lightnotebg dark:!bg-darknotebg"
+  }
+  h-fit cursor-pointer `}
 >
   <h5
     class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
