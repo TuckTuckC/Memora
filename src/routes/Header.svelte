@@ -30,7 +30,7 @@
   }
 </script>
 
-<Navbar let:hidden let:toggle class="border-b-2 divide-y-reverse">
+<Navbar let:hidden let:toggle class="border-b-2 divide-y-reverse fixed z-10">
   <NavBrand href="/">
     <span
       class="self-center whitespace-nowrap text-xl font-semibold dark:text-white"

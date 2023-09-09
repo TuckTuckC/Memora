@@ -105,7 +105,7 @@
 <Modal title={format(new Date(currentYear, currentMonth, day), "EEE, MMM do")} class="w-[40rem] h-[60rem]" bind:open={clickOutsideModal} autoclose outsideclose>
   <div class="grid gap-2" style={`grid-template-columns: 17% repeat(${eventStack() - 1}, 1fr)`}>
     {#each timelineSlots as slot}
-    <div class="!h-4 text-sm text-base font-semibold gap-2 col-start-1 border-t">
+    <div class="!h-4 text-sm text-base font-semibold gap-2 colabout:blank#blocked-start-1 border-t">
       <div>
         <span>{format(new Date(slot), "h:mm a")}
         </span>

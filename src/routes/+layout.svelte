@@ -38,7 +38,7 @@
 <div class="app dark:bg-darkbg">
   <Header />
 
-  <main>
+  <main class='dark:bg-darkbg'>
     <slot />
   </main>
 </div>
@@ -59,6 +59,8 @@
     width: 100%;
     margin: 0 auto;
     box-sizing: border-box;
+    position: absolute;
+    top: 10%;
   }
 
   footer {
