@@ -61,28 +61,26 @@
 </script>
 
 {#if store.currentUser}
-  <div class="flex flex-col flex-2 w-9/12">
+  <div class={`flex flex-col flex-2 w-9/12 ${window.location.pathname === "/" ?  "border-2 border-gray rounded-lg bg-zinc-100 dark:bg-neutral-800" : ""}`}>
     {#if window.location.pathname === "/"}
-      <p class="text-center pb-4 border-b-2 text-2xl dark:text-white">
+      <p class="text-center pb-4 text-2xl font-bold dark:text-white pt-2">
         Forgot About These?
       </p>
     {/if}
     <div
-      class={`flex flex-wrap ${
-        window.location.pathname === "/" ? "border-r-2" : ""
-      }`}
+      class={`flex flex-wrap`}
     >
       {#if $notes}
         {#if $oldNotes && window.location.pathname === "/"}
-          <div class="flex flex-wrap w-full pb-6">
+          <div class="flex flex-wrap w-full pb-4 px-4">
             {#each $oldNotes as note}
               <NoteCard forgot={true} {openEdit} {note} />
             {/each}
           </div>
         {/if}
-        <div class="flex flex-col w-full pt-6">
+        <div class="flex flex-col w-full pt-6 px-4">
           {#if window.location.pathname === "/"}
-            <p class="text-center pb-4 border-b-2 text-2xl dark:text-white">
+            <p class="text-center pb-4 border-b-2 border-black text-2xl dark:text-white dark:border-white">
               Recents
             </p>
           {/if}
@@ -91,7 +89,7 @@
             class="w-fit mt-6 !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
             >Create New Note</Button
           >
-          <div class="flex flex-row flex-wrap justify-center w-full pt-6">
+          <div class="flex flex-row flex-wrap justify-start w-full pt-6">
             {#each $notes as note}
               <NoteCard forgot={false} {openEdit} {note} />
             {/each}

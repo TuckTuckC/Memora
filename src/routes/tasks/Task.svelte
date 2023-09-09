@@ -61,7 +61,7 @@ style={`border: 4px solid ${task.color ? `${task.color}` : "transparent"}`}
 >
 </Card> -->
 
-<AccordionItem class='!w-full self-start'>
+<AccordionItem class='!w-full self-start dark:bg-indigo-900'>
   <span slot="header"><i class="bi bi-x-lg text-red-500 mr-4" on:click={(e) => {e.stopPropagation(); deleteStoredTask(task.id)}}></i>{task.title}</span>
   <p class="mb-2 text-gray-500 dark:text-gray-400">{task.body}</p>
   <p
