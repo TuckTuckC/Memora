@@ -262,7 +262,7 @@
           >
             These have been here a while...
           </div>
-          <div class='flex flex-col'>
+          <div class='flex flex-col w-full px-6'>
             {#if $oldTasks}
               {#each $oldTasks as task}
                 <Task {openEdit} {task} />
