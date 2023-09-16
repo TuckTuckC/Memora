@@ -39,7 +39,7 @@
     {note.title}
   </h5>
   <p
-    class="font-normal text-gray-700 dark:text-gray-200 leading-tight h-fit max-h-32 overflow-auto mb-4"
+    class="font-normal text-gray-700 dark:text-gray-200 leading-tight min-h-fit py-2 max-h-32 overflow-auto mb-4 pr-2"
   >
     {note.body}
   </p>
