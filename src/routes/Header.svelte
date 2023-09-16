@@ -30,7 +30,7 @@
   }
 </script>
 
-<Navbar let:hidden let:toggle class="border-b-2 divide-y-reverse fixed z-10">
+<Navbar let:hidden let:toggle class="border-b-2 divide-y-reverse fixed z-10 bg-slate-200">
   <NavBrand href="/">
     <span
       class="self-center whitespace-nowrap text-xl font-semibold dark:text-white"
@@ -39,7 +39,7 @@
     </span>
   </NavBrand>
   <NavHamburger on:click={toggle} />
-  <NavUl {hidden}>
+  <NavUl {hidden} class="flex items-center justify-center gap-2">
     <NavLi href="/" active={$page.url.pathname === "/" ? true : false}>Home</NavLi>
     <NavLi href="/notes" active={$page.url.pathname === "/notes" ? true : false}>Notes</NavLi>
     <NavLi href="/tasks" active={$page.url.pathname === '/tasks' ? true : false}>Tasks</NavLi>

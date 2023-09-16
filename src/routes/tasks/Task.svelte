@@ -61,8 +61,11 @@ style={`border: 4px solid ${task.color ? `${task.color}` : "transparent"}`}
 >
 </Card> -->
 
-<AccordionItem class='!w-full self-start'>
-  <span slot="header"><i class="bi bi-x-lg text-red-500 mr-4" on:click={(e) => {e.stopPropagation(); deleteStoredTask(task.id)}}></i>{task.title}</span>
+<AccordionItem class='!w-full self-start' style={`border: 4px solid ${task.color ? `${task.color}` : "transparent"}; padding-left: 0;`}>
+  <span slot="header" class='flex'>
+    <div class='h-full w-2 bg-gray-600' style={`background-color: ${task.color ? `${task.color}` : "transparent"}; color: ${task.color ? `${task.color}` : "transparent"}; height: 100%; width: 0.5rem; margin: 0 1rem 0 0;`}>I</div>
+    <i class="bi bi-x-lg text-red-500 mr-4" on:click={(e) => {e.stopPropagation(); deleteStoredTask(task.id)}}></i>{task.title}
+  </span>
   <p class="mb-2 text-gray-500 dark:text-gray-400">{task.body}</p>
   <p
     class="font-normal text-gray-700 dark:text-gray-200 leading-tight mb-4"
@@ -85,5 +88,9 @@ style={`border: 4px solid ${task.color ? `${task.color}` : "transparent"}`}
 <style>
   svg {
     visibility: hidden;
+  }
+
+  .group > button {
+    padding: 0 !important;
   }
 </style>
