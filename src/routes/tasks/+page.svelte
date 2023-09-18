@@ -262,7 +262,7 @@
           >
             These have been here a while...
           </div>
-          <div class='flex flex-col'>
+          <div class='flex flex-col w-full px-6'>
             {#if $oldTasks}
               {#each $oldTasks as task}
                 <Task {openEdit} {task} />
@@ -551,101 +551,104 @@
     </div>
   {/if}
   {#if window.location.pathname == "/tasks"}
-    <div class="flex flex-1 dark:text-white">
-      <div class="text-center w-fit flex flex-col mb-2 w-[37rem] mr-20">
-        <AccordionItem>
-          <div slot="header" class="mb-6">
-            <Input
-              id="title"
-              name="title"
-              required
-              placeholder="Title"
-              bind:value={title}
-            />
-          </div>
-          <div class="flex">
-            <div>
-              <div class="mb-6">
-                <Label for="body" class="mb-2">Body</Label>
-                <Textarea
-                  id="message"
-                  placeholder="Write task body..."
-                  rows="4"
-                  name="message"
-                  bind:value={body}
-                />
-              </div>
-              <div class="mb-6">
-                <Label for="newLabel" class="block mb-2">New Label</Label>
-                <Input
-                  id="newLabel"
-                  name="newLabel"
-                  placeholder="New Label"
-                  bind:value={labelName}
-                />
-              </div>
-              <Button
-                class="w-2/5 !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
-                on:click={() => {makeNewLabel({labelName}), resetLabel()}}>Create Label</Button
-              >
-    
-              <div class="mb-6">
-                <Label for="body" class="mb-2">Applied Labels</Label>
-                <div class="flex flex-col gap-2 items-center">
-                  {#each $labelsAdded as labelAdded}
-                    <div
-                    class="bg-gray-500 w-fit hover:bg-gray-300 flex gap-2 justify-center items-center focus:shadow-outline focus:outline-none text-white font-bold p-1 rounded"
-                  >
-                    <div>
-                      <div>{labelAdded} </div>
-                    </div>
-                    <i on:click={removeAppliedLabel(labelAdded)} class="bi bi-x"></i>
-                  </div>
-                  {/each}
-                </div>
-              </div>
+    <div class="relative grid grid-cols-5 dark:text-white pt-8">
+      <div class="col-span-2">
+        <div class="text-center flex flex-col px-4 sticky h-fit top-32 left-0">
+          <div>
+            <div class="mb-6">
+              <Input
+                id="title"
+                name="title"
+                required
+                placeholder="Title"
+                bind:value={title}
+              />
             </div>
-            <div>
-              <ButtonGroup class="flex justify-center items-center gap-2">
-                  <Button on:click={() => handleColor('#9BABB8')} class={`!bg-[#9BABB8] !p-1 !rounded-full w-[1rem] h-[1rem]`}></Button>
-                  <Button on:click={() => handleColor('#5C8984')} class={`!bg-[#5C8984] !p-1 !rounded-full w-[1rem] h-[1rem]`}></Button>
-                  <Button on:click={() => handleColor('#FCF9BE')} class={`!bg-[#FCF9BE] !p-1 !rounded-full w-[1rem] h-[1rem]`}></Button>
-                  <Button on:click={() => handleColor('#FF8787')} class={`!bg-[#FF8787] !p-1 !rounded-full w-[1rem] h-[1rem]`}></Button>
-                  <Button on:click={() => handleColor('#537188')} class={`!bg-[#537188] !p-1 !rounded-full w-[1rem] h-[1rem]`}></Button>
-                  <Button on:click={() => handleColor('#E8A0BF')} class={`!bg-[#E8A0BF] !p-1 !rounded-full w-[1rem] h-[1rem]`}></Button>
-                  <Button on:click={() => handleColor('#B2A4FF')} class={`!bg-[#B2A4FF] !p-1 !rounded-full w-[1rem] h-[1rem]`}></Button>
-                  <Button on:click={() => handleColor('#A7727D')} class={`!bg-[#A7727D] !p-1 !rounded-full w-[1rem] h-[1rem]`}></Button>
-              </ButtonGroup>
-              {#if $storeTasksLabels}
-              <div class="flex flex-col">
-  
-                <Label for="body" class="mb-2">Your Labels</Label>
-                  <div class="ml-2 mb-6 grid grid-cols-2 gap-2 justify-items-center">
-                    {#each $storeTasksLabels as label}
+            <div class="flex">
+              <div>
+                <div class="mb-2">
+                  <Label for="body" class="mb-2">Body</Label>
+                  <Textarea
+                    id="message"
+                    placeholder="Write task body..."
+                    rows="4"
+                    name="message"
+                    bind:value={body}
+                  />
+                </div>
+                <div class="mb-2">
+                  <Label for="newLabel" class="block mb-2">New Label</Label>
+                  <Input
+                    id="newLabel"
+                    name="newLabel"
+                    placeholder="New Label"
+                    bind:value={labelName}
+                  />
+                </div>
+                <Button
+                  class="w-fit m-4 !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
+                  on:click={() => {makeNewLabel({labelName}), resetLabel()}}>Create Label</Button
+                >
+      
+                <div class="mb-2">
+                  <Label for="body" class="mb-2">Applied Labels</Label>
+                  <div class="flex flex-col gap-2 items-center">
+                    {#each $labelsAdded as labelAdded}
                       <div
-                        class="bg-gray-500 w-fit hover:bg-gray-300 flex gap-2 justify-center justify-self-start items-center focus:shadow-outline focus:outline-none text-white font-bold p-1 rounded"
-                      >
-                        <div on:click={addLabel({labelName: label.labelName})}>
-                          <div>{label.labelName} </div>
-                        </div>
-                        <i on:click={removeStoredLabel(label.labelName)} class="bi bi-x"></i>
+                      class="bg-gray-500 w-fit hover:bg-gray-300 flex gap-2 justify-center items-center focus:shadow-outline focus:outline-none text-white font-bold p-1 rounded"
+                    >
+                      <div>
+                        <div>{labelAdded} </div>
                       </div>
+                      <i on:click={removeAppliedLabel(labelAdded)} class="bi bi-x"></i>
+                    </div>
                     {/each}
                   </div>
+                </div>
               </div>
-              {/if}
+              <div>
+                <ButtonGroup class="flex justify-center items-center gap-2">
+                    <Button on:click={() => handleColor('#9BABB8')} color="dark" class={`!bg-[#9BABB8] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black transition ease-in-out`}></Button>
+                    <Button on:click={() => handleColor('#5C8984')} color="green" class={`!bg-[#5C8984] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black transition ease-in-out`}></Button>
+                    <Button on:click={() => handleColor('#FCF9BE')} color="yellow" class={`!bg-[#FCF9BE] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black transition ease-in-out`}></Button>
+                    <Button on:click={() => handleColor('#FF8787')} color="red" class={`!bg-[#FF8787] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black transition ease-in-out`}></Button>
+                    <Button on:click={() => handleColor('#537188')} color="green" class={`!bg-[#537188] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black transition ease-in-out`}></Button>
+                    <Button on:click={() => handleColor('#E8A0BF')} color="red" class={`!bg-[#E8A0BF] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black transition ease-in-out`}></Button>
+                    <Button on:click={() => handleColor('#B2A4FF')} color="purple" class={`!bg-[#B2A4FF] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black transition ease-in-out`}></Button>
+                    <Button on:click={() => handleColor('#A7727D')} color="dark" class={`!bg-[#A7727D] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black transition ease-in-out`}></Button>
+                </ButtonGroup>
+                {#if $storeTasksLabels}
+                <div class="flex flex-col">
+    
+                  <Label for="body" class="mb-2">Your Labels</Label>
+                    <div class="ml-2 mb-6 grid grid-cols-2 gap-2 justify-center items-center p-2">
+                      {#each $storeTasksLabels as label}
+                        <div
+                          class="bg-gray-500 w-fit hover:bg-gray-300 flex gap-2 justify-center justify-self-start items-center focus:shadow-outline focus:outline-none text-white font-bold p-1 pl-2 rounded"
+                        >
+                          <div on:click={addLabel({labelName: label.labelName})}>
+                            <div>{label.labelName} </div>
+                          </div>
+                          <i on:click={removeStoredLabel(label.labelName)} class="bi bi-x"></i>
+                        </div>
+                      {/each}
+                    </div>
+                </div>
+                {/if}
+              </div>
             </div>
+                <Button
+                  class="w-full !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
+                  on:click={() => {newTask({labelsAdded, body, title, colorSel}), reset()}}
+                  ><i class="bi bi-clipboard-plus-fill mr-2"></i>
+                  Create Task</Button
+                >
           </div>
-              <Button
-                class="w-full !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
-                on:click={() => {newTask({labelsAdded, body, title, colorSel}), reset()}}
-                ><i class="bi bi-clipboard-plus-fill mr-2"></i>
-                Create Task</Button
-              >
-        </AccordionItem>
+        </div>
       </div>
+      
 
-      <div class="flex flex-col justify-center">
+      <div class="flex flex-col justify-center col-span-3">
         {#if $storeTasks}
           {#each $storeTasks as task}
             <Task {task} {openEdit}/>
@@ -679,7 +682,7 @@
                 class="mb-4 dark:text-white"
               />
             </div>
-            <form action="#" class="mb-6">
+            <form action="#">
               <div class="mb-6">
                 <Label for="title" class="block mb-2">Title</Label>
                 <Input
@@ -710,7 +713,7 @@
                 />
               </div>
               <Button
-                class="w-2/5 !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
+                class="w-max !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
                 on:click={() => {makeNewLabel({labelName}), resetLabel()}}>Create Label</Button
               >
 
@@ -862,7 +865,7 @@
               </div>
               {#if $labelsAdded.length > 0}
                 <div class="mb-6">
-                  <Label for="body" class="mb-2">Applied Labels</Label>
+                  <Label for="body" class="m-4">Applied Labels</Label>
                   <div class="flex flex-wrap justify-start align-center">
                     {#each $labelsAdded as labelAdded}
                       <div
