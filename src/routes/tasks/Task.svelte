@@ -62,9 +62,14 @@ style={`border: 4px solid ${task.color ? `${task.color}` : "transparent"}`}
 </Card> -->
 
 <AccordionItem class='!w-full self-start' style={`border: 4px solid ${task.color ? `${task.color}` : "transparent"}; padding-left: 0;`}>
-  <span slot="header" class='flex'>
-    <div class='h-full w-2 bg-gray-600' style={`background-color: ${task.color ? `${task.color}` : "transparent"}; color: ${task.color ? `${task.color}` : "transparent"}; height: 100%; width: 0.5rem; margin: 0 1rem 0 0;`}>I</div>
-    <i class="bi bi-x-lg text-red-500 mr-4" on:click={(e) => {e.stopPropagation(); deleteStoredTask(task.id)}}></i>{task.title}
+  <span slot="header" class='flex justify-center items-center gap-4'>
+    {#if task.color} 
+      <Button color="dark" class={`!bg-[${task.color}] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-black`}></Button>
+    {/if}
+    {#if !task.color} 
+      <Button color="dark" class={`!bg-transparent !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent`}></Button>
+    {/if}
+    <i class="bi bi-x-lg bg-transparent rounded-full text-red-500 mr-4 hover:text-red-800 hover:bg-slate-200 transition ease-in-out" on:click={(e) => {e.stopPropagation(); deleteStoredTask(task.id)}}></i>{task.title}
   </span>
   <p class="mb-2 text-gray-500 dark:text-gray-400">{task.body}</p>
   <p
