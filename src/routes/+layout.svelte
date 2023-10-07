@@ -8,12 +8,29 @@
   import { auth } from "../lib/firebase/firebase.client";
   import { initData } from "../controllers/data";
 
+  import { getMessaging, getToken, onMessage } from "firebase/messaging";
+
   $: {
     if ($authStore.currentUser) {
       initData();
     }
   }
+
   onMount(() => {
+
+    const messaging = getMessaging();
+    Notification.requestPermission().then((permission) => {
+      if (permission === 'granted') {
+        console.log('Notification permission granted.');
+        // Get the messaging token
+        getToken(messaging).then((token) => {
+          console.log('Token:', token);
+          // Store this token in Firestore under the user's document
+        }).catch((err) => {
+          console.log('An error occurred while retrieving token. ', err);
+        });
+      }})
+
     const unsubscribe = auth.onAuthStateChanged((user) => {
       authStore.update((curr) => {
         return { ...curr, isLoading: false, currentUser: user };
