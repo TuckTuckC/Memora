@@ -31,6 +31,7 @@
 
   import {get} from 'svelte/store';
 
+  let displayMore;
   let idTemp = "";
 
   let title = "";
@@ -608,14 +609,14 @@
               </div>
               <div>
                 <ButtonGroup class="flex justify-center items-center gap-2">
-                    <Button on:click={() => handleColor('#9BABB8')} color="dark" class={`!bg-[#9BABB8] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black transition ease-in-out`}></Button>
-                    <Button on:click={() => handleColor('#5C8984')} color="green" class={`!bg-[#5C8984] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black transition ease-in-out`}></Button>
-                    <Button on:click={() => handleColor('#FCF9BE')} color="yellow" class={`!bg-[#FCF9BE] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black transition ease-in-out`}></Button>
-                    <Button on:click={() => handleColor('#FF8787')} color="red" class={`!bg-[#FF8787] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black transition ease-in-out`}></Button>
-                    <Button on:click={() => handleColor('#537188')} color="green" class={`!bg-[#537188] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black transition ease-in-out`}></Button>
-                    <Button on:click={() => handleColor('#E8A0BF')} color="red" class={`!bg-[#E8A0BF] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black transition ease-in-out`}></Button>
-                    <Button on:click={() => handleColor('#B2A4FF')} color="purple" class={`!bg-[#B2A4FF] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black transition ease-in-out`}></Button>
-                    <Button on:click={() => handleColor('#A7727D')} color="dark" class={`!bg-[#A7727D] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black transition ease-in-out`}></Button>
+                    <Button on:click={() => handleColor('#9BABB8')} color="dark" class={`!bg-[#9BABB8] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black dark:hover:border-white transition ease-in-out`}></Button>
+                    <Button on:click={() => handleColor('#5C8984')} color="green" class={`!bg-[#5C8984] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black dark:hover:border-white transition ease-in-out`}></Button>
+                    <Button on:click={() => handleColor('#FCF9BE')} color="yellow" class={`!bg-[#FCF9BE] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black dark:hover:border-white transition ease-in-out`}></Button>
+                    <Button on:click={() => handleColor('#FF8787')} color="red" class={`!bg-[#FF8787] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black dark:hover:border-white transition ease-in-out`}></Button>
+                    <Button on:click={() => handleColor('#537188')} color="green" class={`!bg-[#537188] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black dark:hover:border-white transition ease-in-out`}></Button>
+                    <Button on:click={() => handleColor('#E8A0BF')} color="red" class={`!bg-[#E8A0BF] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black dark:hover:border-white transition ease-in-out`}></Button>
+                    <Button on:click={() => handleColor('#B2A4FF')} color="purple" class={`!bg-[#B2A4FF] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black dark:hover:border-white transition ease-in-out`}></Button>
+                    <Button on:click={() => handleColor('#A7727D')} color="dark" class={`!bg-[#A7727D] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black dark:hover:border-white transition ease-in-out`}></Button>
                 </ButtonGroup>
                 {#if $storeTasksLabels}
                 <div class="flex flex-col">
