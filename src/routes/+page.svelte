@@ -18,6 +18,10 @@
       <Notes />
       <Tasks />
     {/if}
+    {#if !$authStore.currentUser}
+      <Notes />
+      <Tasks />
+    {/if}
   </div>
   <Auth />
 </section>
