@@ -3,7 +3,7 @@
   import Notes from "./notes/+page.svelte";
   import Tasks from "./tasks/+page.svelte";
   import { authStore } from "../stores/authStore";
-  import {sendPostRequest} from '../controllers/reminders';
+  import {sendPostRequest, sendNotification} from '../controllers/reminders';
 </script>
 
 <svelte:head>
@@ -14,7 +14,7 @@
 <section>
   <div class="flex w-full content-start pt-8 px-2">
     {#if $authStore.currentUser}
-    <button on:click={sendPostRequest}>Send POST Request</button>
+    <button on:click={sendNotification}>Send POST Request</button>
       <Notes />
       <Tasks />
     {/if}

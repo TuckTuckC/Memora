@@ -35,6 +35,7 @@
     <span
       class="self-center whitespace-nowrap text-xl font-semibold dark:text-white"
     >
+    
       Memora
     </span>
   </NavBrand>
