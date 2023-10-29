@@ -39,17 +39,22 @@ export async function sendPostRequest() {
 export async function sendNotification() {
   const token = store.currentUser.FCMToken;
 
+  console.log(token);
+
   const requestOptions = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ token: token }), // You can also send other data needed by the server
+    body: JSON.stringify({
+      token:
+        "dzWp-h43Akxop2CoQ73IpG:APA91bFCqal_xwBYGOLIq7Ljy4_NZngCTEPY0sihlyHmHUl42sOICoRHZaxG1PubGQHteaF6urFSd1EblsHzqHq3rQv_00Nx1Oi5a047xw9WXi1PU8j0-CmMHaqGrF38_nm4j1Yeo-0n",
+    }), // You can also send other data needed by the server
   };
 
   try {
     const response = await fetch(
       "http://localhost:3000/send-notification",
       requestOptions
-    ); // Replace with your actual server URL
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
