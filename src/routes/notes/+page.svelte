@@ -1,6 +1,5 @@
 <script>
   import "firebase/firestore";
-  
   import { setDoc, doc, getDoc } from "firebase/firestore";
   import {
     Button,
@@ -16,6 +15,7 @@
   import { newNote, editNote } from "../../controllers/notes";
   import { formatISO } from "date-fns";
   import NoteCard from "./noteCard.svelte";
+  import { browser } from '$app/environment';
 
   let title = "";
   let body = "";
@@ -60,83 +60,85 @@
   };
 </script>
 
-{#if store.currentUser}
-  <div class={`flex flex-col flex-2 w-9/12 ${window.location.pathname === "/" ?  "border-2 border-gray rounded-lg bg-zinc-100 dark:bg-neutral-800" : ""}`}>
-    {#if window.location.pathname === "/"}
-      <p class="text-center pb-4 text-2xl font-bold dark:text-white pt-2">
-        Forgot About These?
-      </p>
-    {/if}
-    <div
-      class={`flex flex-wrap`}
-    >
-      {#if $notes}
-        {#if $oldNotes && window.location.pathname === "/"}
-          <div class="flex flex-wrap w-full pb-4 px-4">
-            {#each $oldNotes as note}
-              <NoteCard forgot={true} {openEdit} {note} />
-            {/each}
+{#if browser} 
+  {#if store.currentUser}
+    <div class={`flex flex-col flex-2 w-9/12 ${window.location.pathname === "/" ?  "border-2 border-gray rounded-lg bg-zinc-100 dark:bg-neutral-800" : ""}`}>
+      {#if window.location.pathname === "/"}
+        <p class="text-center pb-4 text-2xl font-bold dark:text-white pt-2">
+          Forgot About These?
+        </p>
+      {/if}
+      <div
+        class={`flex flex-wrap`}
+      >
+        {#if $notes}
+          {#if $oldNotes && window.location.pathname === "/"}
+            <div class="flex flex-wrap w-full pb-4 px-4">
+              {#each $oldNotes as note}
+                <NoteCard forgot={true} {openEdit} {note} />
+              {/each}
+            </div>
+          {/if}
+          <div class="flex flex-col w-full pt-6 px-4">
+            {#if window.location.pathname === "/"}
+              <p class="text-center pb-4 border-b-2 border-black text-2xl dark:text-white dark:border-white">
+                Recents
+              </p>
+            {/if}
+            <Button
+              on:click={() => (hidden4 = false)}
+              class="w-fit mt-6 !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
+              >Create New Note</Button
+            >
+            <div class="flex flex-row flex-wrap justify-start w-full pt-6">
+              {#each $notes as note}
+                <NoteCard forgot={false} {openEdit} {note} />
+              {/each}
+            </div>
           </div>
         {/if}
-        <div class="flex flex-col w-full pt-6 px-4">
-          {#if window.location.pathname === "/"}
-            <p class="text-center pb-4 border-b-2 border-black text-2xl dark:text-white dark:border-white">
-              Recents
-            </p>
-          {/if}
-          <Button
-            on:click={() => (hidden4 = false)}
-            class="w-fit mt-6 !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
-            >Create New Note</Button
-          >
-          <div class="flex flex-row flex-wrap justify-start w-full pt-6">
-            {#each $notes as note}
-              <NoteCard forgot={false} {openEdit} {note} />
-            {/each}
-          </div>
-        </div>
-      {/if}
+      </div>
     </div>
-  </div>
-{/if}
-{#if !store.currentUser} 
-  <div class={`flex flex-col flex-2 w-9/12 ${window.location.pathname === "/" ?  "border-2 border-gray rounded-lg bg-zinc-100 dark:bg-neutral-800" : ""}`}>
-    {#if window.location.pathname === "/"}
-      <p class="text-center pb-4 text-2xl font-bold dark:text-white pt-2">
-        Forgot About These?
-      </p>
-    {/if}
-    <div
-      class={`flex flex-wrap`}
-    >
-      {#if $guestNotes}
-        {#if $guestOldNotes && window.location.pathname === "/"}
-          <div class="flex flex-wrap w-full pb-4 px-4">
-            {#each $guestOldNotes as note}
-              <NoteCard forgot={true} {openEdit} {note} />
-            {/each}
+  {/if}
+  {#if !store.currentUser} 
+    <div class={`flex flex-col flex-2 w-9/12 ${window.location.pathname === "/" ?  "border-2 border-gray rounded-lg bg-zinc-100 dark:bg-neutral-800" : ""}`}>
+      {#if window.location.pathname === "/"}
+        <p class="text-center pb-4 text-2xl font-bold dark:text-white pt-2">
+          Forgot About These?
+        </p>
+      {/if}
+      <div
+        class={`flex flex-wrap`}
+      >
+        {#if $guestNotes}
+          {#if $guestOldNotes && window.location.pathname === "/"}
+            <div class="flex flex-wrap w-full pb-4 px-4">
+              {#each $guestOldNotes as note}
+                <NoteCard forgot={true} {openEdit} {note} />
+              {/each}
+            </div>
+          {/if}
+          <div class="flex flex-col w-full pt-6 px-4">
+            {#if window.location.pathname === "/"}
+              <p class="text-center pb-4 border-b-2 border-black text-2xl dark:text-white dark:border-white">
+                Recents
+              </p>
+            {/if}
+            <Button
+              on:click={() => (hidden4 = false)}
+              class="w-fit mt-6 !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
+              >Create New Note</Button
+            >
+            <div class="flex flex-row flex-wrap justify-start w-full pt-6">
+              {#each $guestNotes as note}
+                <NoteCard forgot={false} {openEdit} {note} />
+              {/each}
+            </div>
           </div>
         {/if}
-        <div class="flex flex-col w-full pt-6 px-4">
-          {#if window.location.pathname === "/"}
-            <p class="text-center pb-4 border-b-2 border-black text-2xl dark:text-white dark:border-white">
-              Recents
-            </p>
-          {/if}
-          <Button
-            on:click={() => (hidden4 = false)}
-            class="w-fit mt-6 !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
-            >Create New Note</Button
-          >
-          <div class="flex flex-row flex-wrap justify-start w-full pt-6">
-            {#each $guestNotes as note}
-              <NoteCard forgot={false} {openEdit} {note} />
-            {/each}
-          </div>
-        </div>
-      {/if}
+      </div>
     </div>
-  </div>
+  {/if}
 {/if}
 
 <Drawer
