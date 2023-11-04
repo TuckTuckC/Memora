@@ -34,7 +34,7 @@ async function setFCMToken(token) {
         if (store.currentUser) {
           snapshot.docs.forEach((doc) => {
             if (doc.data().uid == store.currentUser.uid) {
-              console.log('ID:', doc);
+              console.log('ID:', doc.data().uid);
               addTokenToFirestore(token, doc.id)
             }
           });
