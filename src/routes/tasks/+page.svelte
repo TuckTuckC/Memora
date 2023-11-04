@@ -11,6 +11,7 @@
   import {
     formatDistanceToNow,
     parseISO,
+    formatISO
   } from "date-fns";
   import {
     Card,
@@ -77,8 +78,21 @@
     gottenGuestOldTasks.splice(taskToDeleteIndex, 1);
     guestOldTasks.set(gottenGuestOldTasks);
   }
-  function guestNewTask() {
-
+  function guestNewTask({guestLabelsAdded, body, title, colorSel}) {
+    const gottenGuestTasks = get(guestTasks);
+    const newTask = {
+      id: uuidv4(),
+      body: body,
+      createdAt: `${formatISO(new Date())}`,
+      title: title,
+      updatedAt: `${formatISO(new Date())}`,
+      user_id: "dummydata@fake.com",
+      color: colorSel,
+      labels: get(guestLabelsAdded),
+    }
+    gottenGuestTasks.unshift(newTask);
+    guestTasks.set(gottenGuestTasks);
+    guestLabelsAdded.set([]);
   }
   function guestEditTask() {
 
@@ -86,8 +100,22 @@
   function guestOpenEdit() {
 
   }
-  function guestMakeNewLabel() {
-
+  function guestMakeNewLabel(guestNewLabelName) {
+    let namesToCheck = [];
+    const gottenGuestStoredLabels = get(guestStoreTasksLabels)
+    gottenGuestStoredLabels.forEach((d) => {
+      namesToCheck.push(d.labelName);
+    });
+    if (namesToCheck.includes(guestNewLabelName.labelName)) {
+      console.log(
+        "No can do, this label is already applied and we don't want duplicates"
+      );
+    } else {
+      console.log("Adding this label: ", guestNewLabelName.labelName);
+      gottenGuestStoredLabels.push(guestNewLabelName);
+      guestLabelsAdded.set([guestNewLabelName.labelName]);
+      guestStoreTasksLabels.set(gottenGuestStoredLabels);
+    }
   }
   function guestRemoveStoredLabel() {
 
@@ -1065,7 +1093,7 @@
             </div>
             <Button
               class="w-2/5 !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
-              on:click={() => {makeNewLabel({labelName}), resetLabel()}}>Create Label</Button
+              on:click={() => {guestMakeNewLabel({labelName}), resetLabel()}}>Create Label</Button
             >
 
             <div class="mb-6">
@@ -1382,7 +1410,7 @@
                   </div>
                   <Button
                     class="w-fit m-4 !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
-                    on:click={() => {makeNewLabel({labelName}), resetLabel()}}>Create Label</Button
+                    on:click={() => {guestMakeNewLabel({labelName}), resetLabel()}}>Create Label</Button
                   >
         
                   <div class="mb-2">
@@ -1436,7 +1464,7 @@
               </div>
                   <Button
                     class="w-full !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
-                    on:click={() => {newTask({labelsAdded, body, title, colorSel}), reset()}}
+                    on:click={() => {guestNewTask({guestLabelsAdded, body, title, colorSel}), reset()}}
                     ><i class="bi bi-clipboard-plus-fill mr-2"></i>
                     Create Task</Button
                   >
@@ -1511,7 +1539,7 @@
                 </div>
                 <Button
                   class="w-max !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
-                  on:click={() => {makeNewLabel({labelName}), resetLabel()}}>Create Label</Button
+                  on:click={() => {guestMakeNewLabel({labelName}), resetLabel()}}>Create Label</Button
                 >
 
                 <div class="mb-6">
@@ -1581,7 +1609,7 @@
                 <Button
                   type="submit"
                   class="w-full !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
-                  on:click={() => {newTask({labelsAdded, body, title, colorSel}), reset()}}
+                  on:click={() => {guestNewTask({guestLabelsAdded, body, title, colorSel}), reset()}}
                   ><svg
                     width="30"
                     height="30"

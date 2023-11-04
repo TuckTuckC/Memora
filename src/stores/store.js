@@ -165,5 +165,5 @@ export const guestTasks = writable([
 export const guestOldNotes = writable([])
 export const guestOldTasks = writable([])
 export const guestTaskLabels = writable(["Awesome label #1", "Awesome label #2", "Awesome label #3", "Awesome label #4", "Awesome label #5"])
-export const guestLabelsAdded = writable(["Added label #1", "Added label #2", "Added label #3"])
+export const guestLabelsAdded = writable([])
 export const guestStoreTasksLabels = writable([{labelName: "My label #1"}, {labelName: "My label #2"}, {labelName: "My label #3"}])

@@ -21,7 +21,7 @@
 
 </script>
 
-<AccordionItem class='!w-full self-start dark:border-gray-400' style={`border: 4px solid ${task.color ? `${task.color}` : "transparent"}; padding-left: 0;`}>
+<AccordionItem class='!w-full self-start dark:border-gray-200' style={`border: 4px solid ${task.color ? `${task.color}` : "transparent"}; padding-left: 0;`}>
   <span slot="header" class='flex items-center gap-4' style={`justify-content: ${window.location.pathname == "/tasks" ? "space-between" : "flex-start"}; ${window.location.pathname == "/tasks" ? "width: 100%" : ""}`}>
     <div class='flex items-center gap-2'>
       {#if task.color} 
