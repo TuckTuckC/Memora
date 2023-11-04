@@ -28,8 +28,9 @@
   import { makeNewLabel, removeStoredLabel, addLabel, removeAppliedLabel } from "../../controllers/labels";
   import Task from './Task.svelte';
   import { browser } from '$app/environment';
-  import {get} from 'svelte/store';
-  
+  import { get } from 'svelte/store';
+  import { v4 as uuidv4 } from 'uuid';
+
   let displayMore;
   let idTemp = "";
 
@@ -64,6 +65,39 @@
     hidden3 = false;
   }
 
+  function guestDeleteTask(taskId) {
+    const gottenGuestTasks = get(guestTasks);
+    const taskToDeleteIndex = gottenGuestTasks.findIndex(x => x.id === taskId);
+    gottenGuestTasks.splice(taskToDeleteIndex, 1);
+    guestTasks.set(gottenGuestTasks);
+  }
+  function guestDeleteOldTask(taskId) {
+    const gottenGuestOldTasks = get(guestOldTasks);
+    const taskToDeleteIndex = gottenGuestOldTasks.findIndex(x => x.id === taskId);
+    gottenGuestOldTasks.splice(taskToDeleteIndex, 1);
+    guestOldTasks.set(gottenGuestOldTasks);
+  }
+  function guestNewTask() {
+
+  }
+  function guestEditTask() {
+
+  }
+  function guestOpenEdit() {
+
+  }
+  function guestMakeNewLabel() {
+
+  }
+  function guestRemoveStoredLabel() {
+
+  }
+  function guestAddLabel() {
+
+  }
+  function guestRemoveAppliedLabel() {
+
+  }
   // $: console.log($oldTasks)
 
   function handleColor(d) {
@@ -1152,7 +1186,7 @@
             <div class='flex flex-col w-full px-6'>
               {#if $guestOldTasks}
                 {#each $guestOldTasks as task}
-                  <Task {openEdit} {task} />
+                  <Task {openEdit} {task} {guestDeleteOldTask} />
                 {/each}
               {/if}
             </div>
@@ -1414,7 +1448,7 @@
         <div class="flex flex-col justify-center col-span-3">
           {#if $guestTasks}
             {#each $guestTasks as task}
-              <Task {task} {openEdit}/>
+              <Task {task} {openEdit} {guestDeleteTask}/>
             {/each}
             <Drawer
               transitionType="fly"

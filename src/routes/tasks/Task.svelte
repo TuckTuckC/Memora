@@ -16,6 +16,8 @@
   
   export let openEdit;
   export let task;
+  export let guestDeleteTask = undefined;
+  export let guestDeleteOldTask = undefined;
 
 </script>
 
@@ -28,7 +30,13 @@
       {#if !task.color} 
         <Button color="dark" class={`!bg-transparent !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent`}></Button>
       {/if}
-      <i class="bi bi-x-lg bg-transparent rounded-full text-red-500 mr-4 hover:text-red-800 hover:bg-slate-200 dark:hover:bg-slate-500 transition ease-in-out p-1" on:click={(e) => {e.stopPropagation(); deleteStoredTask(task.id)}}></i>{task.title}
+      {#if guestDeleteTask} 
+        <i class="bi bi-x-lg bg-transparent rounded-full text-red-500 mr-4 hover:text-red-800 hover:bg-slate-200 dark:hover:bg-slate-500 transition ease-in-out p-1" on:click={(e) => {e.stopPropagation(); guestDeleteTask(task.id)}}></i>{task.title}
+      {:else if guestDeleteOldTask}
+        <i class="bi bi-x-lg bg-transparent rounded-full text-red-500 mr-4 hover:text-red-800 hover:bg-slate-200 dark:hover:bg-slate-500 transition ease-in-out p-1" on:click={(e) => {e.stopPropagation(); guestDeleteOldTask(task.id)}}></i>{task.title}
+      {:else}
+        <i class="bi bi-x-lg bg-transparent rounded-full text-red-500 mr-4 hover:text-red-800 hover:bg-slate-200 dark:hover:bg-slate-500 transition ease-in-out p-1" on:click={(e) => {e.stopPropagation(); deleteStoredTask(task.id)}}></i>{task.title}
+      {/if}
     </div>
     {#if window.location.pathname == "/tasks"}
     <div class="flex justify-start items-center gap-2 mr-2">

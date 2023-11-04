@@ -43,6 +43,7 @@ export const dateTime = writable(getDateTime());
 
 export const guestNotes = writable([
     {
+        id: 1,
         body: "Insert your beautiful note text here",
         createdAt: "2023-04-11T22:16:17-05:00",
         title: "Note Title 1",
@@ -50,6 +51,7 @@ export const guestNotes = writable([
         user_id: "dummydata@fake.com",
     }, 
     {
+        id: 2,
         body: "Insert your beautiful note text here",
         createdAt: "2023-04-11T22:16:17-05:00",
         title: "Note Title 2",
@@ -57,6 +59,7 @@ export const guestNotes = writable([
         user_id: "dummydata@fake.com",
     }, 
     {
+        id: 3,
         body: "Insert your beautiful note text here",
         createdAt: "2023-04-11T22:16:17-05:00",
         title: "Note Title 3",
@@ -64,6 +67,7 @@ export const guestNotes = writable([
         user_id: "dummydata@fake.com",
     }, 
     {
+        id: 4,
         body: "Insert your beautiful note text here",
         createdAt: "2023-06-11T22:16:17-05:00",
         title: "Note Title 4",
@@ -71,6 +75,7 @@ export const guestNotes = writable([
         user_id: "dummydata@fake.com",
     }, 
     {
+        id: 5,
         body: "Insert your beautiful note text here",
         createdAt: "2023-06-11T22:16:17-05:00",
         title: "Note Title 5",
@@ -80,6 +85,7 @@ export const guestNotes = writable([
 ])
 export const guestTasks = writable([
     {
+        id: 1,
         body: "Insert your upcoming task here!",
         createdAt: "2023-04-11T22:16:17-05:00",
         title: "Task Title 1",
@@ -88,6 +94,7 @@ export const guestTasks = writable([
         user_id: "dummydata@fake.com",
     }, 
     {
+        id: 2,
         body: "Insert your upcoming task here!",
         createdAt: "2023-04-11T22:16:17-05:00",
         title: "Task Title 2",
@@ -96,6 +103,7 @@ export const guestTasks = writable([
         user_id: "dummydata@fake.com",
     }, 
     {
+        id: 3,
         body: "Insert your upcoming task here!",
         createdAt: "2023-04-11T22:16:17-05:00",
         title: "Task Title 3",
@@ -104,6 +112,7 @@ export const guestTasks = writable([
         user_id: "dummydata@fake.com",
     }, 
     {
+        id: 4,
         body: "Insert your upcoming task here!",
         createdAt: "2023-06-11T22:16:17-05:00",
         title: "Task Title 4",
@@ -112,6 +121,7 @@ export const guestTasks = writable([
         user_id: "dummydata@fake.com",
     }, 
     {
+        id: 5,
         body: "Insert your upcoming task here!",
         createdAt: "2023-06-11T22:16:17-05:00",
         title: "Task Title 5",
@@ -121,6 +131,7 @@ export const guestTasks = writable([
 ])
 export const guestOldNotes = writable([
     {
+        id: 1,
         body: "These are notes from way back when!",
         createdAt: "2023-01-11T22:16:17-05:00",
         title: "Old Note Title 2",
@@ -128,22 +139,25 @@ export const guestOldNotes = writable([
         user_id: "dummydata@fake.com",
     }, 
     {
+        id: 2,
         body: "These are notes from way back when!",
-        createdAt: "2023-01-7T22:16:17-05:00",
+        createdAt: "2023-01-07T22:16:17-05:00",
         title: "Old Note Title 3",
-        updatedAt: "2023-01-7T22:16:17-05:00",
+        updatedAt: "2023-01-07T22:16:17-05:00",
         user_id: "dummydata@fake.com",
     }, 
     {
+        id: 3,
         body: "These are notes from way back when!",
-        createdAt: "2023-01-1T22:16:17-05:00",
+        createdAt: "2023-01-01T22:16:17-05:00",
         title: "Old Note Title 1",
-        updatedAt: "2023-01-1T22:16:17-05:00",
+        updatedAt: "2023-01-01T22:16:17-05:00",
         user_id: "dummydata@fake.com",
     }, 
 ])
 export const guestOldTasks = writable([
     {
+        id: 1,
         body: "Tasks as old as the dinosaurs",
         createdAt: "2023-01-11T22:16:17-05:00",
         title: "Old Task Title 1",
@@ -152,19 +166,21 @@ export const guestOldTasks = writable([
         user_id: "dummydata@fake.com",
     }, 
     {
+        id: 2,
         body: "Tasks as old as the dinosaurs",
-        createdAt: "2023-01-7T22:16:17-05:00",
+        createdAt: "2023-01-07T22:16:17-05:00",
         title: "Old Task Title 2",
         labels: ["Awesome label #1"],
-        updatedAt: "2023-01-7T22:16:17-05:00",
+        updatedAt: "2023-01-07T22:16:17-05:00",
         user_id: "dummydata@fake.com",
     }, 
     {
+        id: 3,
         body: "Tasks as old as the dinosaurs",
-        createdAt: "2023-01-1T22:16:17-05:00",
+        createdAt: "2023-01-01T22:16:17-05:00",
         title: "Old Task Title 3",
         labels: ["Awesome label #3", "Awesome label #4"],
-        updatedAt: "2023-01-1T22:16:17-05:00",
+        updatedAt: "2023-01-01T22:16:17-05:00",
         user_id: "dummydata@fake.com",
     }, 
 ])
