@@ -19,6 +19,10 @@ import {
   storeTasks,
   storeTasksLabels,
   oldTasks,
+  guestNotes,
+  guestTasks,
+  guestOldNotes, 
+  guestOldTasks
 } from "../stores/store";
 import { matchDaysWithEvents } from "./events.js";
 import {
@@ -36,6 +40,39 @@ authStore.subscribe((value) => {
 });
 
 let userDaysLookup = writable([]);
+
+export function initGuestData() {
+  let tempNotes = [];
+  let tempOldNotes = [];
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+  const gottenGuestNotes = get(guestNotes);
+  gottenGuestNotes.forEach((doc) => {
+    tempNotes.push(doc);
+    parseISO(doc.updatedAt) <= oneWeekAgo
+      ? tempOldNotes.push(doc)
+      : null;
+  });
+  guestOldNotes.set(tempOldNotes);
+  tempNotes.sort((a, b) =>
+    compareDesc(parseISO(a.updatedAt), parseISO(b.updatedAt))
+  );
+  guestNotes.set(tempNotes);
+
+  let array = [];
+  let tempOldTasks = [];
+  const gottenGuestTasks = get(guestTasks);
+  gottenGuestTasks.forEach((doc) => {
+    array.push(doc);
+    parseISO(doc.updatedAt) <= oneWeekAgo ? tempOldTasks.push(doc) : null;
+  });
+  guestOldTasks.set(tempOldTasks);
+  array.sort((a, b) =>
+    compareDesc(parseISO(a.updatedAt), parseISO(b.updatedAt))
+  );
+  guestTasks.set(array);
+}
 
 export function initData() {
   const notesCollection = collection(db, "notes");
@@ -160,4 +197,6 @@ export function initData() {
 
 if (store.currentUser) {
   initData();
+} else {
+  initGuestData();
 }

@@ -36,6 +36,6 @@
 		"flowbite-svelte": "^0.35.3",
 		"preline": "^1.8.0",
 		"preprocess": "^3.2.0",
-		"uuid": "^9.0.0"
+		"uuid": "^9.0.1"
 	}
 }
