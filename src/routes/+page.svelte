@@ -14,7 +14,10 @@
 <section>
   <div class="flex w-full content-start pt-8 px-2">
     {#if $authStore.currentUser}
-    <button on:click={sendPostRequest}>Send POST Request</button>
+      <Notes />
+      <Tasks />
+    {/if}
+    {#if !$authStore.currentUser}
       <Notes />
       <Tasks />
     {/if}
