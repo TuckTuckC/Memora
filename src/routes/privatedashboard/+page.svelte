@@ -16,8 +16,8 @@
     })
 
     const settingsTab = writable("all");
-
-    let userEmailName = email.split("@")[0]
+    
+    let userEmailName = email?.split("@")[0]
 </script>
 
 {#if $authStore.currentUser}
@@ -26,10 +26,16 @@
     <Button class="w-2/12" color="alternative" on:click={() => {settings = true}}>Settings</Button>
     <Button class="w-2/12" color="alternative" on:click={() => manageAccount = true}>Manage Account</Button>
     <Button class="w-2/12" color="alternative" on:click={authHandlers.logout}>Log Out</Button>
-    
 </div>
-{:else}
+{:else if $authStore.isLoading}
 <div>Loading.....</div>
+{:else}
+<div class="flex flex-col w-full self-center gap-2">
+  <h1>Welcome, Guest!</h1>
+  <Button class="w-2/12" color="alternative" disabled>Settings</Button>
+  <Button class="w-2/12" color="alternative" disabled>Manage Account</Button>
+  <Button class="w-2/12" color="alternative" disabled>Log Out</Button>
+</div>
 {/if}
 
 <Modal class='w-full' title="Manage Account" bind:open={manageAccount} autoclose><AuthReset /></Modal>
