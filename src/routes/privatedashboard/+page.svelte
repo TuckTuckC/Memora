@@ -32,7 +32,7 @@
 {:else}
 <div class="flex flex-col w-full self-center gap-2">
   <h1>Welcome, Guest!</h1>
-  <Button class="w-2/12" color="alternative">Settings</Button>
+  <Button class="w-2/12" color="alternative" disabled>Settings</Button>
   <Button class="w-2/12" color="alternative" disabled>Manage Account</Button>
   <Button class="w-2/12" color="alternative" disabled>Log Out</Button>
 </div>

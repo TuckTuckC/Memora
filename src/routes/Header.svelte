@@ -59,10 +59,10 @@
     <DarkMode />
     <Dropdown triggeredBy="#nav-menu1" class="w-44 z-20">
       <DropdownItem
-        ><NavLi href="/privatedashboard">Private Dashboard</NavLi></DropdownItem
+        ><NavLi href="/privatedashboard" active={$page.url.pathname === '/privatedashboard' ? true : false}>Private Dashboard</NavLi></DropdownItem
       >
-      <DropdownItem>Settings</DropdownItem>
-      <DropdownItem>Earnings</DropdownItem>
+      <DropdownItem class="text-gray-400 pointer-events-none">Settings</DropdownItem>
+      <DropdownItem class="text-gray-400 pointer-events-none">Earnings</DropdownItem>
       <DropdownDivider />
       <DropdownItem
         on:click={store.currentUser
