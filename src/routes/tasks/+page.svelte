@@ -136,7 +136,7 @@
 {#if browser}
   {#if store.currentUser}
     {#if window.location.pathname == "/"}
-      <div class="flex flex-col flex-1 border-2 border-gray rounded-lg p-2 ml-4 bg-blue-50 dark:text-white dark:bg-blue-950">
+      <div class="flex flex-col flex-1 border-2 border-gray rounded-lg p-2 w-9/12 md:ml-4 bg-blue-50 dark:text-white dark:bg-blue-950">
         <div class="flex flex-col justify-center items-center">
           {#if $storeTasks}
             <div class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
@@ -255,7 +255,7 @@
   {/if}
   {#if !store.currentUser}
     {#if window.location.pathname == "/"}
-      <div class="flex flex-col flex-1 border-2 border-gray rounded-lg p-2 ml-4 bg-blue-50 dark:text-white dark:bg-blue-950">
+      <div class="flex flex-col flex-1 border-2 border-gray rounded-lg p-2 w-9/12 md:ml-4 bg-blue-50 dark:text-white dark:bg-blue-950">
         <div class="flex flex-col justify-center items-center">
           {#if $guestTasks}
             <div class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
