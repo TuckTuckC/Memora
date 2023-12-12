@@ -62,7 +62,7 @@
 
 {#if browser} 
   {#if store.currentUser}
-    <div class={`flex flex-col flex-2 w-9/12 ${window.location.pathname === "/" ?  "border-2 border-gray rounded-lg bg-zinc-100 dark:bg-neutral-800" : ""}`}>
+    <div class={`flex flex-col flex-2 w-full md:w-9/12 ${window.location.pathname === "/" ?  "border-2 border-gray rounded-lg bg-zinc-100 dark:bg-neutral-800" : ""}`}>
       {#if window.location.pathname === "/"}
         <p class="text-center pb-4 text-2xl font-bold dark:text-white pt-2">
           Forgot About These?
@@ -79,7 +79,7 @@
               {/each}
             </div>
           {/if}
-          <div class="flex flex-col w-full pt-6 px-4">
+          <div class="flex flex-col w-full md:pt-6 px-4 items-center">
             {#if window.location.pathname === "/"}
               <p class="text-center pb-4 border-b-2 border-black text-2xl dark:text-white dark:border-white">
                 Recents
@@ -87,7 +87,7 @@
             {/if}
             <Button
               on:click={() => (hidden4 = false)}
-              class="w-fit mt-6 !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
+              class="w-fit md:mt-6 !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
               >Create New Note</Button
             >
             <div class="flex flex-row flex-wrap justify-start w-full pt-6">
@@ -101,7 +101,7 @@
     </div>
   {/if}
   {#if !store.currentUser} 
-    <div class={`flex flex-col flex-2 w-9/12 ${window.location.pathname === "/" ?  "border-2 border-gray rounded-lg bg-zinc-100 dark:bg-neutral-800" : ""}`}>
+    <div class={`flex flex-col flex-2 w-full md:w-9/12 ${window.location.pathname === "/" ?  "border-2 border-gray rounded-lg bg-zinc-100 dark:bg-neutral-800" : ""}`}>
       {#if window.location.pathname === "/"}
         <p class="text-center pb-4 text-2xl font-bold dark:text-white pt-2">
           Forgot About These?
@@ -118,7 +118,7 @@
               {/each}
             </div>
           {/if}
-          <div class="flex flex-col w-full pt-6 px-4">
+          <div class="flex flex-col w-full md:pt-6 px-4 items-center">
             {#if window.location.pathname === "/"}
               <p class="text-center pb-4 border-b-2 border-black text-2xl dark:text-white dark:border-white">
                 Recents
@@ -126,7 +126,7 @@
             {/if}
             <Button
               on:click={() => (hidden4 = false)}
-              class="w-fit mt-6 !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
+              class="w-fit md:mt-6 !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
               >Create New Note</Button
             >
             <div class="flex flex-row flex-wrap justify-start w-full pt-6">

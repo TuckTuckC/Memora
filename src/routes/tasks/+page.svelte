@@ -136,7 +136,7 @@
 {#if browser}
   {#if store.currentUser}
     {#if window.location.pathname == "/"}
-      <div class="flex flex-col flex-1 border-2 border-gray rounded-lg p-2 w-9/12 md:ml-4 bg-blue-50 dark:text-white dark:bg-blue-950">
+      <div class="flex flex-col flex-1 border-2 border-gray rounded-lg p-2 w-full md:w-9/12 md:ml-4 bg-blue-50 dark:text-white dark:bg-blue-950">
         <div class="flex flex-col justify-center items-center">
           {#if $storeTasks}
             <div class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
@@ -153,13 +153,12 @@
                 {/each}
               {/if}
             </div>
-            <hr class="w-48 h-1 mx-auto my-4 bg-gray-800 border-0 rounded md:my-4 dark:bg-gray-100"/>
           {/if}
         </div>
       </div>
     {/if}
     {#if window.location.pathname == "/tasks"}
-      <div class="relative grid grid-cols-5 dark:text-white pt-8">
+      <div class="relative md:grid md:grid-cols-5 md:pt-8 dark:text-white">
         <div class="col-span-2">
           <div class="text-center flex flex-col px-4 sticky h-fit top-32 left-0">
             <div>
@@ -243,7 +242,7 @@
             </div>
           </div>
         </div>
-        <div class="flex flex-col justify-center col-span-3">
+        <div class="flex flex-col justify-center md:col-span-3">
           {#if $storeTasks}
             {#each $storeTasks as task}
               <Task {task} {openEdit}/>
@@ -255,7 +254,7 @@
   {/if}
   {#if !store.currentUser}
     {#if window.location.pathname == "/"}
-      <div class="flex flex-col flex-1 border-2 border-gray rounded-lg p-2 w-9/12 md:ml-4 bg-blue-50 dark:text-white dark:bg-blue-950">
+      <div class="flex flex-col flex-1 border-2 border-gray rounded-lg p-2 w-full md:w-9/12 md:ml-4 bg-blue-50 dark:text-white dark:bg-blue-950">
         <div class="flex flex-col justify-center items-center">
           {#if $guestTasks}
             <div class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
@@ -272,17 +271,16 @@
                 {/each}
               {/if}
             </div>
-            <hr class="w-48 h-1 mx-auto my-4 bg-gray-800 border-0 rounded md:my-4 dark:bg-gray-100"/>
           {/if}
         </div>
       </div>
     {/if}
     {#if window.location.pathname == "/tasks"}
-      <div class="relative grid grid-cols-5 dark:text-white pt-8">
+      <div class="relative md:grid md:grid-cols-5 md:pt-8 dark:text-white">
         <div class="col-span-2">
           <div class="text-center flex flex-col px-4 sticky h-fit top-32 left-0">
             <div>
-              <div class="mb-6">
+              <div class="mb-4 md:mb-6">
                 <Input
                   id="title"
                   name="title"
@@ -291,7 +289,7 @@
                   bind:value={title}
                 />
               </div>
-              <div class="flex">
+              <div class="flex flex-col">
                 <div>
                   <div class="mb-2">
                     <Label for="body" class="mb-2">Body</Label>
@@ -335,7 +333,7 @@
                   </div>
                 </div>
                 <div>
-                  <ButtonGroup class="flex justify-center items-center gap-2">
+                  <ButtonGroup class="mt-2 md:mt-0 flex justify-center items-center gap-2">
                     {#each buttonColors as buttonColor}
                       <Button on:click={() => handleColor(buttonColor)} color="dark" class={`!bg-[${buttonColor}] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black dark:hover:border-white transition ease-in-out`}></Button>
                     {/each}
@@ -366,7 +364,7 @@
             </div>
           </div>
         </div>
-        <div class="flex flex-col justify-center col-span-3">
+        <div class="flex flex-col justify-center md:col-span-3">
           {#if $guestTasks}
             {#each $guestTasks as task}
               <Task {task} {openEdit} {guestDeleteTask}/>

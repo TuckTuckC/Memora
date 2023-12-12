@@ -13,12 +13,10 @@
     formatDistanceToNow,
     parseISO,
   } from "date-fns";
-  
-  export let openEdit;
+
   export let task;
   export let guestDeleteTask = undefined;
   export let guestDeleteOldTask = undefined;
-
 </script>
 
 <AccordionItem class='!w-full self-start dark:border-red-200' style={`border: 4px solid ${task.color ? `${task.color}` : "transparent"}; padding-left: 0;`}>

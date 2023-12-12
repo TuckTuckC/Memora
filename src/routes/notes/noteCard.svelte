@@ -47,7 +47,7 @@
     {#if (forgot)}
     <Button
       color="yellow"
-      class="w-fit mt-0 bg-yellowbtn dark:!bg-darkredbtn flex self-end bottom-0"
+      class="w-fit mt-0 bg-yellowbtn dark:!bg-redbtn flex self-end bottom-0"
       on:click={async (e) => {
         e.stopPropagation();
         await setDoc(
