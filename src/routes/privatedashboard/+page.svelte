@@ -21,20 +21,20 @@
 </script>
 
 {#if $authStore.currentUser}
-<div class="flex flex-col w-full self-center gap-2">
+<div class="flex flex-col w-full self-center gap-2 dark:text-white">
     <h1>Hello, {userEmailName}</h1>
-    <Button class="w-2/12" color="alternative" on:click={() => {settings = true}}>Settings</Button>
-    <Button class="w-2/12" color="alternative" on:click={() => manageAccount = true}>Manage Account</Button>
-    <Button class="w-2/12" color="alternative" on:click={authHandlers.logout}>Log Out</Button>
+    <Button class="w-1/2 border-gray-400 dark:border-white dark:text-white md:w-2/12" color="alternative" on:click={() => {settings = true}}>Settings</Button>
+    <Button class="w-1/2 border-gray-400 dark:border-white dark:text-white md:w-2/12" color="alternative" on:click={() => manageAccount = true}>Manage Account</Button>
+    <Button class="w-1/2 border-gray-400 dark:border-white dark:text-white md:w-2/12" color="alternative" on:click={authHandlers.logout}>Log Out</Button>
 </div>
 {:else if $authStore.isLoading}
 <div>Loading.....</div>
 {:else}
-<div class="flex flex-col w-full self-center gap-2">
+<div class="flex flex-col w-full self-center gap-2 dark:text-white">
   <h1>Welcome, Guest!</h1>
-  <Button class="w-2/12" color="alternative" disabled>Settings</Button>
-  <Button class="w-2/12" color="alternative" disabled>Manage Account</Button>
-  <Button class="w-2/12" color="alternative" disabled>Log Out</Button>
+  <Button class="w-1/2 border-gray-400 dark:border-white dark:text-white md:w-2/12" color="alternative" disabled>Settings</Button>
+  <Button class="w-1/2 border-gray-400 dark:border-white dark:text-white md:w-2/12" color="alternative" disabled>Manage Account</Button>
+  <Button class="w-1/2 border-gray-400 dark:border-white dark:text-white md:w-2/12" color="alternative" disabled>Log Out</Button>
 </div>
 {/if}
 
@@ -65,8 +65,14 @@
         flex: 1;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: start;
         align-items: center;
+    }
+
+    @media screen and (min-width: 768px) {
+      div {
+        justify-content: center;
+    }
     }
 
     h1 {
