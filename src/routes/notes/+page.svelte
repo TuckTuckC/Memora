@@ -87,7 +87,7 @@
             {/if}
             <Button
               on:click={() => (hidden4 = false)}
-              class="w-fit md:mt-6 !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
+              class="w-fit mt-4 md:mt-6 !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
               >Create New Note</Button
             >
             <div class="flex flex-row flex-wrap justify-start w-full pt-6">
@@ -126,7 +126,7 @@
             {/if}
             <Button
               on:click={() => (hidden4 = false)}
-              class="w-fit md:mt-6 !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
+              class="w-fit mt-4 md:mt-6 !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
               >Create New Note</Button
             >
             <div class="flex flex-row flex-wrap justify-start w-full pt-6">

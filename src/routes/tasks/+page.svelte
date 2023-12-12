@@ -33,7 +33,7 @@
   import { v4 as uuidv4 } from 'uuid';
 
   const buttonColors = ["#9BABB8","#5C8984","#FCF9BE","#FF8787","#537188","#E8A0BF","#B2A4FF","#A7727D"];
-
+  
   let displayMore;
   let idTemp = "";
 
@@ -333,6 +333,7 @@
                   </div>
                 </div>
                 <div>
+                  <div class="text-gray-900 font-medium text-sm dark:text-gray-300">Color</div>
                   <ButtonGroup class="mt-2 md:mt-0 flex justify-center items-center gap-2">
                     {#each buttonColors as buttonColor}
                       <Button on:click={() => handleColor(buttonColor)} color="dark" class={`!bg-[${buttonColor}] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-transparent hover:border-black dark:hover:border-white transition ease-in-out`}></Button>
@@ -356,11 +357,11 @@
                 </div>
               </div>
                 <Button
-                  class="w-full !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white"
+                  class="w-full !bg-greenbtn !text-black dark:!bg-purplebtn dark:!text-white mb-2 md:mb-0"
                   on:click={() => {guestNewTask({guestLabelsAdded, body, title, colorSel}), reset()}}
                   ><i class="bi bi-clipboard-plus-fill mr-2"></i>
-                  Create Task</Button
-                >
+                  Create Task
+                </Button>
             </div>
           </div>
         </div>
