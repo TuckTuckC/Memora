@@ -7,8 +7,8 @@
 </script>
 
 <svelte:head>
-  <title>Home</title>
-  <meta name="description" content="Svelte demo app" />
+  <title>Memora</title>
+  <meta name="description" content="Sveltekit note & task taking application" />
 </svelte:head>
 
 <section>
