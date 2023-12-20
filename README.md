@@ -40,4 +40,4 @@ We welcome contributions from the community! If you find a bug or have a suggest
 Memora is released under the MIT License. Please see the license file for more information.
 
 # Contact
-If you have any questions or comments about Memora, please contact us at [tuckermcraig@gmail.com](mailto:tuckermcraig@gmail.com) or [TuckTuckC](https://github.com/TuckTuckC).
+If you have any questions or comments about Memora, please contact us at [jeffrey.t.li.work@gmail.com](mailto:jeffrey.t.li.work@gmail.com) or [JeffLi117](https://github.com/JeffLi117).
