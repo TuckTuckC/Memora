@@ -130,6 +130,23 @@
     console.log(selStart);
   }
 
+  function openTimeSlot(dateTime) {
+    let date = new Date(dateTime);
+    let currentYear = date.getFullYear();
+    let currentMonth = date.getMonth() + 1; // getMonth() returns 0-11
+    let selDay = date.getDate();
+    let hour = date.getHours();
+    let minute = date.getMinutes();
+    selHour = hour < 10 ? `0${hour}` : `${hour}`;
+    selMinute = minute < 10 ? `0${minute}` : `${minute}`;
+    selStart = `${currentYear}-${currentMonth}-${selDay}`
+    selHourEnd = (hour + 1) < 10 ? `0${hour + 1}` : `${hour + 1}`;
+    selMinuteEnd = selMinute;
+    selEnd = `${currentYear}-${currentMonth}-${selDay}`
+    console.log(selHour, selMinute);
+    hidden4 = false
+  }
+
   $: {
     if (selStart) {
       console.log(selStart);
@@ -159,18 +176,18 @@
     { value: "10", name: "10a" },
     { value: "11", name: "11a" },
     { value: "12", name: "12p" },
-    { value: "11", name: "1p" },
-    { value: "12", name: "2p" },
-    { value: "13", name: "3p" },
-    { value: "14", name: "4p" },
-    { value: "15", name: "5p" },
-    { value: "16", name: "6p" },
-    { value: "17", name: "7p" },
-    { value: "18", name: "8p" },
-    { value: "19", name: "9p" },
-    { value: "20", name: "10p" },
-    { value: "21", name: "11p" },
-    { value: "22", name: "12a" },
+    { value: "13", name: "1p" },
+    { value: "14", name: "2p" },
+    { value: "15", name: "3p" },
+    { value: "16", name: "4p" },
+    { value: "17", name: "5p" },
+    { value: "18", name: "6p" },
+    { value: "19", name: "7p" },
+    { value: "20", name: "8p" },
+    { value: "21", name: "9p" },
+    { value: "22", name: "10p" },
+    { value: "23", name: "11p" },
+    { value: "24", name: "12a" },
   ];
   let minutes = [
     { value: "00", name: "0" },
@@ -269,7 +286,7 @@
     <div class="grid grid-cols-7 gap-4 justify-items-center h-full">
       {#if $daysGrid}
         {#each $daysGrid as day}
-          <DayBlock {day} {currentYear} {currentMonth} {addDayEvent}/>
+          <DayBlock {day} {currentYear} {currentMonth} {addDayEvent} {openTimeSlot}/>
         {/each}
       {/if}
     </div>

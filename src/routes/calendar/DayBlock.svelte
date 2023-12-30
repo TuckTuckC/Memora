@@ -8,6 +8,7 @@
   export let currentYear;
   export let currentMonth;
   export let addDayEvent;
+  export let openTimeSlot;
 
   let clickOutsideModal = false;
 
@@ -107,7 +108,7 @@
   <div class="grid gap-2" style={`grid-template-columns: 17% repeat(${eventStack() - 1}, 1fr)`}>
     {#each timelineSlots as slot}
     <div class="!h-4 text-sm text-base font-semibold gap-2 col-start-1 border-t">
-      <div>
+      <div on:click={() => {openTimeSlot(slot)}}>
         <span>{format(new Date(slot), "h:mm a")}
         </span>
       </div>
