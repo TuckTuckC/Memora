@@ -242,15 +242,15 @@
   let color = "";
 </script>
 
-<div class="flex flex-col self-center p-4 w-5/6 border-2">
+<div class="flex flex-col self-center p-4 w-full md:w-5/6 border-2">
   <div
-    class="flex place-content-evenly mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+    class="flex items-center place-content-evenly mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
   >
-    <Button on:click={previousMonth} color="purple"
+    <Button on:click={previousMonth} color="purple" class="h-[1rem] w-[1rem] md:h-[2rem] md:w-[2rem]"
       ><i class="bi bi-arrow-left" /></Button
     >
-    <h2>{format(date, "MMMM yyyy")}</h2>
-    <Button on:click={nextMonth} color="purple"
+    <h2 class="px-2 text-lg md:text-2xl">{format(date, "MMMM yyyy")}</h2>
+    <Button on:click={nextMonth} color="purple" class="h-[1rem] w-[1rem] md:h-[2rem] md:w-[2rem]"
       ><i class="bi bi-arrow-right" /></Button
     >
   </div>
@@ -273,7 +273,7 @@
         {/each}
       {/if}
     </div>
-    <SpeedDial color="purple" outline defaultClass="absolute right-12 bottom-8">
+    <SpeedDial color="purple" trigger="click" class="absolute right-6 bottom-6 md:right-12 md:bottom-8">
       <SpeedDialButton name="Event" on:click={() => (hidden4 = false)}>
         <i class="bi bi-calendar-check" />
       </SpeedDialButton>

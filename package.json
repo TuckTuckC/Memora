@@ -10,6 +10,7 @@
 		"@fontsource/fira-mono": "^4.5.10",
 		"@neoconfetti/svelte": "^1.0.0",
 		"@sveltejs/adapter-auto": "^2.0.0",
+		"@sveltejs/adapter-vercel": "^3.1.0",
 		"@sveltejs/kit": "^1.5.0",
 		"autoprefixer": "^10.4.14",
 		"postcss": "^8.4.23",
@@ -36,6 +37,7 @@
 		"flowbite-svelte": "^0.35.3",
 		"preline": "^1.8.0",
 		"preprocess": "^3.2.0",
+		"svelte-kit": "^1.2.0",
 		"uuid": "^9.0.1"
 	}
 }

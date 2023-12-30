@@ -13,17 +13,16 @@
     formatDistanceToNow,
     parseISO,
   } from "date-fns";
-  
-  export let openEdit;
+
   export let task;
+  export let openEdit;
   export let guestDeleteTask = undefined;
   export let guestDeleteOldTask = undefined;
-
 </script>
 
-<AccordionItem class='!w-full self-start dark:border-gray-200' style={`border: 4px solid ${task.color ? `${task.color}` : "transparent"}; padding-left: 0;`}>
+<AccordionItem class='!w-full self-start dark:border-red-200' style={`border: 4px solid ${task.color ? `${task.color}` : "transparent"}; padding-left: 0;`}>
   <span slot="header" class='flex items-center gap-4' style={`justify-content: ${window.location.pathname == "/tasks" ? "space-between" : "flex-start"}; ${window.location.pathname == "/tasks" ? "width: 100%" : ""}`}>
-    <div class='flex items-center gap-2'>
+    <div class='flex items-center md:gap-2'>
       {#if task.color} 
       <Button color="dark" class={`!bg-[${task.color}] !p-1 !rounded-full w-[1rem] h-[1rem] border-2 border-black`}></Button>
       {/if}
@@ -39,13 +38,11 @@
       {/if}
     </div>
     {#if window.location.pathname == "/tasks"}
-    <div class="flex justify-start items-center gap-2 mr-2">
+    <div class="flex flex-col gap-2 mr-2 text-xs md:flex-row md:justify-start md:items-center md:text-sm">
       <div class="flex justify-start items-center gap-2 flex-wrap">
         {#if task.labels} 
           {#each task.labels as label}
-            <Label
-              class="text-sm w-fit text-gray-700 block p-2 border-solid border-2 border-gray-700 rounded dark:text-gray-400 dark:border-gray-400 leading-tight"
-            >
+            <Label class="text-xs md:text-sm w-fit text-gray-700 block p-2 border-solid border-2 border-gray-700 rounded dark:text-gray-400 dark:border-gray-400 leading-tight">
               {label}
             </Label>
           {/each}
@@ -57,16 +54,14 @@
   </span>
   <p class="mb-2 text-gray-500 dark:text-gray-400">{task.body}</p>
   {#if window.location.pathname != "/tasks"}
-    <p
-      class="font-normal text-gray-700 dark:text-gray-200 leading-tight mb-4"
-    >
+    <p class="font-normal text-gray-700 dark:text-gray-200 leading-tight mb-4">
       {formatDistanceToNow(parseISO(task.updatedAt))} ago
     </p>
     {#if task.labels}
     <div class="flex justify-start items-center gap-2 flex-wrap">
       {#each task.labels as label}
         <Label
-          class="text-sm w-fit text-gray-700 block mb-2 p-2 border-solid border-2 border-gray-700 rounded dark:text-gray-400 dark:border-gray-400 leading-tight"
+          class="text-xs md:text-sm w-fit text-gray-700 block mb-2 p-2 border-solid border-2 border-gray-700 rounded dark:text-gray-400 dark:border-gray-400 leading-tight"
         >
           {label}
         </Label>

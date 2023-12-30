@@ -7,20 +7,14 @@
 </script>
 
 <svelte:head>
-  <title>Home</title>
-  <meta name="description" content="Svelte demo app" />
+  <title>Memora</title>
+  <meta name="description" content="Sveltekit note & task taking application" />
 </svelte:head>
 
 <section>
-  <div class="flex w-full content-start pt-8 px-2">
-    {#if $authStore.currentUser}
-      <Notes />
-      <Tasks />
-    {/if}
-    {#if !$authStore.currentUser}
-      <Notes />
-      <Tasks />
-    {/if}
+  <div class="flex flex-col justify-center items-center gap-2 md:flex-row md:w-full md:content-start md:items-start md:pt-8 md:px-2 md:gap-0">
+    <Notes />
+    <Tasks />
   </div>
   <Auth />
 </section>

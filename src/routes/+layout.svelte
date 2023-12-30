@@ -50,6 +50,7 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    width: 100%;
   }
 
   main {
@@ -58,11 +59,18 @@
     display: flex;
     flex-direction: column;
     padding: 1rem;
+    padding-top: 0;
     width: 100%;
     margin: 0 auto;
     box-sizing: border-box;
     position: absolute;
     top: 10%;
+  }
+
+  @media only screen and (min-width: 768px) {
+    main {
+      padding-top: 1rem;
+    }
   }
 
   footer {

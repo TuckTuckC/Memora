@@ -76,88 +76,88 @@
             type="button"
             on:click={() => editor.chain().focus().toggleBold().run()}
             class:active={editor.isActive("bold")}
-            class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+            class="p-1 md:p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
           >
-            <i class="bi bi-type-bold text-2xl" />
+            <i class="bi bi-type-bold text-lg md:text-2xl" />
             <span class="sr-only">Bold</span>
           </button>
           <button
             type="button"
             on:click={() => editor.chain().focus().toggleItalic().run()}
             class:active={editor.isActive("italic")}
-            class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+            class="p-1 md:p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
           >
-            <i class="bi bi-type-italic text-2xl" />
+            <i class="bi bi-type-italic text-lg md:text-2xl" />
             <span class="sr-only">Bold</span>
           </button>
           <button
             type="button"
             on:click={() => editor.chain().focus().toggleUnderline().run()}
             class:active={editor.isActive("underline")}
-            class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+            class="p-1 md:p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
           >
-            <i class="bi bi-type-underline text-2xl" />
+            <i class="bi bi-type-underline text-lg md:text-2xl" />
             <span class="sr-only">Bold</span>
           </button>
           <button
             type="button"
             on:click={() => editor.chain().focus().toggleBulletList().run()}
             class:active={editor.isActive("bulletList")}
-            class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+            class="p-1 md:p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
           >
-            <i class="bi bi-list-ul text-2xl" />
+            <i class="bi bi-list-ul text-lg md:text-2xl" />
             <span class="sr-only">Bold</span>
           </button>
           <button
             type="button"
             on:click={() => editor.chain().focus().toggleBold().run()}
             class:active={editor.isActive("bold")}
-            class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+            class="p-1 md:p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
           >
-            <i class="bi bi-list-ol text-2xl" />
+            <i class="bi bi-list-ol text-lg md:text-2xl" />
             <span class="sr-only">Bold</span>
           </button>
           <button
             type="button"
             on:click={() => editor.chain().focus().toggleBold().run()}
             class:active={editor.isActive("bold")}
-            class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+            class="p-1 md:p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
           >
-            <i class="bi bi-link text-2xl" />
+            <i class="bi bi-link text-lg md:text-2xl" />
             <span class="sr-only">Bold</span>
           </button>
           <button
             type="button"
             on:click={() => editor.chain().focus().toggleBold().run()}
             class:active={editor.isActive("bold")}
-            class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+            class="p-1 md:p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
           >
-            <i class="bi bi-text-left text-2xl" />
+            <i class="bi bi-text-left text-lg md:text-2xl" />
             <span class="sr-only">Bold</span>
           </button>
           <button
             type="button"
             on:click={() => editor.chain().focus().toggleBold().run()}
             class:active={editor.isActive("bold")}
-            class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+            class="p-1 md:p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
           >
-            <i class="bi bi-text-center text-2xl" />
+            <i class="bi bi-text-center text-lg md:text-2xl" />
             <span class="sr-only">Bold</span>
           </button>
           <button
             type="button"
             on:click={() => editor.chain().focus().toggleBold().run()}
             class:active={editor.isActive("bold")}
-            class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+            class="p-1 md:p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
           >
-            <i class="bi bi-text-right text-2xl" />
+            <i class="bi bi-text-right text-lg md:text-2xl" />
             <span class="sr-only">Bold</span>
           </button>
         </div>
         <div class="flex flex-wrap items-center space-x-1 sm:pl-4">
           <button
             type="button"
-            class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+            class="p-1 md:p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
           >
             <svg
               aria-hidden="true"
